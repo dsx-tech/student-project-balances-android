@@ -6,12 +6,13 @@ import com.example.mvvmkotlincoroutineretrofitdemo.model.Transaction
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiService {
 
     @GET("/bcv/quotes/bars/{instrument}/{timeFrom}/{timeTo}")
-    fun getRatesForTime(@Query("instrument") instrument: String, @Query("timeFrom") timeFrom: Long, @Query("timeTo") timeTo: Long): Deferred<Response<MutableList<Rate>>>
+    fun getRatesForTime(@Path("instrument") instrument:String, @Path("timeFrom") timeFrom: Long, @Path("timeTo") timeTo: Long): Deferred<Response<MutableList<Rate>>>
     @GET("/bcv/quotes/bars/{instrument}")
     fun getRate(@Query("instrument") instrument: String): Deferred<Response<MutableList<Rate>>>
     @GET("/bcv/transactions")
