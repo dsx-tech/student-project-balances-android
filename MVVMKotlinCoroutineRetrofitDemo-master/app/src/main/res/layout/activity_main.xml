@@ -7,5 +7,21 @@
     android:background="#1D122C"
     tools:context=".view.MainActivity">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
+
+
+<com.aachartmodel.aainfographics.AAInfographicsLib.AAChartConfiger.AAChartView
+    android:id="@+id/AAChartView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1D122C"
+    android:layout_weight="50">
+
+</com.aachartmodel.aainfographics.AAInfographicsLib.AAChartConfiger.AAChartView>
+
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
