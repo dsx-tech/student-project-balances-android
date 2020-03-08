@@ -85,7 +85,7 @@ class ChartAdapter  {
 
 
     }
-    fun setData2(dataLiveData: MutableList<Rate>, aaChartView: AAChartView?) {
+    fun setData2(dataLiveData: MutableList<Rate>, aaChartView: AAChartView?, cur1: String, cur2: String) {
         var rates: ArrayList<BigDecimal> = arrayListOf()
         var dates: ArrayList<String> = arrayListOf()
         val formatter = SimpleDateFormat("dd/MM/yyyy")
@@ -104,7 +104,7 @@ class ChartAdapter  {
             .titleFontColor("#FFFFFF")
             .titleFontSize(20f)
             .titleFontWeight(AAChartFontWeightType.Bold)
-            .subtitle("---------")
+            .subtitle("$cur1/$cur2")
             .subtitleFontColor("#FFFFFF")
             .subtitleFontSize(15f)
             .subtitleFontWeight(AAChartFontWeightType.Bold)
@@ -115,7 +115,7 @@ class ChartAdapter  {
             .dataLabelsFontColor("#FFFFFF")
             .dataLabelsFontSize(1f)
             .xAxisTickInterval(2)
-            .yAxisTitle("USD")
+            .yAxisTitle("${cur2.toUpperCase()}")
             //     .xAxisReversed(true)
             .yAxisGridLineWidth(0.8f)
             .xAxisGridLineWidth(0.8f)
@@ -131,7 +131,7 @@ class ChartAdapter  {
             .series(
                 arrayOf(
                     AASeriesElement()
-                        .name("-+-")
+                        .name("$cur1/$cur2")
                         .data(rates.toTypedArray())
                 )
             )

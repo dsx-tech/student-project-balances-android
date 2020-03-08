@@ -3,6 +3,9 @@
 
     <item
         android:id="@+id/menu1"
-        android:title="График 1"/>
+        android:title="Portfolio"/>
+    <item
+        android:id="@+id/menu2"
+        android:title="Currency rates"/>
 
 </menu>

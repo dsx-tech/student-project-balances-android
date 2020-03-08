@@ -26,14 +26,54 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+    private lateinit var mainViewModel: MainViewModel
+    private lateinit var rateAdapter: RateAdapter
+    private lateinit var transAdapter: TransAdapter
+    private lateinit var tradesAdapter: TradesAdapter
+    private lateinit var chartAdapter: ChartAdapter
+
+    private var aaChartView: AAChartView? = null
+    private var aaChartView2: AAChartView? = null
+
+
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        aaChartView = findViewById(R.id.AAChartView)
+
+
+
+        mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+
+        rateAdapter = RateAdapter()
+        transAdapter = TransAdapter()
+        tradesAdapter = TradesAdapter()
+        chartAdapter = ChartAdapter()
+
+        registerObservers()
+
+        //calling user list api
+        mainViewModel.getTrades()
+        mainViewModel.getTrans()
+
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu1 -> {
+                setContentView(R.layout.activity_main)
+                aaChartView = findViewById(R.id.AAChartView)
+                chartAdapter.setData(mainViewModel.balancesAtTheEnd.value!!, aaChartView)
+                true
+            }
+            R.id.menu2 -> {
 
                 setContentView(R.layout.activity_rate_graph)
                 var button :Button = findViewById(R.id.rate_graph_draw)
                 var currencies1 : Spinner = findViewById(R.id.Spinner1)
-                var currenciesArray = arrayOf("BTC", "USD")
+                var currenciesArray = arrayOf("BTC", "USD", "EUR", "BCH", "RUB")
                 currencies1.adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, currenciesArray)
                 currencies1.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
                     override fun onItemSelected(
@@ -70,7 +110,6 @@ class MainActivity : AppCompatActivity() {
                 button.setOnClickListener{
                     var timeNow = Calendar.getInstance().timeInMillis / 1000
                     var time = timeNow - 2628000
-                    var r = currencies1.selectedItem.toString().toLowerCase()
                     mainViewModel.getRates("${currencies1.selectedItem.toString().toLowerCase()}-${currencies2.selectedItem.toString().toLowerCase()}",
                         time, timeNow)
                 }
@@ -78,37 +117,6 @@ class MainActivity : AppCompatActivity() {
             }
             else -> false
         }
-
-    }
-
-    private lateinit var mainViewModel: MainViewModel
-    private lateinit var rateAdapter: RateAdapter
-    private lateinit var transAdapter: TransAdapter
-    private lateinit var tradesAdapter: TradesAdapter
-    private lateinit var chartAdapter: ChartAdapter
-
-    private var aaChartView: AAChartView? = null
-    private var aaChartView2: AAChartView? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        aaChartView = findViewById(R.id.AAChartView)
-
-
-
-        mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
-
-        rateAdapter = RateAdapter()
-        transAdapter = TransAdapter()
-        tradesAdapter = TradesAdapter()
-        chartAdapter = ChartAdapter()
-
-        registerObservers()
-
-        //calling user list api
-        mainViewModel.getTrades()
-        mainViewModel.getTrans()
 
     }
 
@@ -120,7 +128,9 @@ class MainActivity : AppCompatActivity() {
             rates?.let {
                 rateAdapter.setRates(it)
             }
-            chartAdapter.setData2(mainViewModel.rateSuccessLiveData.value!!, aaChartView2)
+            var cur1: Spinner = findViewById(R.id.Spinner1)
+            var cur2: Spinner = findViewById(R.id.Spinner2)
+            chartAdapter.setData2(mainViewModel.rateSuccessLiveData.value!!, aaChartView2,cur1.selectedItem.toString(), cur2.selectedItem.toString() )
         })
 
         mainViewModel.tradesSuccessLiveData.observe(this, Observer { tradesList ->
