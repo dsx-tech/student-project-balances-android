@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">MVVMKotlinCoroutineREtrofitDemo</string>
+    <string name="app_name">PortfolioManager</string>
+    <string name="whiteColor">#FFFFFF</string>
 </resources>

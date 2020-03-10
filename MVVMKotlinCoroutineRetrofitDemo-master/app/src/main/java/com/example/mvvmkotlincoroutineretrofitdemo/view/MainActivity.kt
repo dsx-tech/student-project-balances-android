@@ -1,5 +1,6 @@
 package com.example.mvvmkotlincoroutineretrofitdemo.view
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -12,10 +13,12 @@ import androidx.lifecycle.ViewModelProviders
 import com.aachartmodel.aainfographics.AAInfographicsLib.AAChartConfiger.AAChartView
 import com.example.mvvmkotlincoroutineretrofitdemo.R
 import com.example.mvvmkotlincoroutineretrofitdemo.viewmodel.MainViewModel
-import kotlinx.coroutines.NonCancellable.start
-import java.math.BigDecimal
+import com.example.mvvmkotlincoroutineretrofitdemo.constants.Days
 import java.util.*
-import kotlin.collections.ArrayList
+import android.widget.TextView
+
+
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -65,7 +68,12 @@ class MainActivity : AppCompatActivity() {
             R.id.menu1 -> {
                 setContentView(R.layout.activity_main)
                 aaChartView = findViewById(R.id.AAChartView)
-                chartAdapter.setData(mainViewModel.balancesAtTheEnd.value!!, aaChartView)
+                if (!mainViewModel.balancesAtTheEnd.value.isNullOrEmpty())
+                    chartAdapter.setData(mainViewModel.balancesAtTheEnd.value!!, aaChartView)
+                else{
+                    mainViewModel.getTrades()
+                    mainViewModel.getTrans()
+                }
                 true
             }
             R.id.menu2 -> {
@@ -82,7 +90,7 @@ class MainActivity : AppCompatActivity() {
                         position: Int,
                         id: Long
                     ) {
-
+                        (parent?.getChildAt(0) as TextView).setTextColor(Color.WHITE)
                     }
 
                     override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -99,7 +107,7 @@ class MainActivity : AppCompatActivity() {
                         position: Int,
                         id: Long
                     ) {
-
+                        (parent?.getChildAt(0) as TextView).setTextColor(Color.WHITE)
                     }
 
                     override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -109,7 +117,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 button.setOnClickListener{
                     var timeNow = Calendar.getInstance().timeInMillis / 1000
-                    var time = timeNow - 2628000
+                    var time = timeNow - Days.MONTH_IN_SEC
                     mainViewModel.getRates("${currencies1.selectedItem.toString().toLowerCase()}-${currencies2.selectedItem.toString().toLowerCase()}",
                         time, timeNow)
                 }
@@ -167,18 +175,12 @@ class MainActivity : AppCompatActivity() {
 
 
             if (transAdapter.transDownloaded.value == true){
-                Toast.makeText(this, "Wow4", Toast.LENGTH_SHORT).show()
-                val dat: ArrayList<BigDecimal?> = arrayListOf()
-
-
                 mainViewModel.countingBalance()
 
             }
         })
         transAdapter.transDownloaded.observe(this, Observer {
             if (tradesAdapter.tradesDownloaded.value == true){
-                Toast.makeText(this, "Wow3", Toast.LENGTH_SHORT).show()
-
                 mainViewModel.countingBalance()
 
             }

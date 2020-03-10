@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mvvmkotlincoroutineretrofitdemo.repository.MainRepository
 import kotlinx.coroutines.launch
-import java.math.BigDecimal
 
 class MainViewModel : ViewModel() {
 

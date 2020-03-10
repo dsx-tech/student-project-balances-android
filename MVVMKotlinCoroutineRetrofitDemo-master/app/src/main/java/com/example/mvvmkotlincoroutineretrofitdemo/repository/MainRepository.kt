@@ -14,10 +14,20 @@ import java.time.format.DateTimeFormatter
 
 class MainRepository {
 
-    private val apiRate = RetrofitManager.apiRate
+
+    private val transTradesApi = RetrofitManager.transTradesApi
+    
+    var transSuccessLiveData = MutableLiveData<MutableList<Transaction>>()
+    var transFailureLiveData = MutableLiveData<Boolean>()
+
+    var tradesSuccessLiveData = MutableLiveData<MutableList<Trade>>()
+    var tradesFailureLiveData = MutableLiveData<Boolean>()
+
+    private val rateApi = RetrofitManager.rateApi
 
     val rateSuccessLiveData = MutableLiveData<MutableList<Rate>>()
     val rateFailureLiveData = MutableLiveData<Boolean>()
+    var balancesAtTheEnd = MutableLiveData<MutableMap<String, BigDecimal?>>()
 
     /*
     this fun is suspend fun means it will execute in different thread
@@ -29,7 +39,7 @@ class MainRepository {
             //here api calling became so simple just 1 line of code
             //there is no callback needed
 
-            val response = apiRate.getRatesForTime(instrument, timeFrom, timeTo).await()
+            val response = rateApi.getRatesForTime(instrument, timeFrom, timeTo).await()
 
             Log.d(TAG, "$response")
 
@@ -63,11 +73,6 @@ class MainRepository {
 
     }
 
-    private val apiTransTrades = RetrofitManager.apiTransTrades
-
-    var transSuccessLiveData = MutableLiveData<MutableList<Transaction>>()
-    var transFailureLiveData = MutableLiveData<Boolean>()
-    var balancesCalculated = MutableLiveData<Boolean>()
     suspend fun getTrans() {
 
         try {
@@ -75,7 +80,7 @@ class MainRepository {
             //here api calling became so simple just 1 line of code
             //there is no callback needed
 
-            val response = apiTransTrades.getTrans().await()
+            val response = transTradesApi.getTrans().await()
 
             Log.d(TAG, "$response")
 
@@ -111,10 +116,6 @@ class MainRepository {
 
     }
 
-    var tradesSuccessLiveData = MutableLiveData<MutableList<Trade>>()
-    var tradesFailureLiveData = MutableLiveData<Boolean>()
-
-
     suspend fun getTrades() {
 
         try {
@@ -122,7 +123,7 @@ class MainRepository {
             //here api calling became so simple just 1 line of code
             //there is no callback needed
 
-            val response = apiTransTrades.getTrades().await()
+            val response = transTradesApi.getTrades().await()
 
             Log.d(TAG, "$response")
 
@@ -159,9 +160,7 @@ class MainRepository {
 
     }
 
-    var balancesAtTheEnd = MutableLiveData<MutableMap<String, BigDecimal?>>()
-
-    suspend fun countingBalance(
+     fun countingBalance(
         trades: MutableList<Trade>,
         transactions: MutableList<Transaction>
     ) {
@@ -175,13 +174,10 @@ class MainRepository {
             balancesAtTheEnd.postValue(balanceForDate(dateTimeFormatter("2019-11-27T15:29:05")))
         }
 
-
-
-
     }
 
 
-    suspend private fun balanceForDate(date: LocalDateTime): MutableMap<String, BigDecimal?>{
+    private fun balanceForDate(date: LocalDateTime): MutableMap<String, BigDecimal?>{
                 val result: MutableMap<String, BigDecimal?> = mutableMapOf()
                 var flagTrades = false
                 var flagTransactions = false

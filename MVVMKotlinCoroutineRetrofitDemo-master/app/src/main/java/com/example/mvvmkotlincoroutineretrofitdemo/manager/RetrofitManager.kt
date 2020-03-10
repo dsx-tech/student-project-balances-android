@@ -8,10 +8,10 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitManager {
 
-    val apiRate: ApiService
+    val rateApi: ApiService
     init {
         val client = OkHttpClient.Builder().build()
-         apiRate = Retrofit.Builder()
+        rateApi = Retrofit.Builder()
             .baseUrl("http://3.248.170.197:8888")
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
@@ -20,10 +20,10 @@ object RetrofitManager {
             .create(ApiService::class.java)
     }
 
-    val apiTransTrades: ApiService
+    val transTradesApi: ApiService
     init {
         val client = OkHttpClient.Builder().build()
-        apiTransTrades = Retrofit.Builder()
+        transTradesApi = Retrofit.Builder()
             .baseUrl("http://3.248.170.197:9999")
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(CoroutineCallAdapterFactory())

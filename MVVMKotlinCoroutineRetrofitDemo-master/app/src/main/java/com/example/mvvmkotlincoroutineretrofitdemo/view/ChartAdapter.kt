@@ -1,16 +1,12 @@
 package com.example.mvvmkotlincoroutineretrofitdemo.view
 
-import android.view.View
-import android.view.ViewGroup
-import androidx.lifecycle.MutableLiveData
 
 import com.aachartmodel.aainfographics.AAInfographicsLib.AAChartConfiger.*
-import com.aachartmodel.aainfographics.AAInfographicsLib.AAOptionsModel.AAChart
 import com.example.mvvmkotlincoroutineretrofitdemo.R
 import com.example.mvvmkotlincoroutineretrofitdemo.model.Rate
-import com.example.mvvmkotlincoroutineretrofitdemo.model.Trade
 import java.math.BigDecimal
 import java.text.SimpleDateFormat
+import com.example.mvvmkotlincoroutineretrofitdemo.constants.Colors
 
 class ChartAdapter  {
 
@@ -32,18 +28,18 @@ class ChartAdapter  {
 
         var aaChartModel = AAChartModel()
             .title("Portfolio")
-            .titleFontColor("#0B1929")
+            .titleFontColor(Colors.WHITE)
             .titleFontSize(20f)
-            .subtitleFontColor("#0B1929")
+            .subtitleFontColor(Colors.WHITE)
             .titleFontWeight(AAChartFontWeightType.Bold)
             .markerRadius(0f)
             .borderRadius(0f)
-            .backgroundColor( "#1D122C")
+            .backgroundColor( R.color.colorBackground)
             .subtitle("2019")
             .yAxisTitle("Values in $")
             .chartType(AAChartType.Pie)
-            .axesTextColor("#0B1929")
-            .dataLabelsFontColor("#0B1929")
+            .axesTextColor(Colors.WHITE)
+            .dataLabelsFontColor(Colors.WHITE)
             .dataLabelsFontWeight(AAChartFontWeightType.Bold)
             .legendEnabled(false)
             .stacking(AAChartStackingType.False)
@@ -98,21 +94,21 @@ class ChartAdapter  {
 
 
         var aaChartModel = AAChartModel()
-            .backgroundColor( "#1D122C")
+            .backgroundColor(R.color.colorBackground)
             .chartType(AAChartType.Areaspline)
             .title("Rate")
-            .titleFontColor("#FFFFFF")
+            .titleFontColor(Colors.WHITE)
             .titleFontSize(20f)
             .titleFontWeight(AAChartFontWeightType.Bold)
             .subtitle("$cur1/$cur2")
-            .subtitleFontColor("#FFFFFF")
+            .subtitleFontColor(Colors.WHITE)
             .subtitleFontSize(15f)
             .subtitleFontWeight(AAChartFontWeightType.Bold)
             .marginright(10f)
             .pointHollow(true)
             .borderRadius(4f)
-            .axesTextColor("#FFFFFF")
-            .dataLabelsFontColor("#FFFFFF")
+            .axesTextColor(Colors.WHITE)
+            .dataLabelsFontColor(Colors.WHITE)
             .dataLabelsFontSize(1f)
             .xAxisTickInterval(2)
             .yAxisTitle("${cur2.toUpperCase()}")
