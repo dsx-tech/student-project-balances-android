@@ -16,7 +16,7 @@ class MainRepository {
 
 
     private val transTradesApi = RetrofitManager.transTradesApi
-    
+
     var transSuccessLiveData = MutableLiveData<MutableList<Transaction>>()
     var transFailureLiveData = MutableLiveData<Boolean>()
 
@@ -88,8 +88,8 @@ class MainRepository {
                 Log.d(TAG, "SUCCESS")
                 Log.d(TAG, "${response.body()}")
                 transSuccessLiveData.postValue(response.body())
-                if (!transSuccessLiveData.value.isNullOrEmpty())
-                    transSuccessLiveData.value!!.sortBy { it.dateTime }
+                transSuccessLiveData.value?.sortBy { it.dateTime }
+
 
             } else {
                 Log.d(TAG, "FAILURE")
@@ -131,8 +131,7 @@ class MainRepository {
                 Log.d(TAG, "SUCCESS")
                 Log.d(TAG, "${response.body()}")
                 tradesSuccessLiveData.postValue(response.body())
-                if (!tradesSuccessLiveData.value.isNullOrEmpty())
-                    tradesSuccessLiveData.value!!.sortBy { it.dateTime }
+                tradesSuccessLiveData.value?.sortBy { it.dateTime }
 
 
             } else {

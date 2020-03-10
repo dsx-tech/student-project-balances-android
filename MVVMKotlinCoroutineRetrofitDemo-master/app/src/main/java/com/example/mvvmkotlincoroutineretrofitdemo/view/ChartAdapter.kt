@@ -85,12 +85,18 @@ class ChartAdapter  {
         var rates: ArrayList<BigDecimal> = arrayListOf()
         var dates: ArrayList<String> = arrayListOf()
         val formatter = SimpleDateFormat("dd/MM/yyyy")
-        if (!dataLiveData.isNullOrEmpty())
+        /*if (!dataLiveData.isNullOrEmpty()){
             for (i in dataLiveData!!) {
                 rates.add(i.exchangeRate)
                 var date = formatter.format(i.date*1000)
                 dates.add(date)
             }
+        }*/
+
+        dataLiveData.forEach {
+            rates.add(it.exchangeRate)
+            dates.add(formatter.format(it.date*1000))
+        }
 
 
         var aaChartModel = AAChartModel()

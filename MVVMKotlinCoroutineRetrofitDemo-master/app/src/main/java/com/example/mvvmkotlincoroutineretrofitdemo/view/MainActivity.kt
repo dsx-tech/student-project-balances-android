@@ -79,9 +79,9 @@ class MainActivity : AppCompatActivity() {
             R.id.menu2 -> {
 
                 setContentView(R.layout.activity_rate_graph)
-                var button :Button = findViewById(R.id.rate_graph_draw)
-                var currencies1 : Spinner = findViewById(R.id.Spinner1)
-                var currenciesArray = arrayOf("BTC", "USD", "EUR", "BCH", "RUB")
+                val button :Button = findViewById(R.id.rate_graph_draw)
+                val currencies1 : Spinner = findViewById(R.id.Spinner1)
+                val currenciesArray = arrayOf("BTC", "USD", "EUR", "BCH", "RUB")
                 currencies1.adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, currenciesArray)
                 currencies1.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
                     override fun onItemSelected(
@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity() {
                     }
 
                 }
-                var currencies2 : Spinner = findViewById(R.id.Spinner2)
+                val currencies2 : Spinner = findViewById(R.id.Spinner2)
                 currencies2.adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, currenciesArray)
                 currencies2.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
                     override fun onItemSelected(
@@ -136,8 +136,8 @@ class MainActivity : AppCompatActivity() {
             rates?.let {
                 rateAdapter.setRates(it)
             }
-            var cur1: Spinner = findViewById(R.id.Spinner1)
-            var cur2: Spinner = findViewById(R.id.Spinner2)
+            val cur1: Spinner = findViewById(R.id.Spinner1)
+            val cur2: Spinner = findViewById(R.id.Spinner2)
             chartAdapter.setData2(mainViewModel.rateSuccessLiveData.value!!, aaChartView2,cur1.selectedItem.toString(), cur2.selectedItem.toString() )
         })
 
