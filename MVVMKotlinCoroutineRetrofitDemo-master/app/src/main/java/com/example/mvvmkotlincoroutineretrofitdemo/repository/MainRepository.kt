@@ -46,7 +46,7 @@ class MainRepository {
             if (response.isSuccessful) {
                 Log.d(TAG, "SUCCESS")
                 Log.d(TAG, "${response.body()}")
-                rateSuccessLiveData.postValue(response.body())
+                rateSuccessLiveData.postValue(response.body()!!.getValue(instrument))
 
             } else {
                 Log.d(TAG, "FAILURE")

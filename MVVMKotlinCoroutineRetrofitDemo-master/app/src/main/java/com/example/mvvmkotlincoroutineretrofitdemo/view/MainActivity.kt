@@ -1,11 +1,12 @@
 package com.example.mvvmkotlincoroutineretrofitdemo.view
 
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
+import android.view.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -14,10 +15,10 @@ import com.aachartmodel.aainfographics.AAInfographicsLib.AAChartConfiger.AAChart
 import com.example.mvvmkotlincoroutineretrofitdemo.R
 import com.example.mvvmkotlincoroutineretrofitdemo.viewmodel.MainViewModel
 import com.example.mvvmkotlincoroutineretrofitdemo.constants.Days
+import com.example.mvvmkotlincoroutineretrofitdemo.constants.Currencies
 import java.util.*
 import android.widget.TextView
-
-
+import kotlinx.android.synthetic.main.activity_rate_graph.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -63,7 +64,9 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
         return when (item.itemId) {
             R.id.menu1 -> {
                 setContentView(R.layout.activity_main)
@@ -80,46 +83,27 @@ class MainActivity : AppCompatActivity() {
 
                 setContentView(R.layout.activity_rate_graph)
                 val button :Button = findViewById(R.id.rate_graph_draw)
-                val currencies1 : Spinner = findViewById(R.id.Spinner1)
-                val currenciesArray = arrayOf("BTC", "USD", "EUR", "BCH", "RUB")
-                currencies1.adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, currenciesArray)
-                currencies1.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-                    override fun onItemSelected(
-                        parent: AdapterView<*>?,
-                        view: View?,
-                        position: Int,
-                        id: Long
-                    ) {
-                        (parent?.getChildAt(0) as TextView).setTextColor(Color.WHITE)
-                    }
+                val currencies1 : AutoCompleteTextView = findViewById(R.id.autoCoCur1)
+                var adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, Currencies.currenciesArray)
+                currencies1.threshold = 0
+                currencies1.setAdapter(adapter)
+                currencies1.setOnFocusChangeListener { _, b -> if (b) currencies1.showDropDown()}
 
-                    override fun onNothingSelected(parent: AdapterView<*>?) {
+                val currencies2 : AutoCompleteTextView = findViewById(R.id.autoCoCur2)
+                var adapter2 = ArrayAdapter(this, android.R.layout.simple_list_item_1, Currencies.currenciesArray)
+                currencies2.threshold = 0
+                currencies2.setAdapter(adapter2)
+                currencies2.setOnFocusChangeListener { _, b -> if (b) currencies2.showDropDown()}
 
-                    }
 
-                }
-                val currencies2 : Spinner = findViewById(R.id.Spinner2)
-                currencies2.adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, currenciesArray)
-                currencies2.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-                    override fun onItemSelected(
-                        parent: AdapterView<*>?,
-                        view: View?,
-                        position: Int,
-                        id: Long
-                    ) {
-                        (parent?.getChildAt(0) as TextView).setTextColor(Color.WHITE)
-                    }
-
-                    override fun onNothingSelected(parent: AdapterView<*>?) {
-
-                    }
-
-                }
                 button.setOnClickListener{
+                 button.clearFocus()
+
                     var timeNow = Calendar.getInstance().timeInMillis / 1000
                     var time = timeNow - Days.MONTH_IN_SEC
-                    mainViewModel.getRates("${currencies1.selectedItem.toString().toLowerCase()}-${currencies2.selectedItem.toString().toLowerCase()}",
+                    mainViewModel.getRates("${currencies1.text.toString().toLowerCase()}-${currencies2.text.toString().toLowerCase()}",
                         time, timeNow)
+                    hideKeyboardFrom(this, it )
                 }
                 true
             }
@@ -136,9 +120,9 @@ class MainActivity : AppCompatActivity() {
             rates?.let {
                 rateAdapter.setRates(it)
             }
-            val cur1: Spinner = findViewById(R.id.Spinner1)
-            val cur2: Spinner = findViewById(R.id.Spinner2)
-            chartAdapter.setData2(mainViewModel.rateSuccessLiveData.value!!, aaChartView2,cur1.selectedItem.toString(), cur2.selectedItem.toString() )
+            val cur1: AutoCompleteTextView = findViewById(R.id.autoCoCur1)
+            val cur2: AutoCompleteTextView = findViewById(R.id.autoCoCur2)
+            chartAdapter.setData2(mainViewModel.rateSuccessLiveData.value!!, aaChartView2,cur1.text.toString(), cur2.text.toString() )
         })
 
         mainViewModel.tradesSuccessLiveData.observe(this, Observer { tradesList ->
@@ -191,5 +175,13 @@ class MainActivity : AppCompatActivity() {
             }
         )
 
+    }
+    fun hideKeyboardFrom(context: Context, view: View) {
+        val imm = context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+    fun showKeyboardFrom(context: Context, view: View) {
+        val imm = context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(view, 0)
     }
 }

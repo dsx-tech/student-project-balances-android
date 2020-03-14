@@ -18,45 +18,26 @@
             android:layout_height="wrap_content"
             android:layout_weight="5"
             android:orientation="horizontal">
+            <AutoCompleteTextView
+                android:id="@+id/autoCoCur1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textColorHint="@color/white"
+                android:textColor="@color/white"
+                android:hint="Cur1" >
+            </AutoCompleteTextView>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textSize="20dp"
-                android:layout_weight="1"
-                android:background="@color/colorAccent"
-                android:gravity="center"
-                android:textColor="@color/colorText"
-                android:text="Cur1:">
-            </TextView>
-            <Spinner
-                android:id="@+id/Spinner1"
+            <AutoCompleteTextView
+                android:id="@+id/autoCoCur2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@color/colorAccent"
-                android:textColor = "@color/colorText"
-                android:text="1">
-            </Spinner>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_weight="1"
-                android:textSize="20dp"
-                android:background="@color/colorAccent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:textColor="@color/colorText"
-                android:text="Cur2:">
-            </TextView>
-            <Spinner
-                android:id="@+id/Spinner2"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@color/colorAccent"
-                android:textColor = "@color/white"
-                android:text="2">
-            </Spinner>
+                android:textColorHint="@color/white"
+                android:textColor="@color/white"
+                android:hint="Cur2" >
+            </AutoCompleteTextView>
+
             <Button
                 android:id="@+id/rate_graph_draw"
                 android:layout_weight="1"
@@ -75,6 +56,7 @@
             android:layout_height="match_parent"
             android:background="#1D122C"
             android:layout_weight="50">
+
 
         </com.aachartmodel.aainfographics.AAInfographicsLib.AAChartConfiger.AAChartView>
 

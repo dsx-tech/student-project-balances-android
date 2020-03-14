@@ -8,16 +8,16 @@ import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
+import java.util.*
 
 interface ApiService {
 
     @GET("/bcv/quotes/bars/{instrument}/{timeFrom}/{timeTo}")
-    fun getRatesForTime(@Path("instrument") instrument:String, @Path("timeFrom") timeFrom: Long, @Path("timeTo") timeTo: Long): Deferred<Response<MutableList<Rate>>>
+    fun getRatesForTime(@Path("instrument") instrument:String, @Path("timeFrom") timeFrom: Long, @Path("timeTo") timeTo: Long): Deferred<Response< MutableMap<String, MutableList<Rate>>>>
     @GET("/bcv/quotes/bars/{instrument}")
-    fun getRate(@Query("instrument") instrument: String): Deferred<Response<MutableList<Rate>>>
+    fun getRate(@Query("instrument") instrument: String): Deferred<Response<MutableMap<String, MutableList<Rate>>>>
     @GET("/bcv/transactions")
     fun getTrans(): Deferred<Response<MutableList<Transaction>>>
     @GET("/bcv/trades")
     fun getTrades(): Deferred<Response<MutableList<Trade>>>
-
 }
