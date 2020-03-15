@@ -85,18 +85,13 @@ class ChartAdapter  {
         var rates: ArrayList<BigDecimal> = arrayListOf()
         var dates: ArrayList<String> = arrayListOf()
         val formatter = SimpleDateFormat("dd/MM/yyyy")
-        /*if (!dataLiveData.isNullOrEmpty()){
-            for (i in dataLiveData!!) {
-                rates.add(i.exchangeRate)
-                var date = formatter.format(i.date*1000)
-                dates.add(date)
-            }
-        }*/
+
 
         dataLiveData.forEach {
             rates.add(it.exchangeRate)
             dates.add(formatter.format(it.date*1000))
         }
+
 
 
         var aaChartModel = AAChartModel()
@@ -113,6 +108,8 @@ class ChartAdapter  {
             .marginright(10f)
             .pointHollow(true)
             .borderRadius(4f)
+            .yAxisMin((rates.min()!!.toFloat())*0.95f)
+            .yAxisMax((rates.max()!!.toFloat())*1.05f)
             .axesTextColor(Colors.WHITE)
             .dataLabelsFontColor(Colors.WHITE)
             .dataLabelsFontSize(1f)
