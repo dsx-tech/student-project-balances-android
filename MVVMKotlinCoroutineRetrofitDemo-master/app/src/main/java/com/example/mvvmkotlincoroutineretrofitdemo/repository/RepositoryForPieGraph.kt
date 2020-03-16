@@ -10,7 +10,6 @@ import java.math.BigDecimal
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 class RepositoryForPieGraph {
 
@@ -88,7 +87,7 @@ class RepositoryForPieGraph {
         stringWithInstruments.postValue(s)
     }
 
-    private fun balanceForDate(date: LocalDateTime, trades: MutableList<Trade>, transactions: MutableList<Transaction>): MutableMap<String, BigDecimal?> {
+    fun balanceForDate(date: LocalDateTime, trades: MutableList<Trade>?, transactions: MutableList<Transaction>?): MutableMap<String, BigDecimal?> {
         val result: MutableMap<String, BigDecimal?> = mutableMapOf()
         var flagTrades = false
         var flagTransactions = false
@@ -109,7 +108,7 @@ class RepositoryForPieGraph {
         while ((!flagTrades) or (!flagTransactions)) {
 
             if (!flagTrades) {
-                if (dateTimeFormatter(nextTrade!!.dateTime) > date) {
+                if (mainRepository.dateTimeFormatter(nextTrade!!.dateTime) > date) {
                     flagTrades = true
                 } else {
                     if (!result.keys.contains(nextTrade.tradedQuantityCurrency))
@@ -136,7 +135,7 @@ class RepositoryForPieGraph {
 
 
             if (!flagTransactions) {
-                if (dateTimeFormatter(nextTransaction!!.dateTime) > date) {
+                if (mainRepository.dateTimeFormatter(nextTransaction!!.dateTime) > date) {
                     flagTransactions = true
                 } else {
 
@@ -155,14 +154,14 @@ class RepositoryForPieGraph {
             }
 
             if (!flagTrades) {
-                if (trades.size == i) {
+                if (trades!!.size == i) {
                     flagTrades = true
                 } else {
                     nextTrade = trades[i]
                 }
             }
             if (!flagTransactions) {
-                if (transactions.size == i) {
+                if (transactions!!.size == i) {
                     flagTransactions = true
                 } else {
                     nextTransaction = transactions[i]
@@ -194,7 +193,5 @@ class RepositoryForPieGraph {
         balancesMultRates.postValue(balancesMult)
 
     }
-    private fun dateTimeFormatter(string: String): LocalDateTime {
-        return LocalDateTime.parse(string, DateTimeFormatter.ISO_DATE_TIME)
-    }
+
 }

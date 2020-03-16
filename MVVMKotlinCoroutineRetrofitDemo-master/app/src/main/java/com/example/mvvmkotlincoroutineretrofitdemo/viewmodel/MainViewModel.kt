@@ -2,7 +2,10 @@ package com.example.mvvmkotlincoroutineretrofitdemo.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mvvmkotlincoroutineretrofitdemo.model.Trade
+import com.example.mvvmkotlincoroutineretrofitdemo.model.Transaction
 import com.example.mvvmkotlincoroutineretrofitdemo.repository.MainRepository
+import com.example.mvvmkotlincoroutineretrofitdemo.repository.RepositoryForColumnGraph
 import com.example.mvvmkotlincoroutineretrofitdemo.repository.RepositoryForPieGraph
 import com.example.mvvmkotlincoroutineretrofitdemo.repository.RepositoryForRates
 import kotlinx.coroutines.launch
@@ -12,6 +15,7 @@ class MainViewModel : ViewModel() {
     private val mainRepository = MainRepository()
     private val repositoryForRates = RepositoryForRates()
     private val repositoryForPieGraph = RepositoryForPieGraph()
+    private val repositoryForColumnGraph = RepositoryForColumnGraph()
 
     var stringWithInstruments = repositoryForPieGraph.stringWithInstruments
     var relevantRatesSuccessLiveData = repositoryForPieGraph.relevantRatesSuccessLiveData
@@ -26,6 +30,8 @@ class MainViewModel : ViewModel() {
     val tradesFailureLiveData = mainRepository.tradesFailureLiveData
     var balancesAtTheEnd = repositoryForPieGraph.balancesAtTheEnd
     var balancesMultRates = repositoryForPieGraph.balancesMultRates
+
+    var columnGraphData = repositoryForColumnGraph.columnGraphData
 
 
 
@@ -57,6 +63,10 @@ class MainViewModel : ViewModel() {
     }
     fun multiplyRelevant(){
         viewModelScope.launch { repositoryForPieGraph.multiplyRelevant() }
+    }
+
+    fun modelingColumnGraph(year: Int, trades: MutableList<Trade>?, transactions: MutableList<Transaction>?){
+        viewModelScope.launch { repositoryForColumnGraph.modelingSeriesForGraph(year, trades, transactions) }
     }
 
 

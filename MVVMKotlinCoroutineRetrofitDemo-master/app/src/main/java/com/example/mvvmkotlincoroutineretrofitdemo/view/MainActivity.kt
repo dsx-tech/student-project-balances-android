@@ -10,6 +10,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.viewModelScope
 import com.aachartmodel.aainfographics.AAInfographicsLib.AAChartConfiger.AAChartView
 import com.example.mvvmkotlincoroutineretrofitdemo.R
 import com.example.mvvmkotlincoroutineretrofitdemo.viewmodel.MainViewModel
@@ -35,8 +36,7 @@ class MainActivity : AppCompatActivity() {
 
     private var aaChartView: AAChartView? = null
     private var aaChartView2: AAChartView? = null
-
-
+    private var aaChartView3: AAChartView? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
                 aaChartView = findViewById(R.id.AAChartView)
                 if (!mainViewModel.balancesAtTheEnd.value.isNullOrEmpty())
                     chartAdapter.setData(mainViewModel.balancesAtTheEnd.value!!, aaChartView)
-                else{
+                else {
                     mainViewModel.getTrades()
                     mainViewModel.getTrans()
                 }
@@ -79,29 +79,54 @@ class MainActivity : AppCompatActivity() {
             R.id.menu2 -> {
 
                 setContentView(R.layout.activity_rate_graph)
-                val button :Button = findViewById(R.id.rate_graph_draw)
-                val currencies1 : AutoCompleteTextView = findViewById(R.id.autoCoCur1)
-                var adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, Currencies.currenciesArray)
+                val button: Button = findViewById(R.id.rate_graph_draw)
+                val currencies1: AutoCompleteTextView = findViewById(R.id.autoCoCur1)
+                val adapter = ArrayAdapter(
+                    this,
+                    android.R.layout.simple_list_item_1,
+                    Currencies.currenciesArray
+                )
                 currencies1.threshold = 0
                 currencies1.setAdapter(adapter)
-                currencies1.setOnFocusChangeListener { _, b -> if (b) currencies1.showDropDown()}
+                currencies1.setOnFocusChangeListener { _, b -> if (b) currencies1.showDropDown() }
 
-                val currencies2 : AutoCompleteTextView = findViewById(R.id.autoCoCur2)
-                var adapter2 = ArrayAdapter(this, android.R.layout.simple_list_item_1, Currencies.currenciesArray)
+                val currencies2: AutoCompleteTextView = findViewById(R.id.autoCoCur2)
+                val adapter2 = ArrayAdapter(
+                    this,
+                    android.R.layout.simple_list_item_1,
+                    Currencies.currenciesArray
+                )
                 currencies2.threshold = 0
                 currencies2.setAdapter(adapter2)
-                currencies2.setOnFocusChangeListener { _, b -> if (b) currencies2.showDropDown()}
+                currencies2.setOnFocusChangeListener { _, b -> if (b) currencies2.showDropDown() }
 
 
-                button.setOnClickListener{
-                 button.clearFocus()
+                button.setOnClickListener {
+                    button.clearFocus()
 
-                    var timeNow = Calendar.getInstance().timeInMillis / 1000
-                    var time = timeNow - Days.MONTH_IN_SEC
-                    mainViewModel.getRates("${currencies1.text.toString().toLowerCase()}-${currencies2.text.toString().toLowerCase()}",
-                        time, timeNow)
-                    hideKeyboardFrom(this, it )
+                    val timeNow = Calendar.getInstance().timeInMillis / 1000
+                    val time = timeNow - Days.MONTH_IN_SEC
+                    mainViewModel.getRates(
+                        "${currencies1.text.toString().toLowerCase()}-${currencies2.text.toString().toLowerCase()}",
+                        time, timeNow
+                    )
+                    hideKeyboardFrom(this, it)
                 }
+                true
+            }
+            R.id.menu3 ->{
+                setContentView(R.layout.activity_column_graph)
+                aaChartView = findViewById(R.id.AAChartView3)
+                val button: Button = findViewById(R.id.rate_column_graph)
+                var editText:EditText = findViewById(R.id.year)
+                button.setOnClickListener {
+                    try{
+                    if((mainViewModel.tradesSuccessLiveData.value?.isNotEmpty() == true) or (mainViewModel.transSuccessLiveData.value?.isNotEmpty() == true))
+                        mainViewModel.modelingColumnGraph(editText.text.toString().toInt(), mainViewModel.tradesSuccessLiveData.value, mainViewModel.transSuccessLiveData.value )
+                } catch(e:NumberFormatException){
+                        Toast.makeText(this, "Please, enter year", Toast.LENGTH_SHORT).show()
+                    }}
+
                 true
             }
             else -> false
@@ -119,7 +144,12 @@ class MainActivity : AppCompatActivity() {
             }
             val cur1: AutoCompleteTextView = findViewById(R.id.autoCoCur1)
             val cur2: AutoCompleteTextView = findViewById(R.id.autoCoCur2)
-            chartAdapter.setData2(mainViewModel.rateSuccessLiveData.value!!, aaChartView2,cur1.text.toString(), cur2.text.toString() )
+            chartAdapter.setData2(
+                mainViewModel.rateSuccessLiveData.value!!,
+                aaChartView2,
+                cur1.text.toString(),
+                cur2.text.toString()
+            )
         })
 
         mainViewModel.tradesSuccessLiveData.observe(this, Observer { tradesList ->
@@ -152,16 +182,16 @@ class MainActivity : AppCompatActivity() {
             }
         })
         mainViewModel.stringWithInstruments.observe(this, Observer {
-        mainViewModel.getRelevantRates(mainViewModel.stringWithInstruments.value!!)
+            mainViewModel.getRelevantRates(mainViewModel.stringWithInstruments.value!!)
         })
 
         tradesAdapter.tradesDownloaded.observe(this, Observer {
-            if (transAdapter.transDownloaded.value == true){
+            if (transAdapter.transDownloaded.value == true) {
                 mainViewModel.countingBalance()
             }
         })
         transAdapter.transDownloaded.observe(this, Observer {
-            if (tradesAdapter.tradesDownloaded.value == true){
+            if (tradesAdapter.tradesDownloaded.value == true) {
                 mainViewModel.countingBalance()
 
             }
@@ -169,12 +199,12 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.balancesAtTheEnd.observe(this, Observer {
 
             mainViewModel.getStringWithInstruments()
-            }
+        }
         )
 
         mainViewModel.relevantRatesSuccessLiveData.observe(this, Observer {
 
-        mainViewModel.multiplyRelevant()
+            mainViewModel.multiplyRelevant()
         }
         )
 
@@ -183,9 +213,15 @@ class MainActivity : AppCompatActivity() {
             chartAdapter.setData(mainViewModel.balancesMultRates.value!!, aaChartView)
         }
         )
+        mainViewModel.columnGraphData.observe(this, Observer {
+            var k = findViewById<EditText>(R.id.year)
+            aaChartView3 = findViewById(R.id.AAChartView3)
+            chartAdapter.setData3(aaChartView3, mainViewModel.columnGraphData.value!!, k.text.toString().toInt())
+        })
 
     }
-    fun hideKeyboardFrom(context: Context, view: View) {
+
+    private fun hideKeyboardFrom(context: Context, view: View) {
         val imm = context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
     }

@@ -7,6 +7,8 @@ import com.example.mvvmkotlincoroutineretrofitdemo.model.Trade
 import com.example.mvvmkotlincoroutineretrofitdemo.model.Transaction
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class MainRepository {
 
@@ -18,12 +20,6 @@ class MainRepository {
 
     var tradesSuccessLiveData = MutableLiveData<MutableList<Trade>>()
     var tradesFailureLiveData = MutableLiveData<Boolean>()
-
-
-    /*
-    this fun is suspend fun means it will execute in different thread
-     */
-
 
     suspend fun getTrans() {
 
@@ -115,7 +111,7 @@ class MainRepository {
     companion object {
         val TAG = MainRepository::class.java.simpleName
     }
-
-
-
+    fun dateTimeFormatter(string: String): LocalDateTime {
+        return LocalDateTime.parse(string, DateTimeFormatter.ISO_DATE_TIME)
+    }
 }
