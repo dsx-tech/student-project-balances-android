@@ -3,7 +3,6 @@ package com.example.mvvmkotlincoroutineretrofitdemo.view
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
@@ -17,8 +16,6 @@ import com.example.mvvmkotlincoroutineretrofitdemo.viewmodel.MainViewModel
 import com.example.mvvmkotlincoroutineretrofitdemo.constants.Days
 import com.example.mvvmkotlincoroutineretrofitdemo.constants.Currencies
 import java.util.*
-import android.widget.TextView
-import kotlinx.android.synthetic.main.activity_rate_graph.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -154,13 +151,13 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Oops! something went wrong", Toast.LENGTH_SHORT).show()
             }
         })
+        mainViewModel.stringWithInstruments.observe(this, Observer {
+        mainViewModel.getRelevantRates(mainViewModel.stringWithInstruments.value!!)
+        })
 
         tradesAdapter.tradesDownloaded.observe(this, Observer {
-
-
             if (transAdapter.transDownloaded.value == true){
                 mainViewModel.countingBalance()
-
             }
         })
         transAdapter.transDownloaded.observe(this, Observer {
@@ -170,18 +167,26 @@ class MainActivity : AppCompatActivity() {
             }
         })
         mainViewModel.balancesAtTheEnd.observe(this, Observer {
-                chartAdapter.setData(mainViewModel.balancesAtTheEnd.value!!, aaChartView)
 
+            mainViewModel.getStringWithInstruments()
             }
+        )
+
+        mainViewModel.relevantRatesSuccessLiveData.observe(this, Observer {
+
+        mainViewModel.multiplyRelevant()
+        }
+        )
+
+        mainViewModel.balancesMultRates.observe(this, Observer {
+
+            chartAdapter.setData(mainViewModel.balancesMultRates.value!!, aaChartView)
+        }
         )
 
     }
     fun hideKeyboardFrom(context: Context, view: View) {
         val imm = context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
-    }
-    fun showKeyboardFrom(context: Context, view: View) {
-        val imm = context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.showSoftInput(view, 0)
     }
 }
