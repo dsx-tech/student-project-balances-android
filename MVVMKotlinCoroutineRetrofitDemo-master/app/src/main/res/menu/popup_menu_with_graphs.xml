@@ -7,5 +7,8 @@
     <item
         android:id="@+id/menu2"
         android:title="Currency rates"/>
+    <item
+        android:id="@+id/menu3"
+        android:title="Balances for time"/>
 
 </menu>
