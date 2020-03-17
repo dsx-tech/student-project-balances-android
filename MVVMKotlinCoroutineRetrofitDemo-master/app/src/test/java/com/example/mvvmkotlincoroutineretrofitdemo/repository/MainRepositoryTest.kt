@@ -65,6 +65,8 @@ internal class MainRepositoryTest {
             Transaction(4, "Deposit","2019-11-24T18:00:00", "BTC", BigDecimal("0.001"),
                 BigDecimal("0.0001"), "Failed", 0)
         )
+        tradesSuccessLiveData.sortBy { it.dateTime }
+        transSuccessLiveData.sortBy { it.dateTime }
         val result: MutableMap<String, BigDecimal?> = mutableMapOf()
         var flagTrades = false
         var flagTransactions = false
