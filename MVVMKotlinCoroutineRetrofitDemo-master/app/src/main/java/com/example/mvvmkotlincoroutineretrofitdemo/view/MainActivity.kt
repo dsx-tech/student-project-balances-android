@@ -2,6 +2,7 @@ package com.example.mvvmkotlincoroutineretrofitdemo.view
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.PendingIntent.getActivity
 import android.content.Context
 import android.os.Bundle
 import android.view.*
@@ -46,14 +47,29 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.login_activity)
 
+        loginSetup()
+
+
+    }
+
+    private fun loginSetup(){
+        setContentView(R.layout.login_activity)
+        val register:TextView = findViewById(R.id.register)
+        register.setOnClickListener{
+            setContentView(R.layout.register_activity)
+            val password:EditText = findViewById(R.id.editText2)
+            val passwordRepeat:EditText = findViewById(R.id.editText3)
+            val createAccount:Button = findViewById(R.id.regButton)
+            createAccount.setOnClickListener {
+                if ((password.text.toString() == passwordRepeat.text.toString()) and (password.text.toString() !=""))
+             loginSetup()
+            }
+        }
         val loginButton :Button = findViewById(R.id.loginButton)
         loginButton.setOnClickListener{
             setContentView(R.layout.activity_main)
             aaChartView = findViewById(R.id.AAChartView)
-
-
             val toolbar:Toolbar= findViewById(R.id.toolBar)
             toolbar.setTitleTextColor(getColor(R.color.white))
             setSupportActionBar(toolbar)
@@ -66,14 +82,11 @@ class MainActivity : AppCompatActivity() {
 
             registerObservers()
 
-            //calling user list api
             mainViewModel.getTrades()
             mainViewModel.getTrans()
 
         }
-
     }
-
     @SuppressLint("ClickableViewAccessibility")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 

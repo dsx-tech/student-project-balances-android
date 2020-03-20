@@ -7,7 +7,7 @@
     android:background="@color/colorBackground"
 
     tools:context=".view.MainActivity"
-   >
+    >
 
     <ImageView
         android:id="@+id/imageView"
@@ -33,7 +33,7 @@
         android:ems="10"
         android:inputType="textPersonName"
         android:singleLine="false"
-        android:hint="Username"
+        android:hint="Create username"
         android:textColorHint="@color/white"
         android:backgroundTint="@color/white"
         android:drawableLeft="@drawable/lock"
@@ -51,28 +51,35 @@
         android:ems="10"
         android:inputType="textPassword"
         android:drawableLeft="@drawable/lock2"
-        android:hint="Password"
+        android:hint="Create password"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:textSize="20dp"/>
+
+    <EditText
+        android:id="@+id/editText3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        android:backgroundTint="@color/white"
+        android:layout_below="@id/editText2"
+        android:ems="10"
+        android:inputType="textPassword"
+        android:drawableLeft="@drawable/lock2"
+        android:hint="Repeat password"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
         android:textSize="20dp"/>
 
     <Button
-        android:id="@+id/loginButton"
+        android:id="@+id/regButton"
         android:layout_width="300dp"
         android:layout_height="50dp"
-        android:layout_below="@id/editText2"
+        android:layout_below="@id/editText3"
 
         android:layout_centerHorizontal="true"
-        android:text="Login"/>
-
-    <TextView
-        android:id="@+id/register"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/loginButton"
-        android:layout_centerHorizontal="true"
-        android:text="Want to register?"
-        android:textColor="@color/white" />
+        android:text="Create account"/>
 
 
 </RelativeLayout>
