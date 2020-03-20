@@ -7,11 +7,15 @@
     android:background="@color/colorBackground"
     tools:context=".view.MainActivity">
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <include
+            layout="@layout/tool_bar"
+            android:id="@+id/toolBar" />
 
         <LinearLayout
             android:layout_width="match_parent"

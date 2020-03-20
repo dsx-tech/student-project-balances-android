@@ -8,6 +8,8 @@ import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.appcompat.widget.ToolbarWidgetWrapper
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.viewModelScope
@@ -21,12 +23,14 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inf: MenuInflater = menuInflater
         inf.inflate(R.menu.popup_menu_with_graphs, menu)
-
+        inf.toString()
         return true
     }
+
 
     private lateinit var mainViewModel: MainViewModel
     private lateinit var rateAdapter: RateAdapter
@@ -40,24 +44,33 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        aaChartView = findViewById(R.id.AAChartView)
+        setContentView(R.layout.login_activity)
+
+        val loginButton :Button = findViewById(R.id.loginButton)
+        loginButton.setOnClickListener{
+            setContentView(R.layout.activity_main)
+            aaChartView = findViewById(R.id.AAChartView)
 
 
+            val toolbar:Toolbar= findViewById(R.id.toolBar)
+            toolbar.setTitleTextColor(getColor(R.color.white))
+            setSupportActionBar(toolbar)
+            mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
-        mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+            rateAdapter = RateAdapter()
+            transAdapter = TransAdapter()
+            tradesAdapter = TradesAdapter()
+            chartAdapter = ChartAdapter()
 
-        rateAdapter = RateAdapter()
-        transAdapter = TransAdapter()
-        tradesAdapter = TradesAdapter()
-        chartAdapter = ChartAdapter()
+            registerObservers()
 
-        registerObservers()
+            //calling user list api
+            mainViewModel.getTrades()
+            mainViewModel.getTrans()
 
-        //calling user list api
-        mainViewModel.getTrades()
-        mainViewModel.getTrans()
+        }
 
     }
 
@@ -67,9 +80,12 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.menu1 -> {
                 setContentView(R.layout.activity_main)
+                val toolbar:Toolbar= findViewById(R.id.toolBar)
+                toolbar.setTitleTextColor(getColor(R.color.white))
+                setSupportActionBar(toolbar)
                 aaChartView = findViewById(R.id.AAChartView)
                 if (!mainViewModel.balancesAtTheEnd.value.isNullOrEmpty())
-                    chartAdapter.setData(mainViewModel.balancesAtTheEnd.value!!, aaChartView)
+                    mainViewModel.getStringWithInstruments()
                 else {
                     mainViewModel.getTrades()
                     mainViewModel.getTrans()
@@ -78,7 +94,10 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.menu2 -> {
 
-                setContentView(R.layout.activity_rate_graph)
+              setContentView(R.layout.activity_rate_graph)
+               val toolbar:Toolbar= findViewById(R.id.toolBar)
+              toolbar.setTitleTextColor(getColor(R.color.white))
+               setSupportActionBar(toolbar)
                 val button: Button = findViewById(R.id.rate_graph_draw)
                 val currencies1: AutoCompleteTextView = findViewById(R.id.autoCoCur1)
                 val adapter = ArrayAdapter(
@@ -116,11 +135,15 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.menu3 ->{
                 setContentView(R.layout.activity_column_graph)
+                val toolbar:Toolbar= findViewById(R.id.toolBar)
+                toolbar.setTitleTextColor(getColor(R.color.white))
+                setSupportActionBar(toolbar)
                 aaChartView = findViewById(R.id.AAChartView3)
                 val button: Button = findViewById(R.id.rate_column_graph)
                 var editText:EditText = findViewById(R.id.year)
                 button.setOnClickListener {
                     try{
+
                     if((mainViewModel.tradesSuccessLiveData.value?.isNotEmpty() == true) or (mainViewModel.transSuccessLiveData.value?.isNotEmpty() == true))
                         mainViewModel.modelingColumnGraph(editText.text.toString().toInt(), mainViewModel.tradesSuccessLiveData.value, mainViewModel.transSuccessLiveData.value )
                 } catch(e:NumberFormatException){
@@ -217,6 +240,13 @@ class MainActivity : AppCompatActivity() {
             var k = findViewById<EditText>(R.id.year)
             aaChartView3 = findViewById(R.id.AAChartView3)
             chartAdapter.setData3(aaChartView3, mainViewModel.columnGraphData.value!!, k.text.toString().toInt())
+        })
+        mainViewModel.yearBalanceLiveData.observe(this, Observer {
+            mainViewModel.getStringWithInstrumentsForColumn((mainViewModel.yearBalanceLiveData.value)!![12]!!.keys.toMutableList())
+        })
+        mainViewModel.stringWithInstruments2.observe(this, Observer {
+            var k = findViewById<EditText>(R.id.year)
+           mainViewModel.getRatesForTime(mainViewModel.stringWithInstruments2.value!!, k.text.toString().toInt())
         })
 
     }

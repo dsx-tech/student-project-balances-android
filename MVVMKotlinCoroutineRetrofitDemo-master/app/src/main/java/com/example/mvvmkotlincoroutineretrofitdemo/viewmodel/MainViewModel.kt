@@ -18,6 +18,7 @@ class MainViewModel : ViewModel() {
     private val repositoryForColumnGraph = RepositoryForColumnGraph()
 
     var stringWithInstruments = repositoryForPieGraph.stringWithInstruments
+    var stringWithInstruments2 = repositoryForColumnGraph.stringWithInstruments
     var relevantRatesSuccessLiveData = repositoryForPieGraph.relevantRatesSuccessLiveData
     var relevantRatesFailureLiveData = repositoryForPieGraph.relevantRatesFailureLiveData
     val rateSuccessLiveData = repositoryForRates.rateSuccessLiveData
@@ -32,6 +33,8 @@ class MainViewModel : ViewModel() {
     var balancesMultRates = repositoryForPieGraph.balancesMultRates
 
     var columnGraphData = repositoryForColumnGraph.columnGraphData
+    val yearBalanceLiveData = repositoryForColumnGraph.yearBalanceLiveData
+
 
 
 
@@ -67,6 +70,12 @@ class MainViewModel : ViewModel() {
 
     fun modelingColumnGraph(year: Int, trades: MutableList<Trade>?, transactions: MutableList<Transaction>?){
         viewModelScope.launch { repositoryForColumnGraph.modelingSeriesForGraph(year, trades, transactions) }
+    }
+    fun getRatesForTime(instruments: String, year: Int){
+        viewModelScope.launch { repositoryForColumnGraph.getRatesForTime(instruments, year) }
+    }
+    fun getStringWithInstrumentsForColumn(currencies: MutableList<String>){
+        viewModelScope.launch { repositoryForColumnGraph.getStringWithInstruments(currencies) }
     }
 
 

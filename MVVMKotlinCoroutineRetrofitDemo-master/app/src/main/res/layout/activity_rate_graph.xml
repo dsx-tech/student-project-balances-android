@@ -5,14 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
-    tools:context=".view.MainActivity">
+    tools:context=".view.MainActivity"
+    android:theme="@style/Ap2">
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-
+        <include
+            layout="@layout/tool_bar"
+            android:id="@+id/toolBar" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -59,6 +63,7 @@
 
 
         </com.aachartmodel.aainfographics.AAInfographicsLib.AAChartConfiger.AAChartView>
+
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
