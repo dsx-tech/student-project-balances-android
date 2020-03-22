@@ -19,5 +19,8 @@ interface ApiService {
     @Headers("Content-Type: application/json")
     @POST("/bcv/auth/login")
     fun auth(@Body login: LoginBody) : Deferred<Response<LoginResponse>>
+    @Headers("Content-Type: application/json")
+    @POST("/bcv/auth/register")
+    fun register(@Body reg: RegisterBody) : Deferred<Response<RegisterResponse>>
 }
 

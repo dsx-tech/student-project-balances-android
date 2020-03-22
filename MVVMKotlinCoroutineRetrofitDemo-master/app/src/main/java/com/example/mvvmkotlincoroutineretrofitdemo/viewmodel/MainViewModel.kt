@@ -3,6 +3,7 @@ package com.example.mvvmkotlincoroutineretrofitdemo.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mvvmkotlincoroutineretrofitdemo.model.LoginBody
+import com.example.mvvmkotlincoroutineretrofitdemo.model.RegisterBody
 import com.example.mvvmkotlincoroutineretrofitdemo.model.Trade
 import com.example.mvvmkotlincoroutineretrofitdemo.model.Transaction
 import com.example.mvvmkotlincoroutineretrofitdemo.repository.*
@@ -15,6 +16,7 @@ class MainViewModel : ViewModel() {
     private val repositoryForPieGraph = RepositoryForPieGraph()
     private val repositoryForColumnGraph = RepositoryForColumnGraph()
     private val repositoryForAuth = RepositoryForAuth()
+    private val repositoryForRegistration = RepositoryForRegistration()
 
 
     var authSuccessLiveData = repositoryForAuth.authSuccessLiveData
@@ -25,6 +27,8 @@ class MainViewModel : ViewModel() {
     var relevantRatesFailureLiveData = repositoryForPieGraph.relevantRatesFailureLiveData
     val rateSuccessLiveData = repositoryForRates.rateSuccessLiveData
     val rateFailureLiveData = repositoryForRates.rateFailureLiveData
+    var registerSuccessLiveData = repositoryForRegistration.registerSuccessLiveData
+    var registerFailureLiveData = repositoryForRegistration.registerFailureLiveData
 
     val transSuccessLiveData = mainRepository.transSuccessLiveData
     val transFailureLiveData = mainRepository.transFailureLiveData
@@ -39,6 +43,10 @@ class MainViewModel : ViewModel() {
 
     fun auth(login:LoginBody){
         viewModelScope.launch { repositoryForAuth.auth(login) }
+    }
+
+    fun register(register:RegisterBody){
+        viewModelScope.launch {repositoryForRegistration.register(register) }
     }
 
 
