@@ -13,9 +13,9 @@ interface ApiService {
     @GET("/bcv/quotes/ticker/{instruments}")
     fun getRate(@Path("instruments") instruments: String): Deferred<Response<MutableMap<String, RelevantRate>>>
     @GET("/bcv/transactions")
-    fun getTrans(): Deferred<Response<MutableList<Transaction>>>
+    fun getTrans(@Header("Authorization") token: String): Deferred<Response<MutableList<Transaction>>>
     @GET("/bcv/trades")
-    fun getTrades(): Deferred<Response<MutableList<Trade>>>
+    fun getTrades(@Header("Authorization") token: String): Deferred<Response<MutableList<Trade>>>
     @Headers("Content-Type: application/json")
     @POST("/bcv/auth/login")
     fun auth(@Body login: LoginBody) : Deferred<Response<LoginResponse>>

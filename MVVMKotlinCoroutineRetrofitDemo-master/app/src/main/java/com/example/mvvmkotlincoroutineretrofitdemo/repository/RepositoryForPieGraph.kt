@@ -170,8 +170,8 @@ class RepositoryForPieGraph {
             i++
         }
 
-        result.remove("EURS")
-        result.remove("BSV")
+        result.remove("eurs")
+        result.remove("bsv")
         return result
     }
 

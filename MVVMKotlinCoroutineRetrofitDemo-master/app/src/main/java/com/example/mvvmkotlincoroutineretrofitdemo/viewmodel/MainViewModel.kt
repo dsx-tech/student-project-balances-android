@@ -52,14 +52,14 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch { repositoryForPieGraph.getRate(instruments) }
 
     }
-    fun getTrans() {
+    fun getTrans(token:String) {
 
-        viewModelScope.launch { mainRepository.getTrans() }
+        viewModelScope.launch { mainRepository.getTrans(token) }
 
     }
-    fun getTrades() {
+    fun getTrades(token:String) {
 
-        viewModelScope.launch { mainRepository.getTrades() }
+        viewModelScope.launch { mainRepository.getTrades(token) }
 
     }
     fun countingBalance() {

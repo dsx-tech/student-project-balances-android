@@ -98,6 +98,8 @@ class MainActivity : AppCompatActivity() {
         val toolbar:Toolbar= findViewById(R.id.toolBar)
         toolbar.setTitleTextColor(getColor(R.color.white))
         setSupportActionBar(toolbar)
+        mainViewModel.getTrades(mainViewModel.authSuccessLiveData.value!!)
+        mainViewModel.getTrans(mainViewModel.authSuccessLiveData.value!!)
     }
     @SuppressLint("ClickableViewAccessibility")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -112,8 +114,8 @@ class MainActivity : AppCompatActivity() {
                 if (!mainViewModel.balancesAtTheEnd.value.isNullOrEmpty())
                     mainViewModel.getStringWithInstruments()
                 else {
-                    mainViewModel.getTrades()
-                    mainViewModel.getTrans()
+                    mainViewModel.getTrades(mainViewModel.authSuccessLiveData.value!!)
+                    mainViewModel.getTrans(mainViewModel.authSuccessLiveData.value!!)
                 }
                 true
             }
@@ -276,6 +278,7 @@ class MainActivity : AppCompatActivity() {
 
         mainViewModel.authSuccessLiveData.observe(this, Observer {
             completedAuth()
+
         }
         )
         mainViewModel.authFailureLiveData.observe(this, Observer {
