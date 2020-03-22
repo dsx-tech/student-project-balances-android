@@ -2,7 +2,6 @@ package com.example.mvvmkotlincoroutineretrofitdemo.view
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.PendingIntent.getActivity
 import android.content.Context
 import android.os.Bundle
 import android.view.*
@@ -10,15 +9,14 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.appcompat.widget.ToolbarWidgetWrapper
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.lifecycle.viewModelScope
 import com.aachartmodel.aainfographics.AAInfographicsLib.AAChartConfiger.AAChartView
 import com.example.mvvmkotlincoroutineretrofitdemo.R
 import com.example.mvvmkotlincoroutineretrofitdemo.viewmodel.MainViewModel
 import com.example.mvvmkotlincoroutineretrofitdemo.constants.Days
 import com.example.mvvmkotlincoroutineretrofitdemo.constants.Currencies
+import com.example.mvvmkotlincoroutineretrofitdemo.model.LoginBody
 import java.util.*
 
 
@@ -56,10 +54,18 @@ class MainActivity : AppCompatActivity() {
     private fun loginSetup(){
         setContentView(R.layout.login_activity)
         val register:TextView = findViewById(R.id.register)
+        val back : RelativeLayout = findViewById(R.id.back)
+        back.setOnClickListener {
+            hideKeyboardFrom(this, it)
+        }
         register.setOnClickListener{
             setContentView(R.layout.register_activity)
             val password:EditText = findViewById(R.id.editText2)
             val passwordRepeat:EditText = findViewById(R.id.editText3)
+            val backReg : RelativeLayout = findViewById(R.id.backReg)
+            backReg.setOnClickListener {
+                hideKeyboardFrom(this, it)
+            }
             val createAccount:Button = findViewById(R.id.regButton)
             createAccount.setOnClickListener {
                 if ((password.text.toString() == passwordRepeat.text.toString()) and (password.text.toString() !=""))
@@ -68,24 +74,30 @@ class MainActivity : AppCompatActivity() {
         }
         val loginButton :Button = findViewById(R.id.loginButton)
         loginButton.setOnClickListener{
-            setContentView(R.layout.activity_main)
-            aaChartView = findViewById(R.id.AAChartView)
-            val toolbar:Toolbar= findViewById(R.id.toolBar)
-            toolbar.setTitleTextColor(getColor(R.color.white))
-            setSupportActionBar(toolbar)
             mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
-
+            var username :EditText = findViewById(R.id.userName)
+            var passwordActual:EditText = findViewById(R.id.password)
             rateAdapter = RateAdapter()
             transAdapter = TransAdapter()
             tradesAdapter = TradesAdapter()
             chartAdapter = ChartAdapter()
-
             registerObservers()
 
-            mainViewModel.getTrades()
-            mainViewModel.getTrans()
+
+            mainViewModel.auth(LoginBody(username.text.toString(), passwordActual.text.toString()))
+
+           // mainViewModel.getTrades()
+          //  mainViewModel.getTrans()
 
         }
+    }
+
+    private fun completedAuth(){
+        setContentView(R.layout.activity_main)
+        aaChartView = findViewById(R.id.AAChartView)
+        val toolbar:Toolbar= findViewById(R.id.toolBar)
+        toolbar.setTitleTextColor(getColor(R.color.white))
+        setSupportActionBar(toolbar)
     }
     @SuppressLint("ClickableViewAccessibility")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -255,13 +267,22 @@ class MainActivity : AppCompatActivity() {
             chartAdapter.setData3(aaChartView3, mainViewModel.columnGraphData.value!!, k.text.toString().toInt())
         })
         mainViewModel.yearBalanceLiveData.observe(this, Observer {
-            mainViewModel.getStringWithInstrumentsForColumn((mainViewModel.yearBalanceLiveData.value)!![12]!!.keys.toMutableList())
+            mainViewModel.getStringWithInstrumentsForColumn((mainViewModel.yearBalanceLiveData.value)!![12].keys.toMutableList())
         })
         mainViewModel.stringWithInstruments2.observe(this, Observer {
             var k = findViewById<EditText>(R.id.year)
            mainViewModel.getRatesForTime(mainViewModel.stringWithInstruments2.value!!, k.text.toString().toInt())
         })
 
+        mainViewModel.authSuccessLiveData.observe(this, Observer {
+            completedAuth()
+        }
+        )
+        mainViewModel.authFailureLiveData.observe(this, Observer {
+
+            var m = mainViewModel.authFailureLiveData.value
+        }
+        )
     }
 
     private fun hideKeyboardFrom(context: Context, view: View) {

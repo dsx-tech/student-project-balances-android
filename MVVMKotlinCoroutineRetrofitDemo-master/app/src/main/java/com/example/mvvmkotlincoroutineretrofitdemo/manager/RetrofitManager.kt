@@ -30,6 +30,7 @@ object RetrofitManager {
             .client(client)
             .build()
             .create(ApiService::class.java)
+
     }
 
 

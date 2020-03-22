@@ -1,14 +1,10 @@
 package com.example.mvvmkotlincoroutineretrofitdemo.interfaces
 
-import com.example.mvvmkotlincoroutineretrofitdemo.model.Rate
-import com.example.mvvmkotlincoroutineretrofitdemo.model.RelevantRate
-import com.example.mvvmkotlincoroutineretrofitdemo.model.Trade
-import com.example.mvvmkotlincoroutineretrofitdemo.model.Transaction
+import com.example.mvvmkotlincoroutineretrofitdemo.model.*
 import kotlinx.coroutines.Deferred
+import retrofit2.Call
 import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Path
-import java.util.*
+import retrofit2.http.*
 
 interface ApiService {
 
@@ -20,4 +16,8 @@ interface ApiService {
     fun getTrans(): Deferred<Response<MutableList<Transaction>>>
     @GET("/bcv/trades")
     fun getTrades(): Deferred<Response<MutableList<Trade>>>
+    @Headers("Content-Type: application/json")
+    @POST("/bcv/auth/login")
+    fun auth(@Body login: LoginBody) : Deferred<Response<LoginResponse>>
 }
+

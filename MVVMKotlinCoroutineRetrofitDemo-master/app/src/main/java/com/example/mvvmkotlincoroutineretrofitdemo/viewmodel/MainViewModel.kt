@@ -2,12 +2,10 @@ package com.example.mvvmkotlincoroutineretrofitdemo.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mvvmkotlincoroutineretrofitdemo.model.LoginBody
 import com.example.mvvmkotlincoroutineretrofitdemo.model.Trade
 import com.example.mvvmkotlincoroutineretrofitdemo.model.Transaction
-import com.example.mvvmkotlincoroutineretrofitdemo.repository.MainRepository
-import com.example.mvvmkotlincoroutineretrofitdemo.repository.RepositoryForColumnGraph
-import com.example.mvvmkotlincoroutineretrofitdemo.repository.RepositoryForPieGraph
-import com.example.mvvmkotlincoroutineretrofitdemo.repository.RepositoryForRates
+import com.example.mvvmkotlincoroutineretrofitdemo.repository.*
 import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
@@ -16,7 +14,11 @@ class MainViewModel : ViewModel() {
     private val repositoryForRates = RepositoryForRates()
     private val repositoryForPieGraph = RepositoryForPieGraph()
     private val repositoryForColumnGraph = RepositoryForColumnGraph()
+    private val repositoryForAuth = RepositoryForAuth()
 
+
+    var authSuccessLiveData = repositoryForAuth.authSuccessLiveData
+    var authFailureLiveData = repositoryForAuth.authFailureLiveData
     var stringWithInstruments = repositoryForPieGraph.stringWithInstruments
     var stringWithInstruments2 = repositoryForColumnGraph.stringWithInstruments
     var relevantRatesSuccessLiveData = repositoryForPieGraph.relevantRatesSuccessLiveData
@@ -35,7 +37,9 @@ class MainViewModel : ViewModel() {
     var columnGraphData = repositoryForColumnGraph.columnGraphData
     val yearBalanceLiveData = repositoryForColumnGraph.yearBalanceLiveData
 
-
+    fun auth(login:LoginBody){
+        viewModelScope.launch { repositoryForAuth.auth(login) }
+    }
 
 
     fun getRates(instrument: String, timeFrom : Long, timeTo : Long) {
