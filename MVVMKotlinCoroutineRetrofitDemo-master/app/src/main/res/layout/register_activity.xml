@@ -22,13 +22,27 @@
         />
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/emailReg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_below="@id/imageView"
+        android:layout_centerInParent="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="284dp"
+        android:backgroundTint="@color/white"
+        android:layout_below="@id/imageView"
+        android:ems="10"
+        android:inputType="textPassword"
+        android:drawableLeft="@drawable/email"
+        android:hint="Email"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:textSize="20dp"/>
+
+    <EditText
+        android:id="@+id/usernameReg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/emailReg"
+        android:layout_centerHorizontal="true"
         android:layout_centerInParent="true"
         android:ems="10"
         android:inputType="textPersonName"
@@ -41,13 +55,13 @@
         android:textSize="20dp" />
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/passwordReg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_centerHorizontal="true"
         android:backgroundTint="@color/white"
-        android:layout_below="@id/editText"
+        android:layout_below="@id/usernameReg"
         android:ems="10"
         android:inputType="textPassword"
         android:drawableLeft="@drawable/lock2"
@@ -57,13 +71,13 @@
         android:textSize="20dp"/>
 
     <EditText
-        android:id="@+id/editText3"
+        android:id="@+id/passwordReg2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_centerHorizontal="true"
         android:backgroundTint="@color/white"
-        android:layout_below="@id/editText2"
+        android:layout_below="@id/passwordReg"
         android:ems="10"
         android:inputType="textPassword"
         android:drawableLeft="@drawable/lock2"
@@ -76,7 +90,7 @@
         android:id="@+id/regButton"
         android:layout_width="300dp"
         android:layout_height="50dp"
-        android:layout_below="@id/editText3"
+        android:layout_below="@id/passwordReg2"
 
         android:layout_centerHorizontal="true"
         android:text="Create account"/>
