@@ -17,6 +17,7 @@ class MainViewModel : ViewModel() {
     private val repositoryForColumnGraph = RepositoryForColumnGraph()
     private val repositoryForAuth = RepositoryForAuth()
     private val repositoryForRegistration = RepositoryForRegistration()
+    private val repositoryForIncome = RepositoryForIncome()
 
 
     var authSuccessLiveData = repositoryForAuth.authSuccessLiveData
@@ -40,6 +41,10 @@ class MainViewModel : ViewModel() {
 
     var columnGraphData = repositoryForColumnGraph.columnGraphData
     val yearBalanceLiveData = repositoryForColumnGraph.yearBalanceLiveData
+
+    var ratesIncomeSuccessLiveData = repositoryForIncome.ratesIncomeSuccessLiveData
+    var ratesIncomeFailureLiveData = repositoryForIncome.ratesIncomeFailureLiveData
+    var resultIncomeLiveData = repositoryForIncome.resultIncomeLiveData
 
     fun auth(login:LoginBody){
         viewModelScope.launch { repositoryForAuth.auth(login) }
@@ -88,6 +93,12 @@ class MainViewModel : ViewModel() {
     }
     fun getStringWithInstrumentsForColumn(currencies: MutableList<String>){
         viewModelScope.launch { repositoryForColumnGraph.getStringWithInstruments(currencies) }
+    }
+    fun modelingSeriesForIncome(currency : String, allTrades: MutableList<Trade>?, allTransactions: MutableList<Transaction>?){
+        viewModelScope.launch { repositoryForIncome.modelingSeriesForIncome(currency, allTrades, allTransactions ) }
+    }
+    fun getRatesForIncome(currency: String, timeFrom: String, timeTo: String){
+        viewModelScope.launch { repositoryForIncome.getRatesForIncome(currency, timeFrom, timeTo) }
     }
 
 

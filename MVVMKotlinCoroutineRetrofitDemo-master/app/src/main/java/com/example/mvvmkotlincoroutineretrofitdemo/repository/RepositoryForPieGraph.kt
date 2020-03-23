@@ -176,7 +176,7 @@ class RepositoryForPieGraph {
     }
 
     fun multiplyRelevant(){
-        var balancesMult : MutableMap<String, BigDecimal?> = mutableMapOf()
+        val balancesMult : MutableMap<String, BigDecimal?> = mutableMapOf()
         for (key in balancesAtTheEnd.value!!.keys){
             if (relevantRatesSuccessLiveData.value!!.containsKey("${key.toLowerCase()}-usd")){
                 balancesMult[key] = (balancesAtTheEnd.value!![key])!!.multiply(relevantRatesSuccessLiveData.value!!["${key.toLowerCase()}-usd"]!!.exchangeRate)

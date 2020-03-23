@@ -31,13 +31,22 @@
             </Spinner>
 
             <TextView
-                android:id="@+id/incomeDate"
+                android:id="@+id/incomeDateFrom"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:textColor="@color/white"
                 android:gravity="center"
-                android:text="Date">
+                android:text="Date from">
+            </TextView>
+            <TextView
+                android:id="@+id/incomeDateTo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textColor="@color/white"
+                android:gravity="center"
+                android:text="Date to">
             </TextView>
 
 

@@ -43,10 +43,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var chartAdapter: ChartAdapter
     private lateinit var ratesChartAdapter: RatesChartAdapter
     private lateinit var columnChartAdapter: ColumnChartAdapter
+    private lateinit var incomeChartAdapter: IncomeChartAdapter
 
     private var aaChartView: AAChartView? = null
     private var aaChartView2: AAChartView? = null
     private var aaChartView3: AAChartView? = null
+    private var aaChartView4: AAChartView? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,6 +61,7 @@ class MainActivity : AppCompatActivity() {
         chartAdapter = ChartAdapter()
         ratesChartAdapter = RatesChartAdapter()
         columnChartAdapter = ColumnChartAdapter()
+        incomeChartAdapter = IncomeChartAdapter()
         registerObservers()
         loginSetup()
 
@@ -200,7 +203,7 @@ class MainActivity : AppCompatActivity() {
                 val toolbar:Toolbar= findViewById(R.id.toolBar)
                 toolbar.setTitleTextColor(getColor(R.color.white))
                 setSupportActionBar(toolbar)
-                aaChartView = findViewById(R.id.AAChartView4)
+                aaChartView4 = findViewById(R.id.AAChartView4)
                 val button: Button = findViewById(R.id.income_graph_draw)
                 val spinner: Spinner = findViewById(R.id.incomeCur)
                 val adapter = ArrayAdapter(this,
@@ -223,26 +226,44 @@ class MainActivity : AppCompatActivity() {
                 }
 
 
-                val textView: TextView  = findViewById(R.id.incomeDate)
-                textView.text = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
+                val textDateFrom: TextView  = findViewById(R.id.incomeDateFrom)
+                val textDateTo: TextView = findViewById(R.id.incomeDateTo)
+                        textDateFrom.text = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
+                        textDateTo.text = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
 
                 val cal = Calendar.getInstance()
-
-                val dateSetListener = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+                val myFormat = "dd.MM.yyyy"
+                val dateSetListenerFrom = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
                     cal.set(Calendar.YEAR, year)
                     cal.set(Calendar.MONTH, monthOfYear)
                     cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
-                    val myFormat = "dd.MM.yyyy"
+
                     val sdf = SimpleDateFormat(myFormat, Locale.US)
-                    textView.text = sdf.format(cal.time)}
-                textView.setOnClickListener {
-                    DatePickerDialog(this, dateSetListener,
+                    textDateFrom.text = sdf.format(cal.time)}
+                textDateFrom.setOnClickListener {
+                    DatePickerDialog(this, dateSetListenerFrom,
                         cal.get(Calendar.YEAR),
                         cal.get(Calendar.MONTH),
                         cal.get(Calendar.DAY_OF_MONTH)).show()
                 }
 
+                val dateSetListenerTo = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+                    cal.set(Calendar.YEAR, year)
+                    cal.set(Calendar.MONTH, monthOfYear)
+                    cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+                    val sdf = SimpleDateFormat(myFormat, Locale.US)
+                    textDateTo.text = sdf.format(cal.time)}
+                textDateTo.setOnClickListener {
+                    DatePickerDialog(this, dateSetListenerTo,
+                        cal.get(Calendar.YEAR),
+                        cal.get(Calendar.MONTH),
+                        cal.get(Calendar.DAY_OF_MONTH)).show()
+                }
+                button.setOnClickListener{
+                    mainViewModel.getRatesForIncome(spinner.selectedItem.toString(), textDateFrom.text.toString(), textDateTo.text.toString())
+                }
                 true
             }
             else -> false
@@ -313,7 +334,6 @@ class MainActivity : AppCompatActivity() {
             }
         })
         mainViewModel.balancesAtTheEnd.observe(this, Observer {
-
             mainViewModel.getStringWithInstruments()
         }
         )
@@ -348,6 +368,15 @@ class MainActivity : AppCompatActivity() {
         )
         mainViewModel.registerSuccessLiveData.observe(this, Observer {
             loginSetup()
+        }
+        )
+
+        mainViewModel.ratesIncomeSuccessLiveData.observe(this, Observer {
+            mainViewModel.modelingSeriesForIncome(it.keys.first(), mainViewModel.tradesSuccessLiveData.value, mainViewModel.transSuccessLiveData.value)
+        }
+        )
+        mainViewModel.resultIncomeLiveData.observe(this, Observer {
+           incomeChartAdapter.setIncomeChart(aaChartView4, it.first, it.second)
         }
         )
     }
