@@ -37,6 +37,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var transAdapter: TransAdapter
     private lateinit var tradesAdapter: TradesAdapter
     private lateinit var chartAdapter: ChartAdapter
+    private lateinit var ratesChartAdapter: RatesChartAdapter
+    private lateinit var columnChartAdapter: ColumnChartAdapter
 
     private var aaChartView: AAChartView? = null
     private var aaChartView2: AAChartView? = null
@@ -51,6 +53,8 @@ class MainActivity : AppCompatActivity() {
         transAdapter = TransAdapter()
         tradesAdapter = TradesAdapter()
         chartAdapter = ChartAdapter()
+        ratesChartAdapter = RatesChartAdapter()
+        columnChartAdapter = ColumnChartAdapter()
         registerObservers()
         loginSetup()
 
@@ -202,7 +206,7 @@ class MainActivity : AppCompatActivity() {
             }
             val cur1: AutoCompleteTextView = findViewById(R.id.autoCoCur1)
             val cur2: AutoCompleteTextView = findViewById(R.id.autoCoCur2)
-            chartAdapter.setData2(
+            ratesChartAdapter.setRatesChart(
                 mainViewModel.rateSuccessLiveData.value!!,
                 aaChartView2,
                 cur1.text.toString(),
@@ -268,13 +272,13 @@ class MainActivity : AppCompatActivity() {
 
         mainViewModel.balancesMultRates.observe(this, Observer {
 
-            chartAdapter.setData(mainViewModel.balancesMultRates.value!!, aaChartView)
+            chartAdapter.setPieChart(mainViewModel.balancesMultRates.value!!, aaChartView)
         }
         )
         mainViewModel.columnGraphData.observe(this, Observer {
             var k = findViewById<EditText>(R.id.year)
             aaChartView3 = findViewById(R.id.AAChartView3)
-            chartAdapter.setData3(aaChartView3, mainViewModel.columnGraphData.value!!, k.text.toString().toInt())
+            columnChartAdapter.setColumnChart(aaChartView3, mainViewModel.columnGraphData.value!!, k.text.toString().toInt())
         })
         mainViewModel.yearBalanceLiveData.observe(this, Observer {
             mainViewModel.getStringWithInstrumentsForColumn((mainViewModel.yearBalanceLiveData.value)!![12].keys.toMutableList())

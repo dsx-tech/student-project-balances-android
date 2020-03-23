@@ -1,45 +1,26 @@
 package com.example.mvvmkotlincoroutineretrofitdemo.view
 
-
 import com.aachartmodel.aainfographics.AAInfographicsLib.AAChartConfiger.*
 import com.example.mvvmkotlincoroutineretrofitdemo.R
-import com.example.mvvmkotlincoroutineretrofitdemo.model.Rate
-import java.math.BigDecimal
-import java.text.SimpleDateFormat
 import com.example.mvvmkotlincoroutineretrofitdemo.constants.Colors
 
-class ChartAdapter  {
-
-    fun setPieChart(dataLiveData: MutableMap<String, BigDecimal?>, aaChartView: AAChartView?) {
-        var resultF: ArrayList<Any> = arrayListOf()
-        var categories: MutableList<String> = ArrayList()
-        var data : ArrayList<BigDecimal?> = arrayListOf()
-        data.addAll(dataLiveData.values)
-        categories.addAll(dataLiveData.keys)
-
-
-        for (i in 0 until data.size){
-            resultF.add(arrayOf(categories[i], data[i]!!))
-        }
-
-        var aaChartModel = AAChartModel()
+class ColumnChartAdapter {
+    fun setColumnChart(aaChartView: AAChartView?, data: Array<AASeriesElement>, year: Int){
+        val aaChartModel = AAChartModel()
             .title("Portfolio")
             .titleFontColor(Colors.WHITE)
             .titleFontSize(20f)
             .subtitleFontColor(Colors.WHITE)
             .titleFontWeight(AAChartFontWeightType.Bold)
-            .markerRadius(0f)
-            .borderRadius(0f)
-            .backgroundColor( R.color.colorBackground)
-            .subtitle("2019")
+            .subtitle(year.toString())
             .yAxisTitle("Values in $")
-            .chartType(AAChartType.Pie)
+            .chartType(AAChartType.Column)
             .axesTextColor(Colors.WHITE)
             .dataLabelsFontColor(Colors.WHITE)
-            .dataLabelsFontWeight(AAChartFontWeightType.Bold)
+            .dataLabelsFontWeight(AAChartFontWeightType.Regular)
+            .backgroundColor(R.color.colorBackground)
             .legendEnabled(false)
-            .stacking(AAChartStackingType.False)
-            .dataLabelsEnabled(false)
+            .stacking(AAChartStackingType.Normal)
             .colorsTheme(
                 arrayOf(
                     "#306FB3",
@@ -60,25 +41,26 @@ class ChartAdapter  {
                 )
             )
             .animationType(AAChartAnimationType.Bounce)
-            .categories(categories.toTypedArray())
             .animationDuration(2000)
-            .series(
+            .categories(
                 arrayOf(
-                    AASeriesElement()
-                        .name("in $")
-                        .data(
-                            resultF.toArray()
-                        )
+                    "Jan",
+                    "Feb",
+                    "Mar",
+                    "Apr",
+                    "May",
+                    "Jun",
+                    "Jul",
+                    "Aug",
+                    "Sep",
+                    "Oct",
+                    "Nov",
+                    "Dec"
                 )
             )
+            .series(data)
 
-
-        aaChartView!!.aa_drawChartWithChartModel(aaChartModel)
-
+        aaChartView?.aa_drawChartWithChartModel(aaChartModel)
 
     }
-
-
-
-
 }
