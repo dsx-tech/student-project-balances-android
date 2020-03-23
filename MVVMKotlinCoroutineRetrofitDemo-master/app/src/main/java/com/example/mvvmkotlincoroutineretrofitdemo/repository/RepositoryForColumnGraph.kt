@@ -29,6 +29,7 @@ class RepositoryForColumnGraph {
         var dataStart: LocalDateTime
         var dataEnd: LocalDateTime = mainRepository.dateTimeFormatter("${year}-02-01T00:00:00")
         var balanceForMonth = repositoryForPieGraph.balanceForDate(dataEnd, trades, transactions)
+        currencies.clear()
         for (key in balanceForMonth.keys)
             currencies.add(key)
         val yearBalance: ArrayList<MutableMap<String, BigDecimal?>> = arrayListOf()

@@ -12,5 +12,8 @@
     <item
         android:id="@+id/menu3"
         android:title="Balances for time"/>
+    <item
+        android:id="@+id/menu4"
+        android:title="Income"/>
 
 </menu>

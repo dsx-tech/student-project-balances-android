@@ -2,7 +2,9 @@ package com.example.mvvmkotlincoroutineretrofitdemo.view
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.DatePickerDialog
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
@@ -18,6 +20,8 @@ import com.example.mvvmkotlincoroutineretrofitdemo.constants.Days
 import com.example.mvvmkotlincoroutineretrofitdemo.constants.Currencies
 import com.example.mvvmkotlincoroutineretrofitdemo.model.LoginBody
 import com.example.mvvmkotlincoroutineretrofitdemo.model.RegisterBody
+import java.text.SimpleDateFormat
+import java.time.ZoneOffset
 import java.util.*
 
 
@@ -188,6 +192,56 @@ class MainActivity : AppCompatActivity() {
                 } catch(e:NumberFormatException){
                         Toast.makeText(this, "Please, enter year", Toast.LENGTH_SHORT).show()
                     }}
+
+                true
+            }
+            R.id.menu4 ->{
+                setContentView(R.layout.activity_income_graph)
+                val toolbar:Toolbar= findViewById(R.id.toolBar)
+                toolbar.setTitleTextColor(getColor(R.color.white))
+                setSupportActionBar(toolbar)
+                aaChartView = findViewById(R.id.AAChartView4)
+                val button: Button = findViewById(R.id.income_graph_draw)
+                val spinner: Spinner = findViewById(R.id.incomeCur)
+                val adapter = ArrayAdapter(this,
+                    android.R.layout.simple_spinner_item, mainViewModel.balancesAtTheEnd.value?.keys!!.toList())
+                spinner.adapter = adapter
+                spinner.onItemSelectedListener  = object : AdapterView.OnItemSelectedListener{
+
+
+                    override fun onItemSelected(
+                        parent: AdapterView<*>?,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                    ) {
+                        (parent?.getChildAt(0) as TextView).setTextColor(Color.WHITE)
+                    }
+                    override fun onNothingSelected(parent: AdapterView<*>?) {
+
+                    }
+                }
+
+
+                val textView: TextView  = findViewById(R.id.incomeDate)
+                textView.text = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
+
+                val cal = Calendar.getInstance()
+
+                val dateSetListener = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+                    cal.set(Calendar.YEAR, year)
+                    cal.set(Calendar.MONTH, monthOfYear)
+                    cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+                    val myFormat = "dd.MM.yyyy"
+                    val sdf = SimpleDateFormat(myFormat, Locale.US)
+                    textView.text = sdf.format(cal.time)}
+                textView.setOnClickListener {
+                    DatePickerDialog(this, dateSetListener,
+                        cal.get(Calendar.YEAR),
+                        cal.get(Calendar.MONTH),
+                        cal.get(Calendar.DAY_OF_MONTH)).show()
+                }
 
                 true
             }

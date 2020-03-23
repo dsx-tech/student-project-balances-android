@@ -3,9 +3,7 @@ package com.example.mvvmkotlincoroutineretrofitdemo.view
 
 import com.aachartmodel.aainfographics.AAInfographicsLib.AAChartConfiger.*
 import com.example.mvvmkotlincoroutineretrofitdemo.R
-import com.example.mvvmkotlincoroutineretrofitdemo.model.Rate
 import java.math.BigDecimal
-import java.text.SimpleDateFormat
 import com.example.mvvmkotlincoroutineretrofitdemo.constants.Colors
 
 class ChartAdapter  {
