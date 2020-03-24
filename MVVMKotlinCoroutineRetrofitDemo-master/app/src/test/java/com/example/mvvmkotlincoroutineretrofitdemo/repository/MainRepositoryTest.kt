@@ -2,10 +2,7 @@ package com.example.mvvmkotlincoroutineretrofitdemo.repository
 
 import com.example.mvvmkotlincoroutineretrofitdemo.model.Trade
 import com.example.mvvmkotlincoroutineretrofitdemo.model.Transaction
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.ValueSource
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -16,7 +13,7 @@ internal class MainRepositoryTest {
 
 
     @Test
-     fun testBalanceForDate(){
+    fun testBalanceForDate(){
     var res = true
         var date = dateTimeFormatter("2019-11-25T08:08:44")
         var resultExpected: MutableMap<String, BigDecimal?> = mutableMapOf(

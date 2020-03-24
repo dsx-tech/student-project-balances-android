@@ -60,7 +60,6 @@ internal class RepositoryForColumnGraphTest{
         trades.sortBy { it.dateTime }
         transactions.sortBy { it.dateTime }
         val result: ArrayList<AASeriesElement> = arrayListOf()
-        val result2: ArrayList<AASeriesElement> = arrayListOf()
         val currencies: LinkedList<String> = LinkedList()
         var dataStart: LocalDateTime
         var dataEnd: LocalDateTime = dateTimeFormatter("${year}-02-01T00:00:00")
@@ -112,15 +111,15 @@ internal class RepositoryForColumnGraphTest{
             )
         }
         for (k in 2..9){
-            var l = balanceForDate(dateTimeFormatter("${year}-0${k}-01T00:00:00"), trades,transactions)
+            val l = balanceForDate(dateTimeFormatter("${year}-0${k}-01T00:00:00"), trades,transactions)
             assertEquals(yearBalance[k-1], l)
         }
         for (k in 10..12){
-            var l = balanceForDate(dateTimeFormatter("${year}-${k}-01T00:00:00"), trades,transactions)
+            val l = balanceForDate(dateTimeFormatter("${year}-${k}-01T00:00:00"), trades,transactions)
             assertEquals(yearBalance[k-1], l)
         }
 
-        var l = balanceForDate(dateTimeFormatter("${year+1}-01-01T00:00:00"), trades,transactions)
+        val l = balanceForDate(dateTimeFormatter("${year+1}-01-01T00:00:00"), trades,transactions)
         assertEquals(yearBalance[12], l)
     }
     private fun dateTimeFormatter(string: String): LocalDateTime {

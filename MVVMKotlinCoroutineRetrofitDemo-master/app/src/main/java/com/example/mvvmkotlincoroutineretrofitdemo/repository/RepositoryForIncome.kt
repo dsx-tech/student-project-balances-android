@@ -42,7 +42,7 @@ class RepositoryForIncome {
             for (trade in allTrades) {
                 val timeTrade =
                     mainRepository.dateTimeFormatter(trade.dateTime).atZone(ZoneOffset.UTC)?.toInstant()?.toEpochMilli()!! / 1000
-                if (((trade.tradedPriceCurrency == currency) or (trade.tradedQuantityCurrency == currency)) and (timeTrade >= time1!!) and (timeTrade <= time2!!))
+                if (((trade.tradedPriceCurrency == currency) or (trade.tradedQuantityCurrency == currency)) and (timeTrade >= time1!!) and (timeTrade < time2!! + DAY_IN_SEC))
                     filteredTrades.add(trade)
             }
         }
@@ -51,7 +51,7 @@ class RepositoryForIncome {
 
                 val timeTrans =
                     mainRepository.dateTimeFormatter(transaction.dateTime).atZone(ZoneOffset.UTC)?.toInstant()?.toEpochMilli()!! / 1000
-                if ((transaction.currency == currency) and (timeTrans >= time1!!) and (timeTrans <= time2!!) and (transaction.transactionStatus == "Complete")) {
+                if ((transaction.currency == currency) and (timeTrans >= time1!!) and (timeTrans < time2!! + DAY_IN_SEC) and (transaction.transactionStatus == "Complete")) {
                     filteredTrans.add(transaction)
                 }
             }
@@ -69,13 +69,13 @@ class RepositoryForIncome {
                                 income -= trade.tradedQuantity * data[i].exchangeRate
                             }
                             (trade.instrument.startsWith("$currency-")) and (trade.tradeType == "Buy") -> {
-                                income += trade.tradedQuantity * data[i].exchangeRate
+                                income += (trade.tradedQuantity - trade.commission) * data[i].exchangeRate
                             }
                             (trade.instrument.endsWith("-$currency")) and (trade.tradeType == "Buy") -> {
                                 income -= trade.tradedQuantity * trade.tradedPrice * data[i].exchangeRate
                             }
                             (trade.instrument.endsWith("-$currency")) and (trade.tradeType == "Sell") -> {
-                                income += trade.tradedQuantity * trade.tradedPrice * data[i].exchangeRate
+                                income += (trade.tradedQuantity*trade.tradedPrice - trade.commission) * data[i].exchangeRate
                             }
                         }
                     }
@@ -86,10 +86,10 @@ class RepositoryForIncome {
                     ) {
                         when {
                             (transaction.transactionType == "Deposit") -> {
-                                income -= transaction.amount * data[i].exchangeRate
+                                income -= (transaction.amount + transaction.commission) * data[i].exchangeRate
                             }
                             (transaction.transactionType == "Withdraw") -> {
-                                income += transaction.amount * data[i].exchangeRate
+                                income += (transaction.amount - transaction.commission) * data[i].exchangeRate
                             }
                         }
                     }
