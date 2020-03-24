@@ -21,7 +21,6 @@ import com.example.mvvmkotlincoroutineretrofitdemo.constants.Currencies
 import com.example.mvvmkotlincoroutineretrofitdemo.model.LoginBody
 import com.example.mvvmkotlincoroutineretrofitdemo.model.RegisterBody
 import java.text.SimpleDateFormat
-import java.time.ZoneOffset
 import java.util.*
 
 
@@ -98,15 +97,12 @@ class MainActivity : AppCompatActivity() {
         val loginButton :Button = findViewById(R.id.loginButton)
         loginButton.setOnClickListener{
 
-            var username :EditText = findViewById(R.id.userName)
-            var passwordActual:EditText = findViewById(R.id.password)
+            val username :EditText = findViewById(R.id.userName)
+            val passwordActual:EditText = findViewById(R.id.password)
 
 
 
             mainViewModel.auth(LoginBody(username.text.toString(), passwordActual.text.toString()))
-
-           // mainViewModel.getTrades()
-          //  mainViewModel.getTrans()
 
         }
     }
@@ -186,7 +182,7 @@ class MainActivity : AppCompatActivity() {
                 setSupportActionBar(toolbar)
                 aaChartView = findViewById(R.id.AAChartView3)
                 val button: Button = findViewById(R.id.rate_column_graph)
-                var editText:EditText = findViewById(R.id.year)
+                val editText:EditText = findViewById(R.id.year)
                 button.setOnClickListener {
                     try{
 
@@ -319,7 +315,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
         mainViewModel.stringWithInstruments.observe(this, Observer {
-            mainViewModel.getRelevantRates(mainViewModel.stringWithInstruments.value!!)
+            mainViewModel.getRelevantRates(it)
         })
 
         tradesAdapter.tradesDownloaded.observe(this, Observer {
@@ -346,20 +342,20 @@ class MainActivity : AppCompatActivity() {
 
         mainViewModel.balancesMultRates.observe(this, Observer {
 
-            chartAdapter.setPieChart(mainViewModel.balancesMultRates.value!!, aaChartView)
+            chartAdapter.setPieChart(it, aaChartView)
         }
         )
         mainViewModel.columnGraphData.observe(this, Observer {
-            var k = findViewById<EditText>(R.id.year)
+            val k = findViewById<EditText>(R.id.year)
             aaChartView3 = findViewById(R.id.AAChartView3)
-            columnChartAdapter.setColumnChart(aaChartView3, mainViewModel.columnGraphData.value!!, k.text.toString().toInt())
+            columnChartAdapter.setColumnChart(aaChartView3, it, k.text.toString().toInt())
         })
         mainViewModel.yearBalanceLiveData.observe(this, Observer {
-            mainViewModel.getStringWithInstrumentsForColumn((mainViewModel.yearBalanceLiveData.value)!![12].keys.toMutableList())
+            mainViewModel.getStringWithInstrumentsForColumn(it[12].keys.toMutableList())
         })
         mainViewModel.stringWithInstruments2.observe(this, Observer {
-            var k = findViewById<EditText>(R.id.year)
-           mainViewModel.getRatesForTime(mainViewModel.stringWithInstruments2.value!!, k.text.toString().toInt())
+            val k = findViewById<EditText>(R.id.year)
+           mainViewModel.getRatesForTime(it, k.text.toString().toInt())
         })
 
         mainViewModel.authSuccessLiveData.observe(this, Observer {

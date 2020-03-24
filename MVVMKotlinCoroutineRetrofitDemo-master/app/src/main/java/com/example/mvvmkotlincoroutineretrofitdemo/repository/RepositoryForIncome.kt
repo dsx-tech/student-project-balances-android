@@ -2,7 +2,6 @@ package com.example.mvvmkotlincoroutineretrofitdemo.repository
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.example.mvvmkotlincoroutineretrofitdemo.constants.Days
 import com.example.mvvmkotlincoroutineretrofitdemo.constants.Days.DAY_IN_SEC
 import com.example.mvvmkotlincoroutineretrofitdemo.manager.RetrofitManager
 import com.example.mvvmkotlincoroutineretrofitdemo.model.Rate
@@ -41,7 +40,7 @@ class RepositoryForIncome {
         val formatter = SimpleDateFormat("dd/MM/yyyy")
         if (!allTrades.isNullOrEmpty()) {
             for (trade in allTrades) {
-                var timeTrade =
+                val timeTrade =
                     mainRepository.dateTimeFormatter(trade.dateTime).atZone(ZoneOffset.UTC)?.toInstant()?.toEpochMilli()!! / 1000
                 if (((trade.tradedPriceCurrency == currency) or (trade.tradedQuantityCurrency == currency)) and (timeTrade >= time1!!) and (timeTrade <= time2!!))
                     filteredTrades.add(trade)
@@ -57,7 +56,7 @@ class RepositoryForIncome {
                 }
             }
         }
-        val daysQuantity = (time2!! - time1!!) / 86400
+        val daysQuantity = (time2!! - time1!!) / DAY_IN_SEC
         if (data?.size == daysQuantity.toInt() + 1) {
             for (i in 0..daysQuantity.toInt()) {
                 var income = BigDecimal(0)
@@ -66,26 +65,24 @@ class RepositoryForIncome {
                         and (mainRepository.dateTimeFormatter(trade.dateTime).atZone(ZoneOffset.UTC)?.toInstant()?.toEpochMilli()!! / 1000 < time1!! + DAY_IN_SEC * (i + 1))
                     ) {
                         when {
-                            (trade.instrument.startsWith(currency)) and (trade.tradeType == "Sell") -> {
+                            (trade.instrument.startsWith("$currency-")) and (trade.tradeType == "Sell") -> {
                                 income -= trade.tradedQuantity * data[i].exchangeRate
                             }
-                            (trade.instrument.startsWith(currency)) and (trade.tradeType == "Buy") -> {
+                            (trade.instrument.startsWith("$currency-")) and (trade.tradeType == "Buy") -> {
                                 income += trade.tradedQuantity * data[i].exchangeRate
                             }
-                            (trade.instrument.endsWith(currency)) and (trade.tradeType == "Buy") -> {
+                            (trade.instrument.endsWith("-$currency")) and (trade.tradeType == "Buy") -> {
                                 income -= trade.tradedQuantity * trade.tradedPrice * data[i].exchangeRate
                             }
-                            (trade.instrument.endsWith(currency)) and (trade.tradeType == "Sell") -> {
+                            (trade.instrument.endsWith("-$currency")) and (trade.tradeType == "Sell") -> {
                                 income += trade.tradedQuantity * trade.tradedPrice * data[i].exchangeRate
                             }
                         }
                     }
                 }
                 for (transaction in filteredTrans) {
-                    if ((mainRepository.dateTimeFormatter(transaction.dateTime).atZone(ZoneOffset.UTC)?.toInstant()?.toEpochMilli()!! / 1000 >= time1!! + 86400 * i)
-                        and (mainRepository.dateTimeFormatter(transaction.dateTime).atZone(
-                            ZoneOffset.UTC
-                        )?.toInstant()?.toEpochMilli()!! / 1000 < time1!! + DAY_IN_SEC * (i + 1))
+                    if ((mainRepository.dateTimeFormatter(transaction.dateTime).atZone(ZoneOffset.UTC)?.toInstant()?.toEpochMilli()!! / 1000 >= time1!! + DAY_IN_SEC * i)
+                        and (mainRepository.dateTimeFormatter(transaction.dateTime).atZone(ZoneOffset.UTC)?.toInstant()?.toEpochMilli()!! / 1000 < time1!! + DAY_IN_SEC * (i + 1))
                     ) {
                         when {
                             (transaction.transactionType == "Deposit") -> {
@@ -98,7 +95,7 @@ class RepositoryForIncome {
                     }
                 }
                 rates.add(income)
-                dates.add(formatter.format(time1!! * 1000 + 86400000 * i))
+                dates.add(formatter.format(time1!! * 1000 + DAY_IN_SEC * 1000 * i))
             }
         }
         resultIncomeLiveData.postValue(Pair(dates, rates))

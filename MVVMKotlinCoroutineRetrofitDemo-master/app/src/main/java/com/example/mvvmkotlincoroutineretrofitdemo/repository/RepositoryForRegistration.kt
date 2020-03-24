@@ -3,7 +3,6 @@ package com.example.mvvmkotlincoroutineretrofitdemo.repository
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.mvvmkotlincoroutineretrofitdemo.manager.RetrofitManager
-import com.example.mvvmkotlincoroutineretrofitdemo.model.LoginBody
 import com.example.mvvmkotlincoroutineretrofitdemo.model.RegisterBody
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException

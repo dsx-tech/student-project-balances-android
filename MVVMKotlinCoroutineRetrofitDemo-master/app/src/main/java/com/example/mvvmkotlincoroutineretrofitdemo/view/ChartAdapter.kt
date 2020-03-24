@@ -9,9 +9,9 @@ import com.example.mvvmkotlincoroutineretrofitdemo.constants.Colors
 class ChartAdapter  {
 
     fun setPieChart(dataLiveData: MutableMap<String, BigDecimal?>, aaChartView: AAChartView?) {
-        var resultF: ArrayList<Any> = arrayListOf()
-        var categories: MutableList<String> = ArrayList()
-        var data : ArrayList<BigDecimal?> = arrayListOf()
+        val resultF: ArrayList<Any> = arrayListOf()
+        val categories: MutableList<String> = ArrayList()
+        val data : ArrayList<BigDecimal?> = arrayListOf()
         data.addAll(dataLiveData.values)
         categories.addAll(dataLiveData.keys)
 
@@ -20,7 +20,7 @@ class ChartAdapter  {
             resultF.add(arrayOf(categories[i], data[i]!!))
         }
 
-        var aaChartModel = AAChartModel()
+        val aaChartModel = AAChartModel()
             .title("Portfolio")
             .titleFontColor(Colors.WHITE)
             .titleFontSize(20f)

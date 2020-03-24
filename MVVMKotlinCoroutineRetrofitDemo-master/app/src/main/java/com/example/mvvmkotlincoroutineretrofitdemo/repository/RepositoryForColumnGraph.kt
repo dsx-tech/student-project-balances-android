@@ -185,8 +185,8 @@ class RepositoryForColumnGraph {
 
     suspend fun getRatesForTime(instrument: String, year: Int) {
 
-        var timeFrom = LocalDateTime.of(year, 1,1,3,0).toEpochSecond(ZoneOffset.UTC)
-        var timeTo = LocalDateTime.of(year+1, 1,1,3,0).toEpochSecond(ZoneOffset.UTC)
+        val timeFrom = LocalDateTime.of(year, 1,1,3,0).toEpochSecond(ZoneOffset.UTC)
+        val timeTo = LocalDateTime.of(year+1, 1,1,3,0).toEpochSecond(ZoneOffset.UTC)
         try {
 
             //here api calling became so simple just 1 line of code

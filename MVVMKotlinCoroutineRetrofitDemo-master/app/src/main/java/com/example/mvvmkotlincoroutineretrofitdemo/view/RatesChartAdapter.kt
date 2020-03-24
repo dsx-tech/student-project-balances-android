@@ -9,8 +9,8 @@ import java.text.SimpleDateFormat
 
 class RatesChartAdapter {
     fun setRatesChart(dataLiveData: MutableList<Rate>, aaChartView: AAChartView?, cur1: String, cur2: String) {
-        var rates: ArrayList<BigDecimal> = arrayListOf()
-        var dates: ArrayList<String> = arrayListOf()
+        val rates: ArrayList<BigDecimal> = arrayListOf()
+        val dates: ArrayList<String> = arrayListOf()
         val formatter = SimpleDateFormat("dd/MM/yyyy")
 
 
@@ -21,7 +21,7 @@ class RatesChartAdapter {
 
 
 
-        var aaChartModel = AAChartModel()
+        val aaChartModel = AAChartModel()
             .backgroundColor(R.color.colorBackground)
             .chartType(AAChartType.Areaspline)
             .title("Rate")
