@@ -34,7 +34,7 @@
         android:drawableLeft="@drawable/email"
         android:hint="Email"
         android:textColor="@color/white"
-        android:textColorHint="@color/white"
+        android:textColorHint="@color/whiteHint"
         android:textSize="20dp"/>
 
     <EditText
@@ -48,7 +48,7 @@
         android:inputType="textPersonName"
         android:singleLine="false"
         android:hint="Create username"
-        android:textColorHint="@color/white"
+        android:textColorHint="@color/whiteHint"
         android:backgroundTint="@color/white"
         android:drawableLeft="@drawable/lock"
         android:textColor="@color/white"
@@ -67,7 +67,7 @@
         android:drawableLeft="@drawable/lock2"
         android:hint="Create password"
         android:textColor="@color/white"
-        android:textColorHint="@color/white"
+        android:textColorHint="@color/whiteHint"
         android:textSize="20dp"/>
 
     <EditText
@@ -83,7 +83,7 @@
         android:drawableLeft="@drawable/lock2"
         android:hint="Repeat password"
         android:textColor="@color/white"
-        android:textColorHint="@color/white"
+        android:textColorHint="@color/whiteHint"
         android:textSize="20dp"/>
 
     <Button

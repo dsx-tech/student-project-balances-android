@@ -95,13 +95,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
         val loginButton :Button = findViewById(R.id.loginButton)
+        
         loginButton.setOnClickListener{
-
             val username :EditText = findViewById(R.id.userName)
             val passwordActual:EditText = findViewById(R.id.password)
-
-
-
             mainViewModel.auth(LoginBody(username.text.toString(), passwordActual.text.toString()))
 
         }
