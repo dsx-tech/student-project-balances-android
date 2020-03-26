@@ -23,7 +23,7 @@
             android:orientation="horizontal">
 
             <Spinner
-                android:id="@+id/incomeCur"
+                android:id="@+id/balanceCur"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -31,7 +31,7 @@
             </Spinner>
 
             <TextView
-                android:id="@+id/incomeDateFrom"
+                android:id="@+id/curDateFrom"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -40,7 +40,7 @@
                 android:text="Date from">
             </TextView>
             <TextView
-                android:id="@+id/incomeDateTo"
+                android:id="@+id/curDateTo"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -52,7 +52,7 @@
 
 
             <Button
-                android:id="@+id/income_graph_draw"
+                android:id="@+id/cur_balance_graph_draw"
                 android:layout_weight="1"
                 android:layout_width="match_parent"
                 android:text="Go"

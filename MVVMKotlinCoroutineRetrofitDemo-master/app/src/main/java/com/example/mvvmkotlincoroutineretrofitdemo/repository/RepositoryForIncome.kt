@@ -17,12 +17,12 @@ import java.time.format.DateTimeFormatter
 import kotlin.collections.ArrayList
 
 class RepositoryForIncome {
-    private val rateApi = RetrofitManager.rateApi
-    var ratesIncomeSuccessLiveData = MutableLiveData<MutableMap<String, MutableList<Rate>>>()
-    var ratesIncomeFailureLiveData = MutableLiveData<Boolean>()
-    var resultIncomeLiveData = MutableLiveData<Pair<ArrayList<String>, ArrayList<BigDecimal>>>()
-    var time1: Long? = null
-    var time2: Long? = null
+        private val rateApi = RetrofitManager.rateApi
+        var ratesIncomeSuccessLiveData = MutableLiveData<MutableMap<String, MutableList<Rate>>>()
+        var ratesIncomeFailureLiveData = MutableLiveData<Boolean>()
+        var resultIncomeLiveData = MutableLiveData<Pair<ArrayList<String>, ArrayList<BigDecimal>>>()
+        var time1: Long? = null
+        var time2: Long? = null
 
 
     private val mainRepository = MainRepository()
@@ -95,7 +95,7 @@ class RepositoryForIncome {
                     }
                 }
                 rates.add(income)
-                dates.add(formatter.format(time1!! * 1000 + DAY_IN_SEC * 1000 * i))
+                dates.add(formatter.format((time1!! + DAY_IN_SEC * i) * 1000))
             }
         }
         resultIncomeLiveData.postValue(Pair(dates, rates))

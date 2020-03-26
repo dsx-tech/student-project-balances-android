@@ -8,6 +8,7 @@ import com.example.mvvmkotlincoroutineretrofitdemo.model.Trade
 import com.example.mvvmkotlincoroutineretrofitdemo.model.Transaction
 import com.example.mvvmkotlincoroutineretrofitdemo.repository.*
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 class MainViewModel : ViewModel() {
 
@@ -18,6 +19,7 @@ class MainViewModel : ViewModel() {
     private val repositoryForAuth = RepositoryForAuth()
     private val repositoryForRegistration = RepositoryForRegistration()
     private val repositoryForIncome = RepositoryForIncome()
+    private val repositoryForCurBalance = RepositoryForCurBalance()
 
 
     var authSuccessLiveData = repositoryForAuth.authSuccessLiveData
@@ -45,6 +47,10 @@ class MainViewModel : ViewModel() {
     var ratesIncomeSuccessLiveData = repositoryForIncome.ratesIncomeSuccessLiveData
     var ratesIncomeFailureLiveData = repositoryForIncome.ratesIncomeFailureLiveData
     var resultIncomeLiveData = repositoryForIncome.resultIncomeLiveData
+
+    var ratesCurSuccessLiveData = repositoryForCurBalance.ratesCurSuccessLiveData
+    var ratesCurFailureLiveData = repositoryForCurBalance.ratesCurFailureLiveData
+    var resultCurLiveData = repositoryForCurBalance.resultCurLiveData
 
     fun auth(login:LoginBody){
         viewModelScope.launch { repositoryForAuth.auth(login) }
@@ -100,6 +106,13 @@ class MainViewModel : ViewModel() {
     fun getRatesForIncome(currency: String, timeFrom: String, timeTo: String){
         viewModelScope.launch { repositoryForIncome.getRatesForIncome(currency, timeFrom, timeTo) }
     }
+    fun getRatesForCurBalance(currency: String, timeFrom: String, timeTo: String){
+        viewModelScope.launch { repositoryForCurBalance.getRatesForCurBalance(currency, timeFrom, timeTo) }
+    }
+    fun modelingSeriesForRateInPortfolio(allTrades: MutableList<Trade>?, allTransactions: MutableList<Transaction>?, currency: String){
+        viewModelScope.launch { repositoryForCurBalance.modelingSeriesForRateInPortfolio(allTrades, allTransactions,  currency) }
+    }
+
 
 
 

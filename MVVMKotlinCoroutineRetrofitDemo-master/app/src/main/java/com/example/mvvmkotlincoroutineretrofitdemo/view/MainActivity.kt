@@ -43,11 +43,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var ratesChartAdapter: RatesChartAdapter
     private lateinit var columnChartAdapter: ColumnChartAdapter
     private lateinit var incomeChartAdapter: IncomeChartAdapter
+    private lateinit var curBalanceChartAdapter: CurBalanceChartAdapter
 
     private var aaChartView: AAChartView? = null
-    private var aaChartView2: AAChartView? = null
-    private var aaChartView3: AAChartView? = null
-    private var aaChartView4: AAChartView? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,6 +59,7 @@ class MainActivity : AppCompatActivity() {
         ratesChartAdapter = RatesChartAdapter()
         columnChartAdapter = ColumnChartAdapter()
         incomeChartAdapter = IncomeChartAdapter()
+        curBalanceChartAdapter = CurBalanceChartAdapter()
         registerObservers()
         loginSetup()
 
@@ -177,7 +176,7 @@ class MainActivity : AppCompatActivity() {
                 val toolbar:Toolbar= findViewById(R.id.toolBar)
                 toolbar.setTitleTextColor(getColor(R.color.white))
                 setSupportActionBar(toolbar)
-                aaChartView = findViewById(R.id.AAChartView3)
+                aaChartView = findViewById(R.id.AAChartView)
                 val button: Button = findViewById(R.id.rate_column_graph)
                 val editText:EditText = findViewById(R.id.year)
                 button.setOnClickListener {
@@ -196,7 +195,7 @@ class MainActivity : AppCompatActivity() {
                 val toolbar:Toolbar= findViewById(R.id.toolBar)
                 toolbar.setTitleTextColor(getColor(R.color.white))
                 setSupportActionBar(toolbar)
-                aaChartView4 = findViewById(R.id.AAChartView4)
+                aaChartView = findViewById(R.id.AAChartView)
                 val button: Button = findViewById(R.id.income_graph_draw)
                 val spinner: Spinner = findViewById(R.id.incomeCur)
                 val adapter = ArrayAdapter(this,
@@ -259,6 +258,69 @@ class MainActivity : AppCompatActivity() {
                 }
                 true
             }
+            R.id.menu5 ->{
+                setContentView(R.layout.activity_curr_in_portfolio)
+                val toolbar:Toolbar= findViewById(R.id.toolBar)
+                toolbar.setTitleTextColor(getColor(R.color.white))
+                setSupportActionBar(toolbar)
+                aaChartView = findViewById(R.id.AAChartView)
+                val button: Button = findViewById(R.id.cur_balance_graph_draw)
+                val spinner: Spinner = findViewById(R.id.balanceCur)
+                val adapter = ArrayAdapter(this,
+                    android.R.layout.simple_spinner_item, mainViewModel.balancesAtTheEnd.value?.keys!!.toList())
+                spinner.adapter = adapter
+                spinner.onItemSelectedListener  = object : AdapterView.OnItemSelectedListener{
+                    override fun onItemSelected(
+                        parent: AdapterView<*>?,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                    ) {
+                        (parent?.getChildAt(0) as TextView).setTextColor(Color.WHITE)
+                    }
+                    override fun onNothingSelected(parent: AdapterView<*>?) {
+
+                    }
+                }
+                val textDateFrom: TextView  = findViewById(R.id.curDateFrom)
+                val textDateTo: TextView = findViewById(R.id.curDateTo)
+                textDateFrom.text = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
+                textDateTo.text = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
+                val cal = Calendar.getInstance()
+                val myFormat = "dd.MM.yyyy"
+                val dateSetListenerFrom = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+                    cal.set(Calendar.YEAR, year)
+                    cal.set(Calendar.MONTH, monthOfYear)
+                    cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+
+                    val sdf = SimpleDateFormat(myFormat, Locale.US)
+                    textDateFrom.text = sdf.format(cal.time)}
+                textDateFrom.setOnClickListener {
+                    DatePickerDialog(this, dateSetListenerFrom,
+                        cal.get(Calendar.YEAR),
+                        cal.get(Calendar.MONTH),
+                        cal.get(Calendar.DAY_OF_MONTH)).show()
+                }
+
+                val dateSetListenerTo = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+                    cal.set(Calendar.YEAR, year)
+                    cal.set(Calendar.MONTH, monthOfYear)
+                    cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+                    val sdf = SimpleDateFormat(myFormat, Locale.US)
+                    textDateTo.text = sdf.format(cal.time)}
+                textDateTo.setOnClickListener {
+                    DatePickerDialog(this, dateSetListenerTo,
+                        cal.get(Calendar.YEAR),
+                        cal.get(Calendar.MONTH),
+                        cal.get(Calendar.DAY_OF_MONTH)).show()
+                }
+                button.setOnClickListener{
+                    mainViewModel.getRatesForCurBalance(spinner.selectedItem.toString(), textDateFrom.text.toString(), textDateTo.text.toString())
+                }
+                true
+            }
             else -> false
         }
 
@@ -267,7 +329,7 @@ class MainActivity : AppCompatActivity() {
     private fun registerObservers() {
 
         mainViewModel.rateSuccessLiveData.observe(this, Observer { rates ->
-            aaChartView2 = findViewById(R.id.AAChartView2)
+            aaChartView = findViewById(R.id.AAChartView)
             //if it is not null then we will display all users
             rates?.let {
                 rateAdapter.setRates(it)
@@ -276,7 +338,7 @@ class MainActivity : AppCompatActivity() {
             val cur2: AutoCompleteTextView = findViewById(R.id.autoCoCur2)
             ratesChartAdapter.setRatesChart(
                 mainViewModel.rateSuccessLiveData.value!!,
-                aaChartView2,
+                aaChartView,
                 cur1.text.toString(),
                 cur2.text.toString()
             )
@@ -344,8 +406,8 @@ class MainActivity : AppCompatActivity() {
         )
         mainViewModel.columnGraphData.observe(this, Observer {
             val k = findViewById<EditText>(R.id.year)
-            aaChartView3 = findViewById(R.id.AAChartView3)
-            columnChartAdapter.setColumnChart(aaChartView3, it, k.text.toString().toInt())
+            aaChartView = findViewById(R.id.AAChartView)
+            columnChartAdapter.setColumnChart(aaChartView, it, k.text.toString().toInt())
         })
         mainViewModel.yearBalanceLiveData.observe(this, Observer {
             mainViewModel.getStringWithInstrumentsForColumn(it[12].keys.toMutableList())
@@ -369,7 +431,15 @@ class MainActivity : AppCompatActivity() {
         }
         )
         mainViewModel.resultIncomeLiveData.observe(this, Observer {
-           incomeChartAdapter.setIncomeChart(aaChartView4, it.first, it.second)
+           incomeChartAdapter.setIncomeChart(aaChartView, it.first, it.second)
+        }
+        )
+        mainViewModel.ratesCurSuccessLiveData.observe(this, Observer {
+           mainViewModel.modelingSeriesForRateInPortfolio(mainViewModel.tradesSuccessLiveData.value, mainViewModel.transSuccessLiveData.value, it.keys.first())
+        }
+        )
+        mainViewModel.resultCurLiveData.observe(this, Observer {
+          curBalanceChartAdapter.setCurBalanceChart(aaChartView, it.first, it.second)
         }
         )
     }
