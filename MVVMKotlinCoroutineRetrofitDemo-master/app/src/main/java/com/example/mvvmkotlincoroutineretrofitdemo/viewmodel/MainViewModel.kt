@@ -8,7 +8,6 @@ import com.example.mvvmkotlincoroutineretrofitdemo.model.Trade
 import com.example.mvvmkotlincoroutineretrofitdemo.model.Transaction
 import com.example.mvvmkotlincoroutineretrofitdemo.repository.*
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
 
 class MainViewModel : ViewModel() {
 
@@ -20,18 +19,16 @@ class MainViewModel : ViewModel() {
     private val repositoryForRegistration = RepositoryForRegistration()
     private val repositoryForIncome = RepositoryForIncome()
     private val repositoryForCurBalance = RepositoryForCurBalance()
+    private val repositoryForPortfolios = RepositoryForPortfolios()
+
 
 
     var authSuccessLiveData = repositoryForAuth.authSuccessLiveData
-    var authFailureLiveData = repositoryForAuth.authFailureLiveData
     var stringWithInstruments = repositoryForPieGraph.stringWithInstruments
     var stringWithInstruments2 = repositoryForColumnGraph.stringWithInstruments
     var relevantRatesSuccessLiveData = repositoryForPieGraph.relevantRatesSuccessLiveData
-    var relevantRatesFailureLiveData = repositoryForPieGraph.relevantRatesFailureLiveData
     val rateSuccessLiveData = repositoryForRates.rateSuccessLiveData
-    val rateFailureLiveData = repositoryForRates.rateFailureLiveData
     var registerSuccessLiveData = repositoryForRegistration.registerSuccessLiveData
-    var registerFailureLiveData = repositoryForRegistration.registerFailureLiveData
 
     val transSuccessLiveData = mainRepository.transSuccessLiveData
     val transFailureLiveData = mainRepository.transFailureLiveData
@@ -45,12 +42,13 @@ class MainViewModel : ViewModel() {
     val yearBalanceLiveData = repositoryForColumnGraph.yearBalanceLiveData
 
     var ratesIncomeSuccessLiveData = repositoryForIncome.ratesIncomeSuccessLiveData
-    var ratesIncomeFailureLiveData = repositoryForIncome.ratesIncomeFailureLiveData
     var resultIncomeLiveData = repositoryForIncome.resultIncomeLiveData
 
     var ratesCurSuccessLiveData = repositoryForCurBalance.ratesCurSuccessLiveData
-    var ratesCurFailureLiveData = repositoryForCurBalance.ratesCurFailureLiveData
     var resultCurLiveData = repositoryForCurBalance.resultCurLiveData
+
+    var portfolioSuccessLiveData = repositoryForPortfolios.portfolioSuccessLiveData
+
 
     fun auth(login:LoginBody){
         viewModelScope.launch { repositoryForAuth.auth(login) }
@@ -112,7 +110,9 @@ class MainViewModel : ViewModel() {
     fun modelingSeriesForRateInPortfolio(allTrades: MutableList<Trade>?, allTransactions: MutableList<Transaction>?, currency: String){
         viewModelScope.launch { repositoryForCurBalance.modelingSeriesForRateInPortfolio(allTrades, allTransactions,  currency) }
     }
-
+    fun getPortfolios(token:String){
+        viewModelScope.launch { repositoryForPortfolios.getPortfolios(token) }
+    }
 
 
 

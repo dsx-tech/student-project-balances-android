@@ -2,7 +2,6 @@ package com.example.mvvmkotlincoroutineretrofitdemo.interfaces
 
 import com.example.mvvmkotlincoroutineretrofitdemo.model.*
 import kotlinx.coroutines.Deferred
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -22,5 +21,8 @@ interface ApiService {
     @Headers("Content-Type: application/json")
     @POST("/bcv/auth/register")
     fun register(@Body reg: RegisterBody) : Deferred<Response<RegisterResponse>>
+    @Headers("Content-Type: application/json")
+    @GET("/bcv/portfolios")
+    fun getPortfolios(@Header("Authorization") token: String) : Deferred<Response<MutableList<Portfolio>>>
 }
 

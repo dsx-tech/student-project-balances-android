@@ -13,12 +13,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.aachartmodel.aainfographics.AAInfographicsLib.AAChartConfiger.AAChartView
 import com.example.mvvmkotlincoroutineretrofitdemo.R
 import com.example.mvvmkotlincoroutineretrofitdemo.viewmodel.MainViewModel
 import com.example.mvvmkotlincoroutineretrofitdemo.constants.Days
 import com.example.mvvmkotlincoroutineretrofitdemo.constants.Currencies
 import com.example.mvvmkotlincoroutineretrofitdemo.model.LoginBody
+import com.example.mvvmkotlincoroutineretrofitdemo.model.Portfolio
 import com.example.mvvmkotlincoroutineretrofitdemo.model.RegisterBody
 import java.text.SimpleDateFormat
 import java.util.*
@@ -44,6 +47,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var columnChartAdapter: ColumnChartAdapter
     private lateinit var incomeChartAdapter: IncomeChartAdapter
     private lateinit var curBalanceChartAdapter: CurBalanceChartAdapter
+    private lateinit var rvPortfolioAdapter: RVPortfolioAdapter
 
     private var aaChartView: AAChartView? = null
 
@@ -51,17 +55,22 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-        mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
-        rateAdapter = RateAdapter()
-        transAdapter = TransAdapter()
-        tradesAdapter = TradesAdapter()
-        chartAdapter = ChartAdapter()
-        ratesChartAdapter = RatesChartAdapter()
-        columnChartAdapter = ColumnChartAdapter()
-        incomeChartAdapter = IncomeChartAdapter()
-        curBalanceChartAdapter = CurBalanceChartAdapter()
-        registerObservers()
-        loginSetup()
+        setContentView(R.layout.activity_portfolios)
+
+         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+         rateAdapter = RateAdapter()
+         transAdapter = TransAdapter()
+         tradesAdapter = TradesAdapter()
+         chartAdapter = ChartAdapter()
+         ratesChartAdapter = RatesChartAdapter()
+         columnChartAdapter = ColumnChartAdapter()
+         incomeChartAdapter = IncomeChartAdapter()
+         curBalanceChartAdapter = CurBalanceChartAdapter()
+         rvPortfolioAdapter = RVPortfolioAdapter()
+
+
+         registerObservers()
+         loginSetup()
 
 
     }
@@ -103,12 +112,24 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun setPortfolios(){
+
+        setContentView(R.layout.activity_portfolios)
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        recyclerView.adapter = rvPortfolioAdapter
+    }
     private fun completedAuth(){
+
+        mainViewModel.getPortfolios(mainViewModel.authSuccessLiveData.value!!)
+
+    }
+    private fun showGraphs(){
         setContentView(R.layout.activity_main)
-        aaChartView = findViewById(R.id.AAChartView)
         val toolbar:Toolbar= findViewById(R.id.toolBar)
         toolbar.setTitleTextColor(getColor(R.color.white))
         setSupportActionBar(toolbar)
+        aaChartView = findViewById(R.id.AAChartView)
         mainViewModel.getTrades(mainViewModel.authSuccessLiveData.value!!)
         mainViewModel.getTrans(mainViewModel.authSuccessLiveData.value!!)
     }
@@ -440,6 +461,16 @@ class MainActivity : AppCompatActivity() {
         )
         mainViewModel.resultCurLiveData.observe(this, Observer {
           curBalanceChartAdapter.setCurBalanceChart(aaChartView, it.first, it.second)
+        }
+        )
+        mainViewModel.portfolioSuccessLiveData.observe(this, Observer {
+            rvPortfolioAdapter.setPortfolios(it)
+            setPortfolios()
+
+        }
+        )
+        rvPortfolioAdapter.selectedPortfolioLiveData.observe(this, Observer {
+            showGraphs()
         }
         )
     }

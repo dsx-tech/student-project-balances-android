@@ -14,7 +14,6 @@ class TradesAdapter {
         tradeList.addAll(rates)
         tradesDownloaded.postValue(true)
 
-
     }
 
 
