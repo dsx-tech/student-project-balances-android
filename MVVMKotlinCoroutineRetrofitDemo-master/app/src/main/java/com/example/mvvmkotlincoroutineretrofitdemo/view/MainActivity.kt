@@ -24,7 +24,8 @@ import com.example.mvvmkotlincoroutineretrofitdemo.model.LoginBody
 import java.text.SimpleDateFormat
 import java.util.*
 import android.content.Intent
-
+import com.anychart.AnyChart
+import com.github.mikephil.charting.charts.PieChart
 
 
 class MainActivity : AppCompatActivity() {
@@ -51,6 +52,8 @@ class MainActivity : AppCompatActivity() {
 
 
     private var aaChartView: AAChartView? = null
+    private var chart: PieChart? = null
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -113,7 +116,8 @@ class MainActivity : AppCompatActivity() {
         val toolbar:Toolbar= findViewById(R.id.toolBar)
         toolbar.setTitleTextColor(getColor(R.color.white))
         setSupportActionBar(toolbar)
-        aaChartView = findViewById(R.id.AAChartView)
+      //  aaChartView = findViewById(R.id.AAChartView)
+        chart = findViewById(R.id.chart)
         mainViewModel.getTrades(mainViewModel.authSuccessLiveData.value!!)
         mainViewModel.getTrans(mainViewModel.authSuccessLiveData.value!!)
     }
@@ -126,7 +130,7 @@ class MainActivity : AppCompatActivity() {
                 val toolbar:Toolbar= findViewById(R.id.toolBar)
                 toolbar.setTitleTextColor(getColor(R.color.white))
                 setSupportActionBar(toolbar)
-                aaChartView = findViewById(R.id.AAChartView)
+              //  aaChartView = findViewById(R.id.AAChartView)
                 if (!mainViewModel.balancesAtTheEnd.value.isNullOrEmpty())
                     mainViewModel.getStringWithInstruments()
                 else {
@@ -407,7 +411,7 @@ class MainActivity : AppCompatActivity() {
 
         mainViewModel.balancesMultRates.observe(this, Observer {
 
-            chartAdapter.setPieChart(it, aaChartView)
+            chartAdapter.setChart(it, chart!!)
         }
         )
         mainViewModel.columnGraphData.observe(this, Observer {

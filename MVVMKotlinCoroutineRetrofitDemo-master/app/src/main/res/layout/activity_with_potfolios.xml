@@ -4,6 +4,8 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="16dp"
+    app:cardElevation="16dp"
+    app:cardBackgroundColor="@color/colorBackground2"
     android:layout_margin="5dp">
 
     <LinearLayout
@@ -15,11 +17,13 @@
         <TextView
             android:id="@+id/tvName"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"/>
 
         <TextView
             android:id="@+id/tvCount"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"/>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

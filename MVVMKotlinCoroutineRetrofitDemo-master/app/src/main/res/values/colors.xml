@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorBackground">#1D122C</color>
+    <color name="colorBackground2">#4F562994</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#414171B8</color>
     <color name="colorText">#C9FFFFFF</color>
     <color name="white">#FFFFFF</color>
     <color name="whiteHint">#4BFFFFFF</color>
+    <color name="Chart1">#8BC34A</color>
+    <color name="Chart2">#9C27B0</color>
+    <color name="Chart3">#3F51B5</color>
+    <color name="Chart4">#FF5722</color>
+    <color name="Chart5">#FFC107</color>
+
 
 </resources>

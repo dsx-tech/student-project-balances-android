@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_weight="3"
     android:background="@color/colorBackground"
     tools:context=".view.MainActivity">
 
@@ -17,14 +18,19 @@
             android:id="@+id/toolBar" />
 
 
-<com.aachartmodel.aainfographics.AAInfographicsLib.AAChartConfiger.AAChartView
+<!--<com.aachartmodel.aainfographics.AAInfographicsLib.AAChartConfiger.AAChartView
     android:id="@+id/AAChartView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
     android:layout_weight="50">
 
-</com.aachartmodel.aainfographics.AAInfographicsLib.AAChartConfiger.AAChartView>
+</com.aachartmodel.aainfographics.AAInfographicsLib.AAChartConfiger.AAChartView> -->
+
+<com.github.mikephil.charting.charts.PieChart
+    android:id="@+id/chart"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

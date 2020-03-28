@@ -1,10 +1,24 @@
 package com.example.mvvmkotlincoroutineretrofitdemo.view
 
 
+import android.content.Context
+import android.graphics.Color
+import android.graphics.DashPathEffect
+import android.graphics.Typeface
 import com.aachartmodel.aainfographics.AAInfographicsLib.AAChartConfiger.*
+import com.anychart.AnyChart
 import com.example.mvvmkotlincoroutineretrofitdemo.R
 import java.math.BigDecimal
 import com.example.mvvmkotlincoroutineretrofitdemo.constants.Colors
+import com.github.mikephil.charting.charts.PieChart
+import com.github.mikephil.charting.components.Legend
+import com.github.mikephil.charting.components.YAxis
+import com.github.mikephil.charting.data.PieData
+import com.github.mikephil.charting.data.PieDataSet
+import com.github.mikephil.charting.data.PieEntry
+import com.github.mikephil.charting.utils.ColorTemplate
+import com.github.mikephil.charting.utils.MPPointF
+import kotlin.math.abs
 
 class ChartAdapter  {
 
@@ -76,7 +90,44 @@ class ChartAdapter  {
 
     }
 
+    fun setChart(dataLiveData: MutableMap<String, BigDecimal?>, chart: PieChart) {
+        val resultF: ArrayList<Any> = arrayListOf()
+        val categories: MutableList<String> = ArrayList()
+        val data : ArrayList<BigDecimal?> = arrayListOf()
+        data.addAll(dataLiveData.values)
+        categories.addAll(dataLiveData.keys)
 
+        var entries:MutableList<PieEntry> = arrayListOf()
+        var sum = 0F
+        for (key in dataLiveData.keys){
+            if (dataLiveData[key]!!.toFloat() > 0){
+            entries.add(PieEntry(dataLiveData[key]!!.toFloat(), key))
+            sum +=dataLiveData[key]!!.toFloat()
+            }
+        }
+        var set = PieDataSet(entries, "Hello")
+        set.valueTextSize = 10f
+        set.sliceSpace = 5f
+        set.formSize = 10f
+        set.form = Legend.LegendForm.CIRCLE
+
+        set.setColors(ColorTemplate.VORDIPLOM_COLORS, 190)
+        var dat = PieData(set)
+        chart.data = dat
+        chart.setHoleColor(R.color.colorBackground)
+        chart.centerText = "$:$sum"
+        chart.legend.isEnabled = false
+        chart.setEntryLabelTextSize(15f)
+        chart.setCenterTextColor(Color.WHITE)
+        chart.setCenterTextTypeface(Typeface.DEFAULT_BOLD)
+        chart.setCenterTextSize(20f)
+        chart.invalidate()
+
+
+
+
+
+    }
 
 
 }
