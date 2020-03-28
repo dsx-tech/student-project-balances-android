@@ -94,6 +94,14 @@
 
         android:layout_centerHorizontal="true"
         android:text="Create account"/>
+    <TextView
+        android:id="@+id/backToLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/regButton"
+        android:layout_centerHorizontal="true"
+        android:text="Back to login"
+        android:textColor="@color/white" />
 
 
 </RelativeLayout>

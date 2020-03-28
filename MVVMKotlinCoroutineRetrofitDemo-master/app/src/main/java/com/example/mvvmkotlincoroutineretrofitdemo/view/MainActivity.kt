@@ -21,10 +21,10 @@ import com.example.mvvmkotlincoroutineretrofitdemo.viewmodel.MainViewModel
 import com.example.mvvmkotlincoroutineretrofitdemo.constants.Days
 import com.example.mvvmkotlincoroutineretrofitdemo.constants.Currencies
 import com.example.mvvmkotlincoroutineretrofitdemo.model.LoginBody
-import com.example.mvvmkotlincoroutineretrofitdemo.model.Portfolio
-import com.example.mvvmkotlincoroutineretrofitdemo.model.RegisterBody
 import java.text.SimpleDateFormat
 import java.util.*
+import android.content.Intent
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -49,6 +49,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var curBalanceChartAdapter: CurBalanceChartAdapter
     private lateinit var rvPortfolioAdapter: RVPortfolioAdapter
 
+
     private var aaChartView: AAChartView? = null
 
 
@@ -68,7 +69,6 @@ class MainActivity : AppCompatActivity() {
          curBalanceChartAdapter = CurBalanceChartAdapter()
          rvPortfolioAdapter = RVPortfolioAdapter()
 
-
          registerObservers()
          loginSetup()
 
@@ -83,24 +83,8 @@ class MainActivity : AppCompatActivity() {
             hideKeyboardFrom(this, it)
         }
         register.setOnClickListener{
-            setContentView(R.layout.register_activity)
-            val email:EditText = findViewById(R.id.emailReg)
-            val usernameReg:EditText = findViewById(R.id.usernameReg)
-            val password:EditText = findViewById(R.id.passwordReg)
-            val passwordRepeat:EditText = findViewById(R.id.passwordReg2)
-            val backReg : RelativeLayout = findViewById(R.id.backReg)
-            backReg.setOnClickListener {
-                hideKeyboardFrom(this, it)
-            }
-            val createAccount:Button = findViewById(R.id.regButton)
-            createAccount.setOnClickListener {
-                if ((password.text.toString() == passwordRepeat.text.toString())
-                    and (password.text.toString() !="")
-                    and (email.text.toString() !="")
-                    and (usernameReg.text.toString() !="")){
-                    mainViewModel.register(RegisterBody(email.text.toString(), usernameReg.text.toString(), password.text.toString()))
-                }
-            }
+
+            startActivity(Intent(this@MainActivity, RegisterView()::class.java))
         }
         val loginButton :Button = findViewById(R.id.loginButton)
         
@@ -277,6 +261,7 @@ class MainActivity : AppCompatActivity() {
                 button.setOnClickListener{
                     mainViewModel.getRatesForIncome(spinner.selectedItem.toString(), textDateFrom.text.toString(), textDateTo.text.toString())
                 }
+                    // startActivity(Intent(this@MainActivity, IncomeView(mainViewModel.balancesAtTheEnd.value?.keys!!)::class.java))
                 true
             }
             R.id.menu5 ->{
@@ -440,10 +425,6 @@ class MainActivity : AppCompatActivity() {
 
         mainViewModel.authSuccessLiveData.observe(this, Observer {
             completedAuth()
-        }
-        )
-        mainViewModel.registerSuccessLiveData.observe(this, Observer {
-            loginSetup()
         }
         )
 

@@ -13,7 +13,6 @@ class RepositoryForAuth {
     suspend fun auth(loginBody: LoginBody) {
         try {
 
-
             val response = transTradesApi.auth(loginBody).await()
 
             Log.d(MainRepository.TAG, "$response")
@@ -43,6 +42,5 @@ class RepositoryForAuth {
         }
 
     }
-
 
 }
