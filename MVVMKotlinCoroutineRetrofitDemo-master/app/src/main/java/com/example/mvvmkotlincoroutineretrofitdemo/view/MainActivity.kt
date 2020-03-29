@@ -24,6 +24,7 @@ import com.example.mvvmkotlincoroutineretrofitdemo.model.LoginBody
 import java.text.SimpleDateFormat
 import java.util.*
 import android.content.Intent
+import android.content.SharedPreferences
 import com.anychart.AnyChart
 import com.github.mikephil.charting.charts.PieChart
 
@@ -38,7 +39,9 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-
+    val APP_PREFERENCES = "mysettings"
+    val APP_PREFERENCES_TOKEN = "token"
+    lateinit var pref: SharedPreferences
     private lateinit var mainViewModel: MainViewModel
     private lateinit var rateAdapter: RateAdapter
     private lateinit var transAdapter: TransAdapter
@@ -59,6 +62,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
+        pref = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE)
         setContentView(R.layout.activity_portfolios)
 
          mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
@@ -78,6 +82,13 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    override fun onStop() {
+        super.onStop()
+
+        val editor = pref.edit()
+        editor.clear()
+        editor.apply()
+    }
     private fun loginSetup(){
         setContentView(R.layout.login_activity)
         val register:TextView = findViewById(R.id.register)
@@ -108,7 +119,11 @@ class MainActivity : AppCompatActivity() {
     }
     private fun completedAuth(){
 
-        mainViewModel.getPortfolios(mainViewModel.authSuccessLiveData.value!!)
+        var token :String? = null
+        if (pref.contains(APP_PREFERENCES_TOKEN)) {
+            token  = pref.getString(APP_PREFERENCES_TOKEN, "-");
+        }
+        mainViewModel.getPortfolios(token!!)
 
     }
     private fun showGraphs(){
@@ -118,8 +133,12 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
       //  aaChartView = findViewById(R.id.AAChartView)
         chart = findViewById(R.id.chart)
-        mainViewModel.getTrades(mainViewModel.authSuccessLiveData.value!!)
-        mainViewModel.getTrans(mainViewModel.authSuccessLiveData.value!!)
+        var token :String? = null
+        if (pref.contains(APP_PREFERENCES_TOKEN)) {
+            token  = pref.getString(APP_PREFERENCES_TOKEN, "-");
+        }
+        mainViewModel.getTrades(token!!)
+        mainViewModel.getTrans(token!!)
     }
     @SuppressLint("ClickableViewAccessibility")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -134,8 +153,12 @@ class MainActivity : AppCompatActivity() {
                 if (!mainViewModel.balancesAtTheEnd.value.isNullOrEmpty())
                     mainViewModel.getStringWithInstruments()
                 else {
-                    mainViewModel.getTrades(mainViewModel.authSuccessLiveData.value!!)
-                    mainViewModel.getTrans(mainViewModel.authSuccessLiveData.value!!)
+                    var token :String? = null
+                    if (pref.contains(APP_PREFERENCES_TOKEN)) {
+                        token  = pref.getString(APP_PREFERENCES_TOKEN, "-");
+                    }
+                    mainViewModel.getTrades(token!!)
+                    mainViewModel.getTrans(token!!)
                 }
                 true
             }
@@ -428,7 +451,11 @@ class MainActivity : AppCompatActivity() {
         })
 
         mainViewModel.authSuccessLiveData.observe(this, Observer {
+            val editor = pref.edit()
+            editor.putString(APP_PREFERENCES_TOKEN, it)
+            editor.apply()
             completedAuth()
+
         }
         )
 

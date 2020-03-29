@@ -91,12 +91,6 @@ class ChartAdapter  {
     }
 
     fun setChart(dataLiveData: MutableMap<String, BigDecimal?>, chart: PieChart) {
-        val resultF: ArrayList<Any> = arrayListOf()
-        val categories: MutableList<String> = ArrayList()
-        val data : ArrayList<BigDecimal?> = arrayListOf()
-        data.addAll(dataLiveData.values)
-        categories.addAll(dataLiveData.keys)
-
         var entries:MutableList<PieEntry> = arrayListOf()
         var sum = 0F
         for (key in dataLiveData.keys){
