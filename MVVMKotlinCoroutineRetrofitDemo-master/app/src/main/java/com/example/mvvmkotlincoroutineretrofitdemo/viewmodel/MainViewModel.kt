@@ -1,11 +1,9 @@
 package com.example.mvvmkotlincoroutineretrofitdemo.viewmodel
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mvvmkotlincoroutineretrofitdemo.model.LoginBody
-import com.example.mvvmkotlincoroutineretrofitdemo.model.RegisterBody
-import com.example.mvvmkotlincoroutineretrofitdemo.model.Trade
-import com.example.mvvmkotlincoroutineretrofitdemo.model.Transaction
+import com.example.mvvmkotlincoroutineretrofitdemo.model.*
 import com.example.mvvmkotlincoroutineretrofitdemo.repository.*
 import kotlinx.coroutines.launch
 
@@ -20,10 +18,12 @@ class MainViewModel : ViewModel() {
     private val repositoryForIncome = RepositoryForIncome()
     private val repositoryForCurBalance = RepositoryForCurBalance()
     private val repositoryForPortfolios = RepositoryForPortfolios()
+    private val repositoryForRelativeRates = RepositoryForRelativeRates()
 
 
 
     var authSuccessLiveData = repositoryForAuth.authSuccessLiveData
+    val authFailureLiveData = repositoryForAuth.authFailureLiveData
     var stringWithInstruments = repositoryForPieGraph.stringWithInstruments
     var stringWithInstruments2 = repositoryForColumnGraph.stringWithInstruments
     var relevantRatesSuccessLiveData = repositoryForPieGraph.relevantRatesSuccessLiveData
@@ -48,6 +48,9 @@ class MainViewModel : ViewModel() {
     var resultCurLiveData = repositoryForCurBalance.resultCurLiveData
 
     var portfolioSuccessLiveData = repositoryForPortfolios.portfolioSuccessLiveData
+
+    var rateCurSuccessLiveData = repositoryForRelativeRates.rateCurSuccessLiveData
+    var rateCurFailureLiveData = repositoryForRelativeRates.rateCurFailureLiveData
 
 
     fun auth(login:LoginBody){
@@ -112,6 +115,9 @@ class MainViewModel : ViewModel() {
     }
     fun getPortfolios(token:String){
         viewModelScope.launch { repositoryForPortfolios.getPortfolios(token) }
+    }
+    fun getRatesCor(currencies: Pair<String, String>, timeFrom: Long, timeTo: Long){
+        viewModelScope.launch { repositoryForRelativeRates.getRatesForTime(currencies, timeFrom, timeTo) }
     }
 
 

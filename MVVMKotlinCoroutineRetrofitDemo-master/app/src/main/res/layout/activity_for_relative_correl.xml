@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
-    tools:context=".view.MainActivity">
-
+    tools:context=".view.MainActivity"
+    android:theme="@style/Ap2">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,24 +15,33 @@
         <include
             layout="@layout/tool_bar"
             android:id="@+id/toolBar" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="5"
             android:orientation="horizontal">
-            <EditText
-                android:id="@+id/year"
+            <AutoCompleteTextView
+                android:id="@+id/corCur1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:textColor="@color/white"
+                android:layout_weight="1"
                 android:textColorHint="@color/whiteHint"
-                android:hint="year"
-                android:layout_weight="1">
-            </EditText>
+                android:textColor="@color/white"
+                android:hint="Cur1" >
+            </AutoCompleteTextView>
+
+            <AutoCompleteTextView
+                android:id="@+id/corCur2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textColorHint="@color/whiteHint"
+                android:textColor="@color/white"
+                android:hint="Cur2" >
+            </AutoCompleteTextView>
 
             <Button
-                android:id="@+id/rate_column_graph"
+                android:id="@+id/rate_cor_graph_draw"
                 android:layout_weight="1"
                 android:layout_width="match_parent"
                 android:text="Go"
@@ -53,6 +61,7 @@
 
 
         </com.aachartmodel.aainfographics.AAInfographicsLib.AAChartConfiger.AAChartView>
+
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -27,7 +27,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:hint = "Cur">
+                android:hint = "Cur"
+                android:textColorHint="@color/whiteHint">
             </Spinner>
 
             <TextView

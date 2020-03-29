@@ -26,6 +26,7 @@ import java.util.*
 import android.content.Intent
 import android.content.SharedPreferences
 import com.anychart.AnyChart
+import com.example.mvvmkotlincoroutineretrofitdemo.repository.RepositoryForRelativeRates
 import com.github.mikephil.charting.charts.PieChart
 
 
@@ -52,6 +53,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var incomeChartAdapter: IncomeChartAdapter
     private lateinit var curBalanceChartAdapter: CurBalanceChartAdapter
     private lateinit var rvPortfolioAdapter: RVPortfolioAdapter
+    private lateinit var repositoryForRelativeRates: RepositoryForRelativeRates
 
 
     private var aaChartView: AAChartView? = null
@@ -75,6 +77,7 @@ class MainActivity : AppCompatActivity() {
          incomeChartAdapter = IncomeChartAdapter()
          curBalanceChartAdapter = CurBalanceChartAdapter()
          rvPortfolioAdapter = RVPortfolioAdapter()
+         repositoryForRelativeRates = RepositoryForRelativeRates()
 
          registerObservers()
          loginSetup()
@@ -149,7 +152,7 @@ class MainActivity : AppCompatActivity() {
                 val toolbar:Toolbar= findViewById(R.id.toolBar)
                 toolbar.setTitleTextColor(getColor(R.color.white))
                 setSupportActionBar(toolbar)
-              //  aaChartView = findViewById(R.id.AAChartView)
+                chart = findViewById(R.id.chart)
                 if (!mainViewModel.balancesAtTheEnd.value.isNullOrEmpty())
                     mainViewModel.getStringWithInstruments()
                 else {
@@ -288,7 +291,7 @@ class MainActivity : AppCompatActivity() {
                 button.setOnClickListener{
                     mainViewModel.getRatesForIncome(spinner.selectedItem.toString(), textDateFrom.text.toString(), textDateTo.text.toString())
                 }
-                    // startActivity(Intent(this@MainActivity, IncomeView(mainViewModel.balancesAtTheEnd.value?.keys!!)::class.java))
+
                 true
             }
             R.id.menu5 ->{
@@ -351,6 +354,46 @@ class MainActivity : AppCompatActivity() {
                 }
                 button.setOnClickListener{
                     mainViewModel.getRatesForCurBalance(spinner.selectedItem.toString(), textDateFrom.text.toString(), textDateTo.text.toString())
+                }
+                true
+            }
+            R.id.menu6 ->{
+                setContentView(R.layout.activity_for_relative_correl)
+                val toolbar:Toolbar= findViewById(R.id.toolBar)
+                toolbar.setTitleTextColor(getColor(R.color.white))
+                setSupportActionBar(toolbar)
+                val button: Button = findViewById(R.id.rate_cor_graph_draw)
+                val currencies1: AutoCompleteTextView = findViewById(R.id.corCur1)
+                val adapter = ArrayAdapter(
+                    this,
+                    android.R.layout.simple_list_item_1,
+                    Currencies.currenciesArray
+                )
+                currencies1.threshold = 0
+                currencies1.setAdapter(adapter)
+                currencies1.setOnFocusChangeListener { _, b -> if (b) currencies1.showDropDown() }
+
+                val currencies2: AutoCompleteTextView = findViewById(R.id.corCur2)
+                val adapter2 = ArrayAdapter(
+                    this,
+                    android.R.layout.simple_list_item_1,
+                    Currencies.currenciesArray
+                )
+                currencies2.threshold = 0
+                currencies2.setAdapter(adapter2)
+                currencies2.setOnFocusChangeListener { _, b -> if (b) currencies2.showDropDown() }
+
+
+                button.setOnClickListener {
+                    button.clearFocus()
+
+                    val timeNow = Calendar.getInstance().timeInMillis / 1000
+                    val time = timeNow - Days.MONTH_IN_SEC
+                    mainViewModel.getRatesCor(
+                        Pair(currencies1.text.toString().toLowerCase(),currencies2.text.toString().toLowerCase()),
+                        time, timeNow
+                    )
+                    hideKeyboardFrom(this, it)
                 }
                 true
             }
@@ -483,6 +526,13 @@ class MainActivity : AppCompatActivity() {
         )
         rvPortfolioAdapter.selectedPortfolioLiveData.observe(this, Observer {
             showGraphs()
+        }
+        )
+        mainViewModel.authFailureLiveData.observe(this, Observer {isFailed ->
+            isFailed?.let {
+                Toast.makeText(this, "Oops! something went wrong", Toast.LENGTH_SHORT).show()
+            }
+
         }
         )
     }
