@@ -11,12 +11,13 @@ class RelativeRatesAdapter {
     fun setRatesChart( dataLiveData:MutableMap<String, MutableList<Rate>>, aaChartView: AAChartView?) {
         val dates: ArrayList<String> = arrayListOf()
         val formatter = SimpleDateFormat("dd/MM/yyyy")
-        var minValue :BigDecimal? = null
-        var maxValue =BigDecimal("0")
+
         if (dataLiveData.values.first().size == dataLiveData.values.last().size){
         val data:MutableList<AASeriesElement> = mutableListOf()
         var flag2 = false
         for (key in dataLiveData.keys){
+            var minValue :BigDecimal? = null
+            var maxValue =BigDecimal("0")
             var flag = false
             if(key =="usd-usd"){
                 minValue = BigDecimal("0")
