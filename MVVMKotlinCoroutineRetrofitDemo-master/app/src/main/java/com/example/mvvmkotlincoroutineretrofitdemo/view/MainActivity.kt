@@ -53,6 +53,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var incomeChartAdapter: IncomeChartAdapter
     private lateinit var curBalanceChartAdapter: CurBalanceChartAdapter
     private lateinit var rvPortfolioAdapter: RVPortfolioAdapter
+    private lateinit var relativeRatesAdapter: RelativeRatesAdapter
     private lateinit var repositoryForRelativeRates: RepositoryForRelativeRates
 
 
@@ -77,6 +78,7 @@ class MainActivity : AppCompatActivity() {
          incomeChartAdapter = IncomeChartAdapter()
          curBalanceChartAdapter = CurBalanceChartAdapter()
          rvPortfolioAdapter = RVPortfolioAdapter()
+         relativeRatesAdapter = RelativeRatesAdapter()
          repositoryForRelativeRates = RepositoryForRelativeRates()
 
          registerObservers()
@@ -362,6 +364,7 @@ class MainActivity : AppCompatActivity() {
                 val toolbar:Toolbar= findViewById(R.id.toolBar)
                 toolbar.setTitleTextColor(getColor(R.color.white))
                 setSupportActionBar(toolbar)
+                aaChartView = findViewById(R.id.AAChartView)
                 val button: Button = findViewById(R.id.rate_cor_graph_draw)
                 val currencies1: AutoCompleteTextView = findViewById(R.id.corCur1)
                 val adapter = ArrayAdapter(
@@ -533,6 +536,10 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Oops! something went wrong", Toast.LENGTH_SHORT).show()
             }
 
+        }
+        )
+        mainViewModel.rateCurSuccessLiveData.observe(this, Observer {
+            relativeRatesAdapter.setRatesChart(it, aaChartView)
         }
         )
     }

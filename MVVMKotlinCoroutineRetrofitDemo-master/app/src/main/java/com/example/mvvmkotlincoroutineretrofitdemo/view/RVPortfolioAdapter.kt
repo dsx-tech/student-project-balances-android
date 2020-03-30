@@ -11,10 +11,10 @@ import com.example.mvvmkotlincoroutineretrofitdemo.model.Portfolio
 
 class RVPortfolioAdapter  : RecyclerView.Adapter<RVPortfolioAdapter.ViewHolder>() {
     val selectedPortfolioLiveData = MutableLiveData<Pair<String, Int>>()
-    val portfolioList : MutableList<Portfolio> = mutableListOf()
+    private val portfolioList : MutableList<Portfolio> = mutableListOf()
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ViewHolder {
-        val v = LayoutInflater.from(p0?.context).inflate(R.layout.activity_with_potfolios, p0, false)
+        val v = LayoutInflater.from(p0.context).inflate(R.layout.activity_with_potfolios, p0, false)
         return ViewHolder(v).listen { pos, _ ->
             selectedPortfolioLiveData.postValue(Pair(portfolioList[pos].name, portfolioList[pos].id))
 
@@ -40,7 +40,7 @@ class RVPortfolioAdapter  : RecyclerView.Adapter<RVPortfolioAdapter.ViewHolder>(
 
     fun <T : RecyclerView.ViewHolder> T.listen(event: (position: Int, type: Int) -> Unit): T {
         itemView.setOnClickListener {
-            event.invoke(getAdapterPosition(), getItemViewType())
+            event.invoke(adapterPosition, itemViewType)
         }
         return this
     }

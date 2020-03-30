@@ -12,6 +12,7 @@
     <color name="Chart3">#3F51B5</color>
     <color name="Chart4">#FF5722</color>
     <color name="Chart5">#FFC107</color>
+    <color name="Invis">#00FFC107</color>
 
 
 </resources>
