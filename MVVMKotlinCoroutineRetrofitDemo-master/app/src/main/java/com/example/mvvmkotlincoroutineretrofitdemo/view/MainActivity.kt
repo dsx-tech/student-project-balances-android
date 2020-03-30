@@ -26,6 +26,7 @@ import java.util.*
 import android.content.Intent
 import android.content.SharedPreferences
 import com.anychart.AnyChart
+import com.example.mvvmkotlincoroutineretrofitdemo.repository.RepositoryForInputOutput
 import com.example.mvvmkotlincoroutineretrofitdemo.repository.RepositoryForRelativeRates
 import com.github.mikephil.charting.charts.PieChart
 
@@ -55,6 +56,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var rvPortfolioAdapter: RVPortfolioAdapter
     private lateinit var relativeRatesAdapter: RelativeRatesAdapter
     private lateinit var repositoryForRelativeRates: RepositoryForRelativeRates
+    private lateinit var repositoryForInputOutput: RepositoryForInputOutput
+    private lateinit var inputOutputAdapter: InputOutputAdapter
 
 
     private var aaChartView: AAChartView? = null
@@ -80,6 +83,8 @@ class MainActivity : AppCompatActivity() {
          rvPortfolioAdapter = RVPortfolioAdapter()
          relativeRatesAdapter = RelativeRatesAdapter()
          repositoryForRelativeRates = RepositoryForRelativeRates()
+         repositoryForInputOutput = RepositoryForInputOutput()
+         inputOutputAdapter = InputOutputAdapter()
 
          registerObservers()
          loginSetup()
@@ -143,7 +148,7 @@ class MainActivity : AppCompatActivity() {
             token  = pref.getString(APP_PREFERENCES_TOKEN, "-");
         }
         mainViewModel.getTrades(token!!)
-        mainViewModel.getTrans(token!!)
+        mainViewModel.getTrans(token)
     }
     @SuppressLint("ClickableViewAccessibility")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -163,7 +168,7 @@ class MainActivity : AppCompatActivity() {
                         token  = pref.getString(APP_PREFERENCES_TOKEN, "-");
                     }
                     mainViewModel.getTrades(token!!)
-                    mainViewModel.getTrans(token!!)
+                    mainViewModel.getTrans(token)
                 }
                 true
             }
@@ -400,6 +405,52 @@ class MainActivity : AppCompatActivity() {
                 }
                 true
             }
+            R.id.menu7 ->{
+                setContentView(R.layout.activity_input_output)
+                val toolbar:Toolbar= findViewById(R.id.toolBar)
+                toolbar.setTitleTextColor(getColor(R.color.white))
+                setSupportActionBar(toolbar)
+                aaChartView = findViewById(R.id.AAChartView)
+                val button: Button = findViewById(R.id.input_graph_draw)
+                val textDateFrom: TextView  = findViewById(R.id.input_DateFrom)
+                val textDateTo: TextView = findViewById(R.id.input_DateTo)
+                textDateFrom.text = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
+                textDateTo.text = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
+                val cal = Calendar.getInstance()
+                val myFormat = "dd.MM.yyyy"
+                val dateSetListenerFrom = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+                    cal.set(Calendar.YEAR, year)
+                    cal.set(Calendar.MONTH, monthOfYear)
+                    cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+
+                    val sdf = SimpleDateFormat(myFormat, Locale.US)
+                    textDateFrom.text = sdf.format(cal.time)}
+                textDateFrom.setOnClickListener {
+                    DatePickerDialog(this, dateSetListenerFrom,
+                        cal.get(Calendar.YEAR),
+                        cal.get(Calendar.MONTH),
+                        cal.get(Calendar.DAY_OF_MONTH)).show()
+                }
+
+                val dateSetListenerTo = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+                    cal.set(Calendar.YEAR, year)
+                    cal.set(Calendar.MONTH, monthOfYear)
+                    cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+                    val sdf = SimpleDateFormat(myFormat, Locale.US)
+                    textDateTo.text = sdf.format(cal.time)}
+                textDateTo.setOnClickListener {
+                    DatePickerDialog(this, dateSetListenerTo,
+                        cal.get(Calendar.YEAR),
+                        cal.get(Calendar.MONTH),
+                        cal.get(Calendar.DAY_OF_MONTH)).show()
+                }
+                button.setOnClickListener{
+                    mainViewModel.filterTrans(mainViewModel.transSuccessLiveData.value!!, textDateFrom.text.toString(), textDateTo.text.toString())
+                }
+                true
+            }
             else -> false
         }
 
@@ -540,6 +591,14 @@ class MainActivity : AppCompatActivity() {
         )
         mainViewModel.rateCurSuccessLiveData.observe(this, Observer {
             relativeRatesAdapter.setRatesChart(it, aaChartView)
+        }
+        )
+        mainViewModel.valuesForInput.observe(this, Observer {
+            mainViewModel.getRatesForTimeInput(it.first, it.second.first, it.second.second)
+        }
+        )
+        mainViewModel.inOutSuccessLiveData.observe(this, Observer {
+         mainViewModel.calculationInput()
         }
         )
     }

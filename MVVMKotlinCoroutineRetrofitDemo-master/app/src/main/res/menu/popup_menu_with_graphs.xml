@@ -21,5 +21,8 @@
     <item
         android:id="@+id/menu6"
         android:title="Relative rates"/>
+    <item
+        android:id="@+id/menu7"
+        android:title="Input/Output"/>
 
 </menu>

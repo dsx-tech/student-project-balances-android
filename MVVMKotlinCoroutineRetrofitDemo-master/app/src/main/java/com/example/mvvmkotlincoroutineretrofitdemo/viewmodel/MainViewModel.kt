@@ -19,6 +19,7 @@ class MainViewModel : ViewModel() {
     private val repositoryForCurBalance = RepositoryForCurBalance()
     private val repositoryForPortfolios = RepositoryForPortfolios()
     private val repositoryForRelativeRates = RepositoryForRelativeRates()
+    private val repositoryForInputOutput = RepositoryForInputOutput()
 
 
 
@@ -52,35 +53,27 @@ class MainViewModel : ViewModel() {
     var rateCurSuccessLiveData = repositoryForRelativeRates.rateCurSuccessLiveData
     var rateCurFailureLiveData = repositoryForRelativeRates.rateCurFailureLiveData
 
+    var valuesForInput = repositoryForInputOutput.valuesForInput
+    var inOutSuccessLiveData = repositoryForInputOutput.inOutSuccessLiveData
+
 
     fun auth(login:LoginBody){
         viewModelScope.launch { repositoryForAuth.auth(login) }
     }
-
     fun register(register:RegisterBody){
         viewModelScope.launch {repositoryForRegistration.register(register) }
     }
-
-
     fun getRates(instrument: String, timeFrom : Long, timeTo : Long) {
-
         viewModelScope.launch { repositoryForRates.getRatesForTime(instrument, timeFrom, timeTo) }
-
     }
     fun getRelevantRates(instruments: String) {
-
         viewModelScope.launch { repositoryForPieGraph.getRate(instruments) }
-
     }
     fun getTrans(token:String) {
-
         viewModelScope.launch { mainRepository.getTrans(token) }
-
     }
     fun getTrades(token:String) {
-
         viewModelScope.launch { mainRepository.getTrades(token) }
-
     }
     fun countingBalance() {
         viewModelScope.launch { repositoryForPieGraph.countingBalance(tradesSuccessLiveData.value!!, transSuccessLiveData.value!!) }
@@ -91,7 +84,6 @@ class MainViewModel : ViewModel() {
     fun multiplyRelevant(){
         viewModelScope.launch { repositoryForPieGraph.multiplyRelevant() }
     }
-
     fun modelingColumnGraph(year: Int, trades: MutableList<Trade>?, transactions: MutableList<Transaction>?){
         viewModelScope.launch { repositoryForColumnGraph.modelingSeriesForGraph(year, trades, transactions) }
     }
@@ -118,6 +110,15 @@ class MainViewModel : ViewModel() {
     }
     fun getRatesCor(currencies: Pair<String, String>, timeFrom: Long, timeTo: Long){
         viewModelScope.launch { repositoryForRelativeRates.getRatesForTime(currencies, timeFrom, timeTo) }
+    }
+    fun getRatesForTimeInput(instruments: String, time1: Long, time2: Long){
+        viewModelScope.launch { repositoryForInputOutput.getRatesForTime(instruments, time1, time2) }
+    }
+    fun filterTrans(allTrans : MutableList<Transaction>, time1:String, time2:String){
+        viewModelScope.launch { repositoryForInputOutput.filterTrans(allTrans, time1, time2) }
+    }
+    fun calculationInput(){
+        viewModelScope.launch { repositoryForInputOutput.calculationInput() }
     }
 
 
