@@ -112,6 +112,9 @@ class MainViewModel : ViewModel() {
     fun addPortfolio(portfolio: Portfolio, token:String){
         viewModelScope.launch { repositoryForPortfolios.addPortfolio(portfolio, token) }
     }
+    fun deletePortfolio(id: Int, token:String){
+        viewModelScope.launch { repositoryForPortfolios.deletePortfolio(id, token) }
+    }
     fun getRatesCor(currencies: Pair<String, String>, timeFrom: Long, timeTo: Long){
         viewModelScope.launch { repositoryForRelativeRates.getRatesForTime(currencies, timeFrom, timeTo) }
     }

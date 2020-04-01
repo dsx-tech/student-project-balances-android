@@ -14,6 +14,8 @@ class RepositoryForPortfolios {
     val portfolioFailureLiveData = MutableLiveData<Boolean>()
     var addPortfolioSuccessLiveData = MutableLiveData<Portfolio>()
     var addPortfolioFailureLiveData = MutableLiveData<Boolean>()
+    var deletePortfolioSuccessLiveData = MutableLiveData<Boolean>()
+    var deletPortfolioFailureLiveData = MutableLiveData<Boolean>()
 
     suspend fun getPortfolios(token:String) {
 
@@ -83,6 +85,37 @@ class RepositoryForPortfolios {
             //this is generic exception handling
             //so inform user that something went wrong
             addPortfolioFailureLiveData.postValue(true)
+        }
+    }
+    suspend fun deletePortfolio(id:Int, token:String) {
+        try {
+
+            val response = RetrofitManager.transTradesApi.deletePortfolio(id, "Token_$token").await()
+
+            Log.d(MainRepository.TAG, "$response")
+            if (response.isSuccessful) {
+                deletePortfolioSuccessLiveData.postValue(true)
+            } else {
+                Log.d(MainRepository.TAG, "FAILURE")
+                Log.d(MainRepository.TAG, "${response.body()}")
+                deletPortfolioFailureLiveData.postValue(true)
+            }
+
+        } catch (e: UnknownHostException) {
+            Log.e(MainRepository.TAG, e.message)
+            //this exception occurs when there is no internet connection or host is not available
+            //so inform user that something went wrong
+            deletPortfolioFailureLiveData.postValue(true)
+        } catch (e: SocketTimeoutException) {
+            Log.e(MainRepository.TAG, e.message)
+            //this exception occurs when time out will happen
+            //so inform user that something went wrong
+            deletPortfolioFailureLiveData.postValue(true)
+        } catch (e: Exception) {
+            Log.e(MainRepository.TAG, e.message)
+            //this is generic exception handling
+            //so inform user that something went wrong
+            deletPortfolioFailureLiveData.postValue(true)
         }
 
 

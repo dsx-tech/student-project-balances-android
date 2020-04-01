@@ -43,8 +43,8 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    val APP_PREFERENCES = "mysettings"
-    val APP_PREFERENCES_TOKEN = "token"
+    private val APP_PREFERENCES = "mysettings"
+    private val APP_PREFERENCES_TOKEN = "token"
     lateinit var pref: SharedPreferences
     private lateinit var mainViewModel: MainViewModel
     private lateinit var rateAdapter: RateAdapter
@@ -143,8 +143,7 @@ class MainActivity : AppCompatActivity() {
         val toolbar:Toolbar= findViewById(R.id.toolBar)
         toolbar.setTitleTextColor(getColor(R.color.white))
         setSupportActionBar(toolbar)
-        val transButton:Button = findViewById(R.id.buttonTrans)
-      //  aaChartView = findViewById(R.id.AAChartView)
+
         chart = findViewById(R.id.chart)
         var token :String? = null
         if (pref.contains(APP_PREFERENCES_TOKEN)) {
@@ -157,6 +156,10 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         return when (item.itemId) {
+            R.id.backTo -> {
+                setPortfolios()
+                true
+            }
             R.id.menu1 -> {
                 setContentView(R.layout.activity_main)
                 val toolbar:Toolbar= findViewById(R.id.toolBar)
@@ -594,10 +597,10 @@ class MainActivity : AppCompatActivity() {
             if (it.second != -1)
                 showGraphs()
             else{
-               var dialog = Dialog(this)
+               val dialog = Dialog(this)
                 dialog.setContentView(R.layout.add_portfolio)
-                var name:EditText = dialog.findViewById(R.id.portfolioName)
-                var button : Button = dialog.findViewById(R.id.addPortfolio)
+                val name:EditText = dialog.findViewById(R.id.portfolioName)
+                val button : Button = dialog.findViewById(R.id.addPortfolio)
                 dialog.show()
                 button.setOnClickListener {
                     var token :String? = null
@@ -629,6 +632,14 @@ class MainActivity : AppCompatActivity() {
         )
         mainViewModel.inOutSuccessLiveData.observe(this, Observer {
          mainViewModel.calculationInput()
+        }
+        )
+        rvPortfolioAdapter.deletePortfolioLiveData.observe(this, Observer {
+            var token :String? = null
+            if (pref.contains(APP_PREFERENCES_TOKEN)) {
+                token  = pref.getString(APP_PREFERENCES_TOKEN, "-");
+            }
+            mainViewModel.deletePortfolio(it, token!!)
         }
         )
     }

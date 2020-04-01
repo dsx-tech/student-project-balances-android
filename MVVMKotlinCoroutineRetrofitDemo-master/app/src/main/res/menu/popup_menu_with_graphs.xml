@@ -3,6 +3,14 @@
     android:id="@+id/infMenu"
     >
     <item
+        android:id="@+id/load"
+        android:title="Upload"
+        />
+    <item
+        android:id="@+id/backTo"
+        android:title="Back to portfolios"
+        />
+    <item
         android:id="@+id/menu1"
         android:title="Portfolio"
         />

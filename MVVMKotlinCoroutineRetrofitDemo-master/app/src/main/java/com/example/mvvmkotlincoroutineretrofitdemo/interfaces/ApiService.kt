@@ -27,5 +27,12 @@ interface ApiService {
     @Headers("Content-Type: application/json")
     @POST("/bcv/portfolios")
     fun addPortfolios(@Body portfolio: Portfolio, @Header("Authorization") token: String) : Deferred<Response<Portfolio>>
+    @Headers("Content-Type: application/json")
+    @DELETE("/bcv/portfolios/{id}")
+    fun deletePortfolio( @Path("id") id: Int, @Header("Authorization") token: String) : Deferred<Response<Void>>
+    @Headers("Content-Type: application/json")
+    @Multipart
+    @POST("/bcv/portfolios/{id}/trades/upload")
+    fun uploadTrades(@Header("Authorization") token: String, @Path("id") id: Int) : Deferred<Response<Portfolio>>
 }
 
