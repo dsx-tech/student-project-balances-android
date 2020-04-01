@@ -24,5 +24,8 @@ interface ApiService {
     @Headers("Content-Type: application/json")
     @GET("/bcv/portfolios")
     fun getPortfolios(@Header("Authorization") token: String) : Deferred<Response<MutableList<Portfolio>>>
+    @Headers("Content-Type: application/json")
+    @POST("/bcv/portfolios")
+    fun addPortfolios(@Body portfolio: Portfolio, @Header("Authorization") token: String) : Deferred<Response<Portfolio>>
 }
 

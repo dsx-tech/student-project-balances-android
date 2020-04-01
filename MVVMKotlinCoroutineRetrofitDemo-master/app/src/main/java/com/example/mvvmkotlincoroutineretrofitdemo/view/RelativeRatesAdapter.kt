@@ -14,7 +14,7 @@ class RelativeRatesAdapter {
 
         if (dataLiveData.values.first().size == dataLiveData.values.last().size){
         val data:MutableList<AASeriesElement> = mutableListOf()
-        var flag2 = false
+        var flagDate = false
         for (key in dataLiveData.keys){
             var minValue :BigDecimal? = null
             var maxValue =BigDecimal("0")
@@ -39,12 +39,12 @@ class RelativeRatesAdapter {
             }
             val rates: ArrayList<BigDecimal> = arrayListOf()
             dataLiveData[key]?.forEach {
-                if (!flag2){
+                if (!flagDate){
                     dates.add(formatter.format(it.date*1000))
                 }
                 rates.add((it.exchangeRate - minValue!!)/(maxValue-minValue!!))
             }
-            flag2 = true
+            flagDate = true
             data.add( AASeriesElement().data(rates.toTypedArray())
                 .name(key)
             )

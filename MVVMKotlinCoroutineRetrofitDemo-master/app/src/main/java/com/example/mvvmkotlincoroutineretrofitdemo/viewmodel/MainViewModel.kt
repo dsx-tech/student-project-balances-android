@@ -49,6 +49,7 @@ class MainViewModel : ViewModel() {
     var resultCurLiveData = repositoryForCurBalance.resultCurLiveData
 
     var portfolioSuccessLiveData = repositoryForPortfolios.portfolioSuccessLiveData
+    var addPortfolioSuccessLiveData = repositoryForPortfolios.addPortfolioSuccessLiveData
 
     var rateCurSuccessLiveData = repositoryForRelativeRates.rateCurSuccessLiveData
     var rateCurFailureLiveData = repositoryForRelativeRates.rateCurFailureLiveData
@@ -107,6 +108,9 @@ class MainViewModel : ViewModel() {
     }
     fun getPortfolios(token:String){
         viewModelScope.launch { repositoryForPortfolios.getPortfolios(token) }
+    }
+    fun addPortfolio(portfolio: Portfolio, token:String){
+        viewModelScope.launch { repositoryForPortfolios.addPortfolio(portfolio, token) }
     }
     fun getRatesCor(currencies: Pair<String, String>, timeFrom: Long, timeTo: Long){
         viewModelScope.launch { repositoryForRelativeRates.getRatesForTime(currencies, timeFrom, timeTo) }

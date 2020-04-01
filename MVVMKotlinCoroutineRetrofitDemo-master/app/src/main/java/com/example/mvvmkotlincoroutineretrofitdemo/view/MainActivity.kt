@@ -3,6 +3,7 @@ package com.example.mvvmkotlincoroutineretrofitdemo.view
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DatePickerDialog
+import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
@@ -26,6 +27,7 @@ import java.util.*
 import android.content.Intent
 import android.content.SharedPreferences
 import com.anychart.AnyChart
+import com.example.mvvmkotlincoroutineretrofitdemo.model.Portfolio
 import com.example.mvvmkotlincoroutineretrofitdemo.repository.RepositoryForInputOutput
 import com.example.mvvmkotlincoroutineretrofitdemo.repository.RepositoryForRelativeRates
 import com.github.mikephil.charting.charts.PieChart
@@ -141,6 +143,7 @@ class MainActivity : AppCompatActivity() {
         val toolbar:Toolbar= findViewById(R.id.toolBar)
         toolbar.setTitleTextColor(getColor(R.color.white))
         setSupportActionBar(toolbar)
+        val transButton:Button = findViewById(R.id.buttonTrans)
       //  aaChartView = findViewById(R.id.AAChartView)
         chart = findViewById(R.id.chart)
         var token :String? = null
@@ -488,7 +491,15 @@ class MainActivity : AppCompatActivity() {
                 transAdapter.setTrans(it)
             }
         })
+        mainViewModel.addPortfolioSuccessLiveData.observe(this, Observer { portfolioList ->
 
+            //if it is not null then we will display all users
+            portfolioList?.let {
+                rvPortfolioAdapter.addPortfolio(it)
+                setPortfolios()
+            }
+
+        })
         mainViewModel.tradesFailureLiveData.observe(this, Observer { isFailed ->
 
             //if it is not null then we will display all users
@@ -573,15 +584,34 @@ class MainActivity : AppCompatActivity() {
         }
         )
         mainViewModel.portfolioSuccessLiveData.observe(this, Observer {
+            it.add(Portfolio(-1, "Add"))
             rvPortfolioAdapter.setPortfolios(it)
             setPortfolios()
 
         }
         )
         rvPortfolioAdapter.selectedPortfolioLiveData.observe(this, Observer {
-            showGraphs()
+            if (it.second != -1)
+                showGraphs()
+            else{
+               var dialog = Dialog(this)
+                dialog.setContentView(R.layout.add_portfolio)
+                var name:EditText = dialog.findViewById(R.id.portfolioName)
+                var button : Button = dialog.findViewById(R.id.addPortfolio)
+                dialog.show()
+                button.setOnClickListener {
+                    var token :String? = null
+                    if (pref.contains(APP_PREFERENCES_TOKEN)) {
+                        token  = pref.getString(APP_PREFERENCES_TOKEN, "-");
+                    }
+                    mainViewModel.addPortfolio(Portfolio(0, name.text.toString()), token!!)
+                    dialog.dismiss()
+                }
+
+            }
         }
         )
+
         mainViewModel.authFailureLiveData.observe(this, Observer {isFailed ->
             isFailed?.let {
                 Toast.makeText(this, "Oops! something went wrong", Toast.LENGTH_SHORT).show()

@@ -25,6 +25,11 @@ class RVPortfolioAdapter  : RecyclerView.Adapter<RVPortfolioAdapter.ViewHolder>(
         portfolioList.addAll(portfolios)
 
     }
+    fun addPortfolio(portfolio:Portfolio) {
+
+        portfolioList.add(0, portfolio)
+
+    }
     override fun getItemCount(): Int {
         return portfolioList.size
     }

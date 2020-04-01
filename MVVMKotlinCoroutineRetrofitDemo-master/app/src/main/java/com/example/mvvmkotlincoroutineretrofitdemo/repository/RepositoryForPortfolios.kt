@@ -12,6 +12,8 @@ class RepositoryForPortfolios {
     private val api = RetrofitManager.transTradesApi
     val portfolioSuccessLiveData = MutableLiveData<MutableList<Portfolio>>()
     val portfolioFailureLiveData = MutableLiveData<Boolean>()
+    var addPortfolioSuccessLiveData = MutableLiveData<Portfolio>()
+    var addPortfolioFailureLiveData = MutableLiveData<Boolean>()
 
     suspend fun getPortfolios(token:String) {
 
@@ -51,5 +53,38 @@ class RepositoryForPortfolios {
             //so inform user that something went wrong
             portfolioFailureLiveData.postValue(true)
         }
+    }
+    suspend fun addPortfolio(portfolio: Portfolio, token:String) {
+        try {
+
+            val response = RetrofitManager.transTradesApi.addPortfolios(portfolio, "Token_$token").await()
+
+            Log.d(MainRepository.TAG, "$response")
+            if (response.isSuccessful) {
+                addPortfolioSuccessLiveData.postValue(response.body()!!)
+            } else {
+                Log.d(MainRepository.TAG, "FAILURE")
+                Log.d(MainRepository.TAG, "${response.body()}")
+                addPortfolioFailureLiveData.postValue(true)
+            }
+
+        } catch (e: UnknownHostException) {
+            Log.e(MainRepository.TAG, e.message)
+            //this exception occurs when there is no internet connection or host is not available
+            //so inform user that something went wrong
+            addPortfolioFailureLiveData.postValue(true)
+        } catch (e: SocketTimeoutException) {
+            Log.e(MainRepository.TAG, e.message)
+            //this exception occurs when time out will happen
+            //so inform user that something went wrong
+            addPortfolioFailureLiveData.postValue(true)
+        } catch (e: Exception) {
+            Log.e(MainRepository.TAG, e.message)
+            //this is generic exception handling
+            //so inform user that something went wrong
+            addPortfolioFailureLiveData.postValue(true)
+        }
+
+
     }
 }

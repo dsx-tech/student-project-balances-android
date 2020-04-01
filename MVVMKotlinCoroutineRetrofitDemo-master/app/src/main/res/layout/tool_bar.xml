@@ -6,5 +6,11 @@
     android:theme="@style/AppTheme"
     android:elevation="4dp"
     >
-
+<Button
+    android:id="@+id/buttonTrans"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_below="@id/passwordReg2"
+    android:text="Upload">
+</Button>
 </androidx.appcompat.widget.Toolbar>
