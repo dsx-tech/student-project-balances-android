@@ -3,25 +3,27 @@ package com.example.mvvmkotlincoroutineretrofitdemo.view
 import com.aachartmodel.aainfographics.AAInfographicsLib.AAChartConfiger.*
 import com.example.mvvmkotlincoroutineretrofitdemo.R
 import com.example.mvvmkotlincoroutineretrofitdemo.constants.Colors
+import com.example.mvvmkotlincoroutineretrofitdemo.constants.Days
 import java.math.BigDecimal
 import java.text.SimpleDateFormat
 
 class InputOutputAdapter {
-    fun setInputChart(aaChartView: AAChartView?, inOut: Pair<MutableMap<Long, BigDecimal>, MutableMap<Long, BigDecimal>>){
+    fun setInputChart(aaChartView: AAChartView?, inOut: MutableList<Pair<BigDecimal, BigDecimal>>, time: Pair<Long, Long>){
 
-        val input = inOut.first
-        val output = inOut.second
+
         val categories: MutableList<String> = mutableListOf()
         val formatter = SimpleDateFormat("dd/MM/yyyy")
         val inputData: MutableList<BigDecimal> = mutableListOf()
         val outputData: MutableList<BigDecimal> = mutableListOf()
-        input.keys.forEach{
-            categories.add(formatter.format(it*1000))
-            inputData.add(input[it]!!)
+        inOut.forEach {
+            inputData.add(it.first)
+            outputData.add(it.second)
         }
-        output.keys.forEach{
-            outputData.add(input[it]!!)
+        val days =  (time.second - time.first) / Days.DAY_IN_SEC
+        for (i in 0..days.toInt()){
+            categories.add(formatter.format((time.first + Days.DAY_IN_SEC * i)S*1000 ))
         }
+
         val aaChartModel = AAChartModel()
             .chartType(AAChartType.Bar)
             .backgroundColor(R.color.colorBackground)

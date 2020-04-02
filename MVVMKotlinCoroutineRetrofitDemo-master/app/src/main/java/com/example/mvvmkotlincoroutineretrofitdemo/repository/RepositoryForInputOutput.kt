@@ -1,10 +1,13 @@
 package com.example.mvvmkotlincoroutineretrofitdemo.repository
 
+import android.provider.SyncStateContract
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.example.mvvmkotlincoroutineretrofitdemo.constants.Days
 import com.example.mvvmkotlincoroutineretrofitdemo.manager.RetrofitManager.rateApi
 import com.example.mvvmkotlincoroutineretrofitdemo.model.Rate
 import com.example.mvvmkotlincoroutineretrofitdemo.model.Transaction
+import java.math.BigDecimal
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.time.LocalDate
@@ -13,9 +16,11 @@ import java.time.format.DateTimeFormatter
 
 class RepositoryForInputOutput {
     val mainRepository  = MainRepository()
-    val inOutSuccessLiveData = MutableLiveData<MutableList<Rate>>()
+    val inOutSuccessLiveData = MutableLiveData<MutableMap<String, MutableList<Rate>>>()
     val valuesForInput = MutableLiveData<Pair<String, Pair<Long, Long>>>()
     val inOutFailureLiveData = MutableLiveData<Boolean>()
+    var transFilter : List<Transaction> = listOf()
+    var resSuccessLiveData = MutableLiveData<MutableList<Pair<BigDecimal, BigDecimal>>>()
     fun filterTrans(allTrans : MutableList<Transaction>, timeFrom:String, timeTo:String){
         val time1 = LocalDate.parse(timeFrom, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
             .atStartOfDay(ZoneOffset.UTC).toInstant().epochSecond
@@ -24,7 +29,7 @@ class RepositoryForInputOutput {
         var instruments = ""
         val currencies:MutableList<String> = mutableListOf()
         val filteredTrans = allTrans.filter {(mainRepository.dateTimeFormatter(it.dateTime).atZone(ZoneOffset.UTC)?.toInstant()?.toEpochMilli()!! / 1000 >= time1) and
-                (mainRepository.dateTimeFormatter(it.dateTime).atZone(ZoneOffset.UTC)?.toInstant()?.toEpochMilli()!! / 1000 <= time2)}
+                (mainRepository.dateTimeFormatter(it.dateTime).atZone(ZoneOffset.UTC)?.toInstant()?.toEpochMilli()!! / 1000 <= time2) and (it.transactionStatus == "Complete")}
         filteredTrans.forEach{
             if (!currencies.contains(it.currency)){
                 currencies.add(it.currency)
@@ -33,10 +38,40 @@ class RepositoryForInputOutput {
         }
         instruments = instruments.removeRange(instruments.length - 1, instruments.length - 1)
         valuesForInput.postValue(Pair(instruments, Pair(time1, time2)))
+        transFilter = filteredTrans
     }
 
     fun calculationInput(){
-
+        var flag = false
+        val res :MutableList<Pair<BigDecimal, BigDecimal>> = mutableListOf()
+        var resDayDep= BigDecimal("0")
+        var resDrawDep= BigDecimal("0")
+        val daysCount = (valuesForInput.value!!.second.second - valuesForInput.value!!.second.first) / Days.DAY_IN_SEC
+        inOutSuccessLiveData.value!!.values.forEach{
+            if (it.size != (daysCount + 1).toInt()){
+                flag = true
+            }
+        }
+        if (!flag){
+            for (i in 0..daysCount.toInt()){
+                for (transaction in transFilter) {
+                    if ((mainRepository.dateTimeFormatter(transaction.dateTime).atZone(ZoneOffset.UTC)?.toInstant()?.toEpochMilli()!! / 1000 >= valuesForInput.value!!.second.first + Days.DAY_IN_SEC * i)
+                        and (mainRepository.dateTimeFormatter(transaction.dateTime).atZone(ZoneOffset.UTC)?.toInstant()?.toEpochMilli()!! / 1000 < valuesForInput.value!!.second.first + Days.DAY_IN_SEC * (i + 1))
+                    ) {
+                        when {
+                            (transaction.transactionType == "Deposit") -> {
+                                resDayDep += (transaction.amount ) * inOutSuccessLiveData.value!!["${transaction.currency}-usd"]!![i].exchangeRate
+                            }
+                            (transaction.transactionType == "Withdraw") -> {
+                                resDrawDep += (transaction.amount ) * inOutSuccessLiveData.value!!["${transaction.currency}-usd"]!![i].exchangeRate
+                            }
+                        }
+                    }
+                }
+                res.add(Pair(resDayDep,resDrawDep))
+            }
+            resSuccessLiveData.postValue(res)
+        }
     }
 
     suspend fun getRatesForTime(instrument: String, timeFrom: Long, timeTo: Long) {
@@ -50,7 +85,7 @@ class RepositoryForInputOutput {
             if (response.isSuccessful) {
                 Log.d(MainRepository.TAG, "SUCCESS")
                 Log.d(MainRepository.TAG, "${response.body()}")
-                inOutSuccessLiveData.postValue(response.body()!!.getValue(instrument))
+                inOutSuccessLiveData.postValue(response.body()!!)
 
             } else {
                 Log.d(MainRepository.TAG, "FAILURE")

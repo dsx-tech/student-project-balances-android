@@ -66,30 +66,29 @@ class MainActivity : AppCompatActivity() {
     private var chart: PieChart? = null
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         pref = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE)
         setContentView(R.layout.activity_portfolios)
 
-         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
-         rateAdapter = RateAdapter()
-         transAdapter = TransAdapter()
-         tradesAdapter = TradesAdapter()
-         chartAdapter = ChartAdapter()
-         ratesChartAdapter = RatesChartAdapter()
-         columnChartAdapter = ColumnChartAdapter()
-         incomeChartAdapter = IncomeChartAdapter()
-         curBalanceChartAdapter = CurBalanceChartAdapter()
-         rvPortfolioAdapter = RVPortfolioAdapter()
-         relativeRatesAdapter = RelativeRatesAdapter()
-         repositoryForRelativeRates = RepositoryForRelativeRates()
-         repositoryForInputOutput = RepositoryForInputOutput()
-         inputOutputAdapter = InputOutputAdapter()
+        mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+        rateAdapter = RateAdapter()
+        transAdapter = TransAdapter()
+        tradesAdapter = TradesAdapter()
+        chartAdapter = ChartAdapter()
+        ratesChartAdapter = RatesChartAdapter()
+        columnChartAdapter = ColumnChartAdapter()
+        incomeChartAdapter = IncomeChartAdapter()
+        curBalanceChartAdapter = CurBalanceChartAdapter()
+        rvPortfolioAdapter = RVPortfolioAdapter()
+        relativeRatesAdapter = RelativeRatesAdapter()
+        repositoryForRelativeRates = RepositoryForRelativeRates()
+        repositoryForInputOutput = RepositoryForInputOutput()
+        inputOutputAdapter = InputOutputAdapter()
 
-         registerObservers()
-         loginSetup()
+        registerObservers()
+        loginSetup()
 
 
     }
@@ -101,57 +100,61 @@ class MainActivity : AppCompatActivity() {
         editor.clear()
         editor.apply()
     }
-    private fun loginSetup(){
+
+    private fun loginSetup() {
         setContentView(R.layout.login_activity)
-        val register:TextView = findViewById(R.id.register)
-        val back : RelativeLayout = findViewById(R.id.back)
+        val register: TextView = findViewById(R.id.register)
+        val back: RelativeLayout = findViewById(R.id.back)
         back.setOnClickListener {
             hideKeyboardFrom(this, it)
         }
-        register.setOnClickListener{
+        register.setOnClickListener {
 
             startActivity(Intent(this@MainActivity, RegisterView()::class.java))
         }
-        val loginButton :Button = findViewById(R.id.loginButton)
-        
-        loginButton.setOnClickListener{
-            val username :EditText = findViewById(R.id.userName)
-            val passwordActual:EditText = findViewById(R.id.password)
+        val loginButton: Button = findViewById(R.id.loginButton)
+
+        loginButton.setOnClickListener {
+            val username: EditText = findViewById(R.id.userName)
+            val passwordActual: EditText = findViewById(R.id.password)
             mainViewModel.auth(LoginBody(username.text.toString(), passwordActual.text.toString()))
 
         }
     }
 
-    private fun setPortfolios(){
+    private fun setPortfolios() {
 
         setContentView(R.layout.activity_portfolios)
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         recyclerView.adapter = rvPortfolioAdapter
     }
-    private fun completedAuth(){
 
-        var token :String? = null
+    private fun completedAuth() {
+
+        var token: String? = null
         if (pref.contains(APP_PREFERENCES_TOKEN)) {
-            token  = pref.getString(APP_PREFERENCES_TOKEN, "-");
+            token = pref.getString(APP_PREFERENCES_TOKEN, "-");
         }
         mainViewModel.getPortfolios(token!!)
 
     }
-    private fun showGraphs(){
+
+    private fun showGraphs() {
         setContentView(R.layout.activity_main)
-        val toolbar:Toolbar= findViewById(R.id.toolBar)
+        val toolbar: Toolbar = findViewById(R.id.toolBar)
         toolbar.setTitleTextColor(getColor(R.color.white))
         setSupportActionBar(toolbar)
 
         chart = findViewById(R.id.chart)
-        var token :String? = null
+        var token: String? = null
         if (pref.contains(APP_PREFERENCES_TOKEN)) {
-            token  = pref.getString(APP_PREFERENCES_TOKEN, "-");
+            token = pref.getString(APP_PREFERENCES_TOKEN, "-");
         }
         mainViewModel.getTrades(token!!)
         mainViewModel.getTrans(token)
     }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
@@ -162,16 +165,16 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.menu1 -> {
                 setContentView(R.layout.activity_main)
-                val toolbar:Toolbar= findViewById(R.id.toolBar)
+                val toolbar: Toolbar = findViewById(R.id.toolBar)
                 toolbar.setTitleTextColor(getColor(R.color.white))
                 setSupportActionBar(toolbar)
                 chart = findViewById(R.id.chart)
                 if (!mainViewModel.balancesAtTheEnd.value.isNullOrEmpty())
                     mainViewModel.getStringWithInstruments()
                 else {
-                    var token :String? = null
+                    var token: String? = null
                     if (pref.contains(APP_PREFERENCES_TOKEN)) {
-                        token  = pref.getString(APP_PREFERENCES_TOKEN, "-");
+                        token = pref.getString(APP_PREFERENCES_TOKEN, "-");
                     }
                     mainViewModel.getTrades(token!!)
                     mainViewModel.getTrans(token)
@@ -180,10 +183,10 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.menu2 -> {
 
-              setContentView(R.layout.activity_rate_graph)
-               val toolbar:Toolbar= findViewById(R.id.toolBar)
-              toolbar.setTitleTextColor(getColor(R.color.white))
-               setSupportActionBar(toolbar)
+                setContentView(R.layout.activity_rate_graph)
+                val toolbar: Toolbar = findViewById(R.id.toolBar)
+                toolbar.setTitleTextColor(getColor(R.color.white))
+                setSupportActionBar(toolbar)
                 val button: Button = findViewById(R.id.rate_graph_draw)
                 val currencies1: AutoCompleteTextView = findViewById(R.id.autoCoCur1)
                 val adapter = ArrayAdapter(
@@ -219,37 +222,45 @@ class MainActivity : AppCompatActivity() {
                 }
                 true
             }
-            R.id.menu3 ->{
+            R.id.menu3 -> {
                 setContentView(R.layout.activity_column_graph)
-                val toolbar:Toolbar= findViewById(R.id.toolBar)
+                val toolbar: Toolbar = findViewById(R.id.toolBar)
                 toolbar.setTitleTextColor(getColor(R.color.white))
                 setSupportActionBar(toolbar)
                 aaChartView = findViewById(R.id.AAChartView)
                 val button: Button = findViewById(R.id.rate_column_graph)
-                val editText:EditText = findViewById(R.id.year)
+                val editText: EditText = findViewById(R.id.year)
                 button.setOnClickListener {
-                    try{
+                    try {
 
-                    if((mainViewModel.tradesSuccessLiveData.value?.isNotEmpty() == true) or (mainViewModel.transSuccessLiveData.value?.isNotEmpty() == true))
-                        mainViewModel.modelingColumnGraph(editText.text.toString().toInt(), mainViewModel.tradesSuccessLiveData.value, mainViewModel.transSuccessLiveData.value )
-                } catch(e:NumberFormatException){
+                        if ((mainViewModel.tradesSuccessLiveData.value?.isNotEmpty() == true) or (mainViewModel.transSuccessLiveData.value?.isNotEmpty() == true))
+                            mainViewModel.modelingColumnGraph(
+                                editText.text.toString().toInt(),
+                                mainViewModel.tradesSuccessLiveData.value,
+                                mainViewModel.transSuccessLiveData.value
+                            )
+                    } catch (e: NumberFormatException) {
                         Toast.makeText(this, "Please, enter year", Toast.LENGTH_SHORT).show()
-                    }}
+                    }
+                }
 
                 true
             }
-            R.id.menu4 ->{
+            R.id.menu4 -> {
                 setContentView(R.layout.activity_income_graph)
-                val toolbar:Toolbar= findViewById(R.id.toolBar)
+                val toolbar: Toolbar = findViewById(R.id.toolBar)
                 toolbar.setTitleTextColor(getColor(R.color.white))
                 setSupportActionBar(toolbar)
                 aaChartView = findViewById(R.id.AAChartView)
                 val button: Button = findViewById(R.id.income_graph_draw)
                 val spinner: Spinner = findViewById(R.id.incomeCur)
-                val adapter = ArrayAdapter(this,
-                    android.R.layout.simple_spinner_item, mainViewModel.balancesAtTheEnd.value?.keys!!.toList())
+                val adapter = ArrayAdapter(
+                    this,
+                    android.R.layout.simple_spinner_item,
+                    mainViewModel.balancesAtTheEnd.value?.keys!!.toList()
+                )
                 spinner.adapter = adapter
-                spinner.onItemSelectedListener  = object : AdapterView.OnItemSelectedListener{
+                spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 
 
                     override fun onItemSelected(
@@ -260,65 +271,82 @@ class MainActivity : AppCompatActivity() {
                     ) {
                         (parent?.getChildAt(0) as TextView).setTextColor(Color.WHITE)
                     }
+
                     override fun onNothingSelected(parent: AdapterView<*>?) {
 
                     }
                 }
 
 
-                val textDateFrom: TextView  = findViewById(R.id.incomeDateFrom)
+                val textDateFrom: TextView = findViewById(R.id.incomeDateFrom)
                 val textDateTo: TextView = findViewById(R.id.incomeDateTo)
-                        textDateFrom.text = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
-                        textDateTo.text = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
+                textDateFrom.text =
+                    SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
+                textDateTo.text = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
 
                 val cal = Calendar.getInstance()
                 val myFormat = "dd.MM.yyyy"
-                val dateSetListenerFrom = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-                    cal.set(Calendar.YEAR, year)
-                    cal.set(Calendar.MONTH, monthOfYear)
-                    cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                val dateSetListenerFrom =
+                    DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+                        cal.set(Calendar.YEAR, year)
+                        cal.set(Calendar.MONTH, monthOfYear)
+                        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
 
-                    val sdf = SimpleDateFormat(myFormat, Locale.US)
-                    textDateFrom.text = sdf.format(cal.time)}
+                        val sdf = SimpleDateFormat(myFormat, Locale.US)
+                        textDateFrom.text = sdf.format(cal.time)
+                    }
                 textDateFrom.setOnClickListener {
-                    DatePickerDialog(this, dateSetListenerFrom,
+                    DatePickerDialog(
+                        this, dateSetListenerFrom,
                         cal.get(Calendar.YEAR),
                         cal.get(Calendar.MONTH),
-                        cal.get(Calendar.DAY_OF_MONTH)).show()
+                        cal.get(Calendar.DAY_OF_MONTH)
+                    ).show()
                 }
 
-                val dateSetListenerTo = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-                    cal.set(Calendar.YEAR, year)
-                    cal.set(Calendar.MONTH, monthOfYear)
-                    cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                val dateSetListenerTo =
+                    DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+                        cal.set(Calendar.YEAR, year)
+                        cal.set(Calendar.MONTH, monthOfYear)
+                        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
-                    val sdf = SimpleDateFormat(myFormat, Locale.US)
-                    textDateTo.text = sdf.format(cal.time)}
+                        val sdf = SimpleDateFormat(myFormat, Locale.US)
+                        textDateTo.text = sdf.format(cal.time)
+                    }
                 textDateTo.setOnClickListener {
-                    DatePickerDialog(this, dateSetListenerTo,
+                    DatePickerDialog(
+                        this, dateSetListenerTo,
                         cal.get(Calendar.YEAR),
                         cal.get(Calendar.MONTH),
-                        cal.get(Calendar.DAY_OF_MONTH)).show()
+                        cal.get(Calendar.DAY_OF_MONTH)
+                    ).show()
                 }
-                button.setOnClickListener{
-                    mainViewModel.getRatesForIncome(spinner.selectedItem.toString(), textDateFrom.text.toString(), textDateTo.text.toString())
+                button.setOnClickListener {
+                    mainViewModel.getRatesForIncome(
+                        spinner.selectedItem.toString(),
+                        textDateFrom.text.toString(),
+                        textDateTo.text.toString()
+                    )
                 }
 
                 true
             }
-            R.id.menu5 ->{
+            R.id.menu5 -> {
                 setContentView(R.layout.activity_curr_in_portfolio)
-                val toolbar:Toolbar= findViewById(R.id.toolBar)
+                val toolbar: Toolbar = findViewById(R.id.toolBar)
                 toolbar.setTitleTextColor(getColor(R.color.white))
                 setSupportActionBar(toolbar)
                 aaChartView = findViewById(R.id.AAChartView)
                 val button: Button = findViewById(R.id.cur_balance_graph_draw)
                 val spinner: Spinner = findViewById(R.id.balanceCur)
-                val adapter = ArrayAdapter(this,
-                    android.R.layout.simple_spinner_item, mainViewModel.balancesAtTheEnd.value?.keys!!.toList())
+                val adapter = ArrayAdapter(
+                    this,
+                    android.R.layout.simple_spinner_item,
+                    mainViewModel.balancesAtTheEnd.value?.keys!!.toList()
+                )
                 spinner.adapter = adapter
-                spinner.onItemSelectedListener  = object : AdapterView.OnItemSelectedListener{
+                spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(
                         parent: AdapterView<*>?,
                         view: View?,
@@ -327,52 +355,66 @@ class MainActivity : AppCompatActivity() {
                     ) {
                         (parent?.getChildAt(0) as TextView).setTextColor(Color.WHITE)
                     }
+
                     override fun onNothingSelected(parent: AdapterView<*>?) {
 
                     }
                 }
-                val textDateFrom: TextView  = findViewById(R.id.curDateFrom)
+                val textDateFrom: TextView = findViewById(R.id.curDateFrom)
                 val textDateTo: TextView = findViewById(R.id.curDateTo)
-                textDateFrom.text = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
+                textDateFrom.text =
+                    SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
                 textDateTo.text = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
                 val cal = Calendar.getInstance()
                 val myFormat = "dd.MM.yyyy"
-                val dateSetListenerFrom = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-                    cal.set(Calendar.YEAR, year)
-                    cal.set(Calendar.MONTH, monthOfYear)
-                    cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                val dateSetListenerFrom =
+                    DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+                        cal.set(Calendar.YEAR, year)
+                        cal.set(Calendar.MONTH, monthOfYear)
+                        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
 
-                    val sdf = SimpleDateFormat(myFormat, Locale.US)
-                    textDateFrom.text = sdf.format(cal.time)}
+                        val sdf = SimpleDateFormat(myFormat, Locale.US)
+                        textDateFrom.text = sdf.format(cal.time)
+                    }
                 textDateFrom.setOnClickListener {
-                    DatePickerDialog(this, dateSetListenerFrom,
+                    DatePickerDialog(
+                        this, dateSetListenerFrom,
                         cal.get(Calendar.YEAR),
                         cal.get(Calendar.MONTH),
-                        cal.get(Calendar.DAY_OF_MONTH)).show()
+                        cal.get(Calendar.DAY_OF_MONTH)
+                    ).show()
                 }
 
-                val dateSetListenerTo = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-                    cal.set(Calendar.YEAR, year)
-                    cal.set(Calendar.MONTH, monthOfYear)
-                    cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                val dateSetListenerTo =
+                    DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+                        cal.set(Calendar.YEAR, year)
+                        cal.set(Calendar.MONTH, monthOfYear)
+                        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
-                    val sdf = SimpleDateFormat(myFormat, Locale.US)
-                    textDateTo.text = sdf.format(cal.time)}
+                        val sdf = SimpleDateFormat(myFormat, Locale.US)
+                        textDateTo.text = sdf.format(cal.time)
+                    }
                 textDateTo.setOnClickListener {
-                    DatePickerDialog(this, dateSetListenerTo,
+                    DatePickerDialog(
+                        this, dateSetListenerTo,
                         cal.get(Calendar.YEAR),
                         cal.get(Calendar.MONTH),
-                        cal.get(Calendar.DAY_OF_MONTH)).show()
+                        cal.get(Calendar.DAY_OF_MONTH)
+                    ).show()
                 }
-                button.setOnClickListener{
-                    mainViewModel.getRatesForCurBalance(spinner.selectedItem.toString(), textDateFrom.text.toString(), textDateTo.text.toString())
+                button.setOnClickListener {
+                    mainViewModel.getRatesForCurBalance(
+                        spinner.selectedItem.toString(),
+                        textDateFrom.text.toString(),
+                        textDateTo.text.toString()
+                    )
                 }
                 true
             }
-            R.id.menu6 ->{
+            R.id.menu6 -> {
                 setContentView(R.layout.activity_for_relative_correl)
-                val toolbar:Toolbar= findViewById(R.id.toolBar)
+                val toolbar: Toolbar = findViewById(R.id.toolBar)
                 toolbar.setTitleTextColor(getColor(R.color.white))
                 setSupportActionBar(toolbar)
                 aaChartView = findViewById(R.id.AAChartView)
@@ -404,56 +446,72 @@ class MainActivity : AppCompatActivity() {
                     val timeNow = Calendar.getInstance().timeInMillis / 1000
                     val time = timeNow - Days.MONTH_IN_SEC
                     mainViewModel.getRatesCor(
-                        Pair(currencies1.text.toString().toLowerCase(),currencies2.text.toString().toLowerCase()),
+                        Pair(
+                            currencies1.text.toString().toLowerCase(),
+                            currencies2.text.toString().toLowerCase()
+                        ),
                         time, timeNow
                     )
                     hideKeyboardFrom(this, it)
                 }
                 true
             }
-            R.id.menu7 ->{
+            R.id.menu7 -> {
                 setContentView(R.layout.activity_input_output)
-                val toolbar:Toolbar= findViewById(R.id.toolBar)
+                val toolbar: Toolbar = findViewById(R.id.toolBar)
                 toolbar.setTitleTextColor(getColor(R.color.white))
                 setSupportActionBar(toolbar)
                 aaChartView = findViewById(R.id.AAChartView)
                 val button: Button = findViewById(R.id.input_graph_draw)
-                val textDateFrom: TextView  = findViewById(R.id.input_DateFrom)
+                val textDateFrom: TextView = findViewById(R.id.input_DateFrom)
                 val textDateTo: TextView = findViewById(R.id.input_DateTo)
-                textDateFrom.text = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
+                textDateFrom.text =
+                    SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
                 textDateTo.text = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
                 val cal = Calendar.getInstance()
                 val myFormat = "dd.MM.yyyy"
-                val dateSetListenerFrom = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-                    cal.set(Calendar.YEAR, year)
-                    cal.set(Calendar.MONTH, monthOfYear)
-                    cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                val dateSetListenerFrom =
+                    DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+                        cal.set(Calendar.YEAR, year)
+                        cal.set(Calendar.MONTH, monthOfYear)
+                        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
 
-                    val sdf = SimpleDateFormat(myFormat, Locale.US)
-                    textDateFrom.text = sdf.format(cal.time)}
+                        val sdf = SimpleDateFormat(myFormat, Locale.US)
+                        textDateFrom.text = sdf.format(cal.time)
+                    }
                 textDateFrom.setOnClickListener {
-                    DatePickerDialog(this, dateSetListenerFrom,
+                    DatePickerDialog(
+                        this, dateSetListenerFrom,
                         cal.get(Calendar.YEAR),
                         cal.get(Calendar.MONTH),
-                        cal.get(Calendar.DAY_OF_MONTH)).show()
+                        cal.get(Calendar.DAY_OF_MONTH)
+                    ).show()
                 }
 
-                val dateSetListenerTo = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-                    cal.set(Calendar.YEAR, year)
-                    cal.set(Calendar.MONTH, monthOfYear)
-                    cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                val dateSetListenerTo =
+                    DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+                        cal.set(Calendar.YEAR, year)
+                        cal.set(Calendar.MONTH, monthOfYear)
+                        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
-                    val sdf = SimpleDateFormat(myFormat, Locale.US)
-                    textDateTo.text = sdf.format(cal.time)}
+                        val sdf = SimpleDateFormat(myFormat, Locale.US)
+                        textDateTo.text = sdf.format(cal.time)
+                    }
                 textDateTo.setOnClickListener {
-                    DatePickerDialog(this, dateSetListenerTo,
+                    DatePickerDialog(
+                        this, dateSetListenerTo,
                         cal.get(Calendar.YEAR),
                         cal.get(Calendar.MONTH),
-                        cal.get(Calendar.DAY_OF_MONTH)).show()
+                        cal.get(Calendar.DAY_OF_MONTH)
+                    ).show()
                 }
-                button.setOnClickListener{
-                    mainViewModel.filterTrans(mainViewModel.transSuccessLiveData.value!!, textDateFrom.text.toString(), textDateTo.text.toString())
+                button.setOnClickListener {
+                    mainViewModel.filterTrans(
+                        mainViewModel.transSuccessLiveData.value!!,
+                        textDateFrom.text.toString(),
+                        textDateTo.text.toString()
+                    )
                 }
                 true
             }
@@ -558,7 +616,7 @@ class MainActivity : AppCompatActivity() {
         })
         mainViewModel.stringWithInstruments2.observe(this, Observer {
             val k = findViewById<EditText>(R.id.year)
-           mainViewModel.getRatesForTime(it, k.text.toString().toInt())
+            mainViewModel.getRatesForTime(it, k.text.toString().toInt())
         })
 
         mainViewModel.authSuccessLiveData.observe(this, Observer {
@@ -571,19 +629,27 @@ class MainActivity : AppCompatActivity() {
         )
 
         mainViewModel.ratesIncomeSuccessLiveData.observe(this, Observer {
-            mainViewModel.modelingSeriesForIncome(it.keys.first(), mainViewModel.tradesSuccessLiveData.value, mainViewModel.transSuccessLiveData.value)
+            mainViewModel.modelingSeriesForIncome(
+                it.keys.first(),
+                mainViewModel.tradesSuccessLiveData.value,
+                mainViewModel.transSuccessLiveData.value
+            )
         }
         )
         mainViewModel.resultIncomeLiveData.observe(this, Observer {
-           incomeChartAdapter.setIncomeChart(aaChartView, it.first, it.second)
+            incomeChartAdapter.setIncomeChart(aaChartView, it.first, it.second)
         }
         )
         mainViewModel.ratesCurSuccessLiveData.observe(this, Observer {
-           mainViewModel.modelingSeriesForRateInPortfolio(mainViewModel.tradesSuccessLiveData.value, mainViewModel.transSuccessLiveData.value, it.keys.first())
+            mainViewModel.modelingSeriesForRateInPortfolio(
+                mainViewModel.tradesSuccessLiveData.value,
+                mainViewModel.transSuccessLiveData.value,
+                it.keys.first()
+            )
         }
         )
         mainViewModel.resultCurLiveData.observe(this, Observer {
-          curBalanceChartAdapter.setCurBalanceChart(aaChartView, it.first, it.second)
+            curBalanceChartAdapter.setCurBalanceChart(aaChartView, it.first, it.second)
         }
         )
         mainViewModel.portfolioSuccessLiveData.observe(this, Observer {
@@ -596,16 +662,16 @@ class MainActivity : AppCompatActivity() {
         rvPortfolioAdapter.selectedPortfolioLiveData.observe(this, Observer {
             if (it.second != -1)
                 showGraphs()
-            else{
-               val dialog = Dialog(this)
+            else {
+                val dialog = Dialog(this)
                 dialog.setContentView(R.layout.add_portfolio)
-                val name:EditText = dialog.findViewById(R.id.portfolioName)
-                val button : Button = dialog.findViewById(R.id.addPortfolio)
+                val name: EditText = dialog.findViewById(R.id.portfolioName)
+                val button: Button = dialog.findViewById(R.id.addPortfolio)
                 dialog.show()
                 button.setOnClickListener {
-                    var token :String? = null
+                    var token: String? = null
                     if (pref.contains(APP_PREFERENCES_TOKEN)) {
-                        token  = pref.getString(APP_PREFERENCES_TOKEN, "-");
+                        token = pref.getString(APP_PREFERENCES_TOKEN, "-");
                     }
                     mainViewModel.addPortfolio(Portfolio(0, name.text.toString()), token!!)
                     dialog.dismiss()
@@ -615,7 +681,7 @@ class MainActivity : AppCompatActivity() {
         }
         )
 
-        mainViewModel.authFailureLiveData.observe(this, Observer {isFailed ->
+        mainViewModel.authFailureLiveData.observe(this, Observer { isFailed ->
             isFailed?.let {
                 Toast.makeText(this, "Oops! something went wrong", Toast.LENGTH_SHORT).show()
             }
@@ -631,15 +697,19 @@ class MainActivity : AppCompatActivity() {
         }
         )
         mainViewModel.inOutSuccessLiveData.observe(this, Observer {
-         mainViewModel.calculationInput()
+            mainViewModel.calculationInput()
         }
         )
         rvPortfolioAdapter.deletePortfolioLiveData.observe(this, Observer {
-            var token :String? = null
+            var token: String? = null
             if (pref.contains(APP_PREFERENCES_TOKEN)) {
-                token  = pref.getString(APP_PREFERENCES_TOKEN, "-");
+                token = pref.getString(APP_PREFERENCES_TOKEN, "-");
             }
             mainViewModel.deletePortfolio(it, token!!)
+        }
+        )
+        mainViewModel.resSuccessLiveData.observe(this, Observer {
+            inputOutputAdapter.setInputChart(aaChartView, it, mainViewModel.valuesForInput.value!!.second)
         }
         )
     }

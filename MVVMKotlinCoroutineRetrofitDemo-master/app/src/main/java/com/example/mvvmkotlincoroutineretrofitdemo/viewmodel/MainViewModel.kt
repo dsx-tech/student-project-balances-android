@@ -56,6 +56,7 @@ class MainViewModel : ViewModel() {
 
     var valuesForInput = repositoryForInputOutput.valuesForInput
     var inOutSuccessLiveData = repositoryForInputOutput.inOutSuccessLiveData
+    var resSuccessLiveData = repositoryForInputOutput.resSuccessLiveData
 
 
     fun auth(login:LoginBody){
