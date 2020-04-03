@@ -3,7 +3,6 @@ package com.example.mvvmkotlincoroutineretrofitdemo.repository
 import com.example.mvvmkotlincoroutineretrofitdemo.constants.Days
 import com.example.mvvmkotlincoroutineretrofitdemo.model.Rate
 import com.example.mvvmkotlincoroutineretrofitdemo.model.Transaction
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal

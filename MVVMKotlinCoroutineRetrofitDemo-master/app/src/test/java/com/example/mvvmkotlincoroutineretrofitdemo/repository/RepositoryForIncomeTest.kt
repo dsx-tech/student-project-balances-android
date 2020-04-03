@@ -37,7 +37,7 @@ internal class RepositoryForIncomeTest{
             Trade(2, "2019-11-25T02:59:59","btc-usd", "Buy", BigDecimal("0.5"), "btc",
                 BigDecimal("6700"), "usd", BigDecimal("0.0025"), "btc",12),
 
-            Trade(3, "2019-11-24T21:00:00","ltc-eur", "Sell", BigDecimal("0.001"), "BTC",
+            Trade(3, "2019-11-24T21:00:00","ltc-eur", "Sell", BigDecimal("0.001"), "btc",
                 BigDecimal("47.6"), "eur", BigDecimal("0.01"), "eur",11),
 
             Trade(4, "2019-11-24T00:00:00","ltc-btc", "Sell", BigDecimal("0.1"), "ltc",
