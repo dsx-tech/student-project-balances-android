@@ -515,6 +515,63 @@ class MainActivity : AppCompatActivity() {
                 }
                 true
             }
+            R.id.menu8 -> {
+                setContentView(R.layout.activity_input_output)
+                val toolbar: Toolbar = findViewById(R.id.toolBar)
+                toolbar.setTitleTextColor(getColor(R.color.white))
+                setSupportActionBar(toolbar)
+                aaChartView = findViewById(R.id.AAChartView)
+                val button: Button = findViewById(R.id.input_graph_draw)
+                val textDateFrom: TextView = findViewById(R.id.input_DateFrom)
+                val textDateTo: TextView = findViewById(R.id.input_DateTo)
+                textDateFrom.text =
+                    SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
+                textDateTo.text = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
+                val cal = Calendar.getInstance()
+                val myFormat = "dd.MM.yyyy"
+                val dateSetListenerFrom =
+                    DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+                        cal.set(Calendar.YEAR, year)
+                        cal.set(Calendar.MONTH, monthOfYear)
+                        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+
+                        val sdf = SimpleDateFormat(myFormat, Locale.US)
+                        textDateFrom.text = sdf.format(cal.time)
+                    }
+                textDateFrom.setOnClickListener {
+                    DatePickerDialog(
+                        this, dateSetListenerFrom,
+                        cal.get(Calendar.YEAR),
+                        cal.get(Calendar.MONTH),
+                        cal.get(Calendar.DAY_OF_MONTH)
+                    ).show()
+                }
+
+                val dateSetListenerTo =
+                    DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+                        cal.set(Calendar.YEAR, year)
+                        cal.set(Calendar.MONTH, monthOfYear)
+                        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+                        val sdf = SimpleDateFormat(myFormat, Locale.US)
+                        textDateTo.text = sdf.format(cal.time)
+                    }
+                textDateTo.setOnClickListener {
+                    DatePickerDialog(
+                        this, dateSetListenerTo,
+                        cal.get(Calendar.YEAR),
+                        cal.get(Calendar.MONTH),
+                        cal.get(Calendar.DAY_OF_MONTH)
+                    ).show()
+                }
+                button.setOnClickListener {
+                    mainViewModel.filterTradesTrans( mainViewModel.transSuccessLiveData.value!!, mainViewModel.tradesSuccessLiveData.value!!,
+                        textDateFrom.text.toString(),
+                        textDateTo.text.toString())
+                }
+                true
+            }
             else -> false
         }
 
@@ -710,6 +767,18 @@ class MainActivity : AppCompatActivity() {
         )
         mainViewModel.resSuccessLiveData.observe(this, Observer {
             inputOutputAdapter.setInputChart(aaChartView, it, mainViewModel.valuesForInput.value!!.second)
+        }
+        )
+        mainViewModel.incomeFilterSuccessLiveData.observe(this, Observer {
+            mainViewModel.getRatesForIncome(it.first, it.second.first, it.second.second)
+        }
+        )
+        mainViewModel.incomePortSuccessLiveData.observe(this, Observer {
+            mainViewModel.modelingSeriesForIncome()
+        }
+        )
+        mainViewModel.resultIncomePortLiveData.observe(this, Observer {
+            incomeChartAdapter.setIncomeChart(aaChartView, it.first, it.second)
         }
         )
     }

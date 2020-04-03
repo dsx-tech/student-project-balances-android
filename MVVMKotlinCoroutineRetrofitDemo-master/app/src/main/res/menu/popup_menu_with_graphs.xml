@@ -32,5 +32,8 @@
     <item
         android:id="@+id/menu7"
         android:title="Input/Output"/>
+    <item
+        android:id="@+id/menu8"
+        android:title="Portfolio income"/>
 
 </menu>

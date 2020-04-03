@@ -20,6 +20,7 @@ class MainViewModel : ViewModel() {
     private val repositoryForPortfolios = RepositoryForPortfolios()
     private val repositoryForRelativeRates = RepositoryForRelativeRates()
     private val repositoryForInputOutput = RepositoryForInputOutput()
+    private val repositoryForIncomePort = RepositoryForIncomePort()
 
 
 
@@ -57,6 +58,10 @@ class MainViewModel : ViewModel() {
     var valuesForInput = repositoryForInputOutput.valuesForInput
     var inOutSuccessLiveData = repositoryForInputOutput.inOutSuccessLiveData
     var resSuccessLiveData = repositoryForInputOutput.resSuccessLiveData
+
+    var incomeFilterSuccessLiveData = repositoryForIncomePort.incomeFilterSuccessLiveData
+    var incomePortSuccessLiveData = repositoryForIncomePort.incomePortSuccessLiveData
+    var resultIncomePortLiveData = repositoryForIncomePort.resultIncomePortLiveData
 
 
     fun auth(login:LoginBody){
@@ -127,6 +132,15 @@ class MainViewModel : ViewModel() {
     }
     fun calculationInput(){
         viewModelScope.launch { repositoryForInputOutput.calculationInput() }
+    }
+    fun getRatesForIncome(instruments: String, time1: Long, time2: Long){
+        viewModelScope.launch { repositoryForIncomePort.getRatesForIncome(instruments, time1, time2) }
+    }
+    fun modelingSeriesForIncome(){
+        viewModelScope.launch { repositoryForIncomePort.modelingSeriesForIncome() }
+    }
+    fun filterTradesTrans(allTrans : MutableList<Transaction>, allTrades : MutableList<Trade>, time1:String, time2:String){
+        viewModelScope.launch { repositoryForIncomePort.filterTradesTrans(allTrans, allTrades, time1, time2) }
     }
 
 

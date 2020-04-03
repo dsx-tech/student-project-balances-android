@@ -21,7 +21,7 @@ class InputOutputAdapter {
         }
         val days =  (time.second - time.first) / Days.DAY_IN_SEC
         for (i in 0..days.toInt()){
-            categories.add(formatter.format((time.first + Days.DAY_IN_SEC * i)S*1000 ))
+            categories.add(formatter.format((time.first + Days.DAY_IN_SEC * i)*1000 ))
         }
 
         val aaChartModel = AAChartModel()

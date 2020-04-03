@@ -36,8 +36,10 @@ class RepositoryForInputOutput {
                 instruments += "${it.currency}-usd,"
             }
         }
-        instruments = instruments.removeRange(instruments.length - 1, instruments.length - 1)
+        if (instruments != "" ){
+        instruments = instruments.substring(0, instruments.length - 1)
         valuesForInput.postValue(Pair(instruments, Pair(time1, time2)))
+        }
         transFilter = filteredTrans
     }
 
@@ -45,7 +47,7 @@ class RepositoryForInputOutput {
         var flag = false
         val res :MutableList<Pair<BigDecimal, BigDecimal>> = mutableListOf()
         var resDayDep= BigDecimal("0")
-        var resDrawDep= BigDecimal("0")
+        var resDayDraw= BigDecimal("0")
         val daysCount = (valuesForInput.value!!.second.second - valuesForInput.value!!.second.first) / Days.DAY_IN_SEC
         inOutSuccessLiveData.value!!.values.forEach{
             if (it.size != (daysCount + 1).toInt()){
@@ -63,12 +65,14 @@ class RepositoryForInputOutput {
                                 resDayDep += (transaction.amount ) * inOutSuccessLiveData.value!!["${transaction.currency}-usd"]!![i].exchangeRate
                             }
                             (transaction.transactionType == "Withdraw") -> {
-                                resDrawDep += (transaction.amount ) * inOutSuccessLiveData.value!!["${transaction.currency}-usd"]!![i].exchangeRate
+                                resDayDraw += (transaction.amount ) * inOutSuccessLiveData.value!!["${transaction.currency}-usd"]!![i].exchangeRate
                             }
                         }
                     }
                 }
-                res.add(Pair(resDayDep,resDrawDep))
+                res.add(Pair(resDayDep,resDayDraw))
+                resDayDep = BigDecimal("0")
+                resDayDraw = BigDecimal("0")
             }
             resSuccessLiveData.postValue(res)
         }

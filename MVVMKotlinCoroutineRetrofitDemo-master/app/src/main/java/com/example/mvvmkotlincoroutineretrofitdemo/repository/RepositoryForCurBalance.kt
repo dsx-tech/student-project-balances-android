@@ -172,7 +172,7 @@ class RepositoryForCurBalance {
 
     }
 
-    fun balanceForDateOneCurr(
+    private fun balanceForDateOneCurr(
         allTrades: MutableList<Trade>?,
         allTransactions: MutableList<Transaction>?,
         currency: String
