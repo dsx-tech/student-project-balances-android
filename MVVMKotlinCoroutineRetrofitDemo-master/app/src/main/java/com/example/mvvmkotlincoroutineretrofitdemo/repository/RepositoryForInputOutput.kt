@@ -29,7 +29,7 @@ class RepositoryForInputOutput {
         var instruments = ""
         val currencies:MutableList<String> = mutableListOf()
         val filteredTrans = allTrans.filter {(mainRepository.dateTimeFormatter(it.dateTime).atZone(ZoneOffset.UTC)?.toInstant()?.toEpochMilli()!! / 1000 >= time1) and
-                (mainRepository.dateTimeFormatter(it.dateTime).atZone(ZoneOffset.UTC)?.toInstant()?.toEpochMilli()!! / 1000 <= time2) and (it.transactionStatus == "Complete")}
+                (mainRepository.dateTimeFormatter(it.dateTime).atZone(ZoneOffset.UTC)?.toInstant()?.toEpochMilli()!! / 1000 < time2 + Days.DAY_IN_SEC) and (it.transactionStatus == "Complete")}
         filteredTrans.forEach{
             if (!currencies.contains(it.currency)){
                 currencies.add(it.currency)
