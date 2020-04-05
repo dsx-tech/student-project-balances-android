@@ -5,7 +5,6 @@ import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
@@ -26,7 +25,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import android.content.Intent
 import android.content.SharedPreferences
-import com.anychart.AnyChart
 import com.example.mvvmkotlincoroutineretrofitdemo.model.Portfolio
 import com.example.mvvmkotlincoroutineretrofitdemo.repository.RepositoryForInputOutput
 import com.example.mvvmkotlincoroutineretrofitdemo.repository.RepositoryForRelativeRates
@@ -142,10 +140,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showGraphs() {
         setContentView(R.layout.activity_main)
-        val toolbar: Toolbar = findViewById(R.id.toolBar)
-        toolbar.setTitleTextColor(getColor(R.color.white))
-        setSupportActionBar(toolbar)
-
+        setToolbar()
         chart = findViewById(R.id.chart)
         var token: String? = null
         if (pref.contains(APP_PREFERENCES_TOKEN)) {
@@ -165,9 +160,7 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.menu1 -> {
                 setContentView(R.layout.activity_main)
-                val toolbar: Toolbar = findViewById(R.id.toolBar)
-                toolbar.setTitleTextColor(getColor(R.color.white))
-                setSupportActionBar(toolbar)
+                setToolbar()
                 chart = findViewById(R.id.chart)
                 if (!mainViewModel.balancesAtTheEnd.value.isNullOrEmpty())
                     mainViewModel.getStringWithInstruments()
@@ -184,9 +177,7 @@ class MainActivity : AppCompatActivity() {
             R.id.menu2 -> {
 
                 setContentView(R.layout.activity_rate_graph)
-                val toolbar: Toolbar = findViewById(R.id.toolBar)
-                toolbar.setTitleTextColor(getColor(R.color.white))
-                setSupportActionBar(toolbar)
+                setToolbar()
                 val button: Button = findViewById(R.id.rate_graph_draw)
                 val currencies1: AutoCompleteTextView = findViewById(R.id.autoCoCur1)
                 val adapter = ArrayAdapter(
@@ -224,9 +215,7 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.menu3 -> {
                 setContentView(R.layout.activity_column_graph)
-                val toolbar: Toolbar = findViewById(R.id.toolBar)
-                toolbar.setTitleTextColor(getColor(R.color.white))
-                setSupportActionBar(toolbar)
+                setToolbar()
                 aaChartView = findViewById(R.id.AAChartView)
                 val button: Button = findViewById(R.id.rate_column_graph)
                 val editText: EditText = findViewById(R.id.year)
@@ -248,175 +237,63 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.menu4 -> {
                 setContentView(R.layout.activity_income_graph)
-                val toolbar: Toolbar = findViewById(R.id.toolBar)
-                toolbar.setTitleTextColor(getColor(R.color.white))
-                setSupportActionBar(toolbar)
-                aaChartView = findViewById(R.id.AAChartView)
-                val button: Button = findViewById(R.id.income_graph_draw)
-                val spinner: Spinner = findViewById(R.id.incomeCur)
+                setCalendars()
+                val textDateFrom: TextView = findViewById(R.id.dateFrom)
+                val textDateTo: TextView = findViewById(R.id.dateTo)
+                val button: Button = findViewById(R.id.graph_draw)
+                val currencies1: AutoCompleteTextView = findViewById(R.id.autoCoCur1)
                 val adapter = ArrayAdapter(
                     this,
-                    android.R.layout.simple_spinner_item,
-                    mainViewModel.balancesAtTheEnd.value?.keys!!.toList()
+                    android.R.layout.simple_list_item_1,
+                    Currencies.currenciesArray
                 )
-                spinner.adapter = adapter
-                spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                currencies1.threshold = 0
+                currencies1.setAdapter(adapter)
+                currencies1.setOnFocusChangeListener { _, b -> if (b) currencies1.showDropDown() }
 
 
-                    override fun onItemSelected(
-                        parent: AdapterView<*>?,
-                        view: View?,
-                        position: Int,
-                        id: Long
-                    ) {
-                        (parent?.getChildAt(0) as TextView).setTextColor(Color.WHITE)
-                    }
 
-                    override fun onNothingSelected(parent: AdapterView<*>?) {
-
-                    }
-                }
-
-
-                val textDateFrom: TextView = findViewById(R.id.incomeDateFrom)
-                val textDateTo: TextView = findViewById(R.id.incomeDateTo)
-                textDateFrom.text =
-                    SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
-                textDateTo.text = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
-
-                val cal = Calendar.getInstance()
-                val myFormat = "dd.MM.yyyy"
-                val dateSetListenerFrom =
-                    DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-                        cal.set(Calendar.YEAR, year)
-                        cal.set(Calendar.MONTH, monthOfYear)
-                        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-
-
-                        val sdf = SimpleDateFormat(myFormat, Locale.US)
-                        textDateFrom.text = sdf.format(cal.time)
-                    }
-                textDateFrom.setOnClickListener {
-                    DatePickerDialog(
-                        this, dateSetListenerFrom,
-                        cal.get(Calendar.YEAR),
-                        cal.get(Calendar.MONTH),
-                        cal.get(Calendar.DAY_OF_MONTH)
-                    ).show()
-                }
-
-                val dateSetListenerTo =
-                    DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-                        cal.set(Calendar.YEAR, year)
-                        cal.set(Calendar.MONTH, monthOfYear)
-                        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-
-                        val sdf = SimpleDateFormat(myFormat, Locale.US)
-                        textDateTo.text = sdf.format(cal.time)
-                    }
-                textDateTo.setOnClickListener {
-                    DatePickerDialog(
-                        this, dateSetListenerTo,
-                        cal.get(Calendar.YEAR),
-                        cal.get(Calendar.MONTH),
-                        cal.get(Calendar.DAY_OF_MONTH)
-                    ).show()
-                }
                 button.setOnClickListener {
+                    button.clearFocus()
                     mainViewModel.getRatesForIncome(
-                        spinner.selectedItem.toString(),
+                        currencies1.text.toString().toLowerCase(),
                         textDateFrom.text.toString(),
                         textDateTo.text.toString()
                     )
+                    hideKeyboardFrom(this, it)
                 }
 
                 true
             }
             R.id.menu5 -> {
                 setContentView(R.layout.activity_curr_in_portfolio)
-                val toolbar: Toolbar = findViewById(R.id.toolBar)
-                toolbar.setTitleTextColor(getColor(R.color.white))
-                setSupportActionBar(toolbar)
-                aaChartView = findViewById(R.id.AAChartView)
-                val button: Button = findViewById(R.id.cur_balance_graph_draw)
-                val spinner: Spinner = findViewById(R.id.balanceCur)
+                setCalendars()
+                val button: Button = findViewById(R.id.graph_draw)
+                val textDateFrom: TextView = findViewById(R.id.dateFrom)
+                val textDateTo: TextView = findViewById(R.id.dateTo)
+                val currencies1: AutoCompleteTextView = findViewById(R.id.autoCoCur1)
                 val adapter = ArrayAdapter(
                     this,
-                    android.R.layout.simple_spinner_item,
-                    mainViewModel.balancesAtTheEnd.value?.keys!!.toList()
+                    android.R.layout.simple_list_item_1,
+                    Currencies.currenciesArray
                 )
-                spinner.adapter = adapter
-                spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                    override fun onItemSelected(
-                        parent: AdapterView<*>?,
-                        view: View?,
-                        position: Int,
-                        id: Long
-                    ) {
-                        (parent?.getChildAt(0) as TextView).setTextColor(Color.WHITE)
-                    }
-
-                    override fun onNothingSelected(parent: AdapterView<*>?) {
-
-                    }
-                }
-                val textDateFrom: TextView = findViewById(R.id.curDateFrom)
-                val textDateTo: TextView = findViewById(R.id.curDateTo)
-                textDateFrom.text =
-                    SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
-                textDateTo.text = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
-                val cal = Calendar.getInstance()
-                val myFormat = "dd.MM.yyyy"
-                val dateSetListenerFrom =
-                    DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-                        cal.set(Calendar.YEAR, year)
-                        cal.set(Calendar.MONTH, monthOfYear)
-                        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-
-
-                        val sdf = SimpleDateFormat(myFormat, Locale.US)
-                        textDateFrom.text = sdf.format(cal.time)
-                    }
-                textDateFrom.setOnClickListener {
-                    DatePickerDialog(
-                        this, dateSetListenerFrom,
-                        cal.get(Calendar.YEAR),
-                        cal.get(Calendar.MONTH),
-                        cal.get(Calendar.DAY_OF_MONTH)
-                    ).show()
-                }
-
-                val dateSetListenerTo =
-                    DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-                        cal.set(Calendar.YEAR, year)
-                        cal.set(Calendar.MONTH, monthOfYear)
-                        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-
-                        val sdf = SimpleDateFormat(myFormat, Locale.US)
-                        textDateTo.text = sdf.format(cal.time)
-                    }
-                textDateTo.setOnClickListener {
-                    DatePickerDialog(
-                        this, dateSetListenerTo,
-                        cal.get(Calendar.YEAR),
-                        cal.get(Calendar.MONTH),
-                        cal.get(Calendar.DAY_OF_MONTH)
-                    ).show()
-                }
+                currencies1.threshold = 0
+                currencies1.setAdapter(adapter)
+                currencies1.setOnFocusChangeListener { _, b -> if (b) currencies1.showDropDown() }
                 button.setOnClickListener {
+                    button.clearFocus()
                     mainViewModel.getRatesForCurBalance(
-                        spinner.selectedItem.toString(),
+                        currencies1.text.toString().toLowerCase(),
                         textDateFrom.text.toString(),
                         textDateTo.text.toString()
                     )
+                    hideKeyboardFrom(this, it)
                 }
                 true
             }
             R.id.menu6 -> {
                 setContentView(R.layout.activity_for_relative_correl)
-                val toolbar: Toolbar = findViewById(R.id.toolBar)
-                toolbar.setTitleTextColor(getColor(R.color.white))
-                setSupportActionBar(toolbar)
+                setToolbar()
                 aaChartView = findViewById(R.id.AAChartView)
                 val button: Button = findViewById(R.id.rate_cor_graph_draw)
                 val currencies1: AutoCompleteTextView = findViewById(R.id.corCur1)
@@ -442,7 +319,6 @@ class MainActivity : AppCompatActivity() {
 
                 button.setOnClickListener {
                     button.clearFocus()
-
                     val timeNow = Calendar.getInstance().timeInMillis / 1000
                     val time = timeNow - Days.MONTH_IN_SEC
                     mainViewModel.getRatesCor(
@@ -458,54 +334,10 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.menu7 -> {
                 setContentView(R.layout.activity_input_output)
-                val toolbar: Toolbar = findViewById(R.id.toolBar)
-                toolbar.setTitleTextColor(getColor(R.color.white))
-                setSupportActionBar(toolbar)
-                aaChartView = findViewById(R.id.AAChartView)
-                val button: Button = findViewById(R.id.input_graph_draw)
-                val textDateFrom: TextView = findViewById(R.id.input_DateFrom)
-                val textDateTo: TextView = findViewById(R.id.input_DateTo)
-                textDateFrom.text =
-                    SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
-                textDateTo.text = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
-                val cal = Calendar.getInstance()
-                val myFormat = "dd.MM.yyyy"
-                val dateSetListenerFrom =
-                    DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-                        cal.set(Calendar.YEAR, year)
-                        cal.set(Calendar.MONTH, monthOfYear)
-                        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-
-
-                        val sdf = SimpleDateFormat(myFormat, Locale.US)
-                        textDateFrom.text = sdf.format(cal.time)
-                    }
-                textDateFrom.setOnClickListener {
-                    DatePickerDialog(
-                        this, dateSetListenerFrom,
-                        cal.get(Calendar.YEAR),
-                        cal.get(Calendar.MONTH),
-                        cal.get(Calendar.DAY_OF_MONTH)
-                    ).show()
-                }
-
-                val dateSetListenerTo =
-                    DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-                        cal.set(Calendar.YEAR, year)
-                        cal.set(Calendar.MONTH, monthOfYear)
-                        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-
-                        val sdf = SimpleDateFormat(myFormat, Locale.US)
-                        textDateTo.text = sdf.format(cal.time)
-                    }
-                textDateTo.setOnClickListener {
-                    DatePickerDialog(
-                        this, dateSetListenerTo,
-                        cal.get(Calendar.YEAR),
-                        cal.get(Calendar.MONTH),
-                        cal.get(Calendar.DAY_OF_MONTH)
-                    ).show()
-                }
+                setCalendars()
+                val button: Button = findViewById(R.id.graph_draw)
+                val textDateFrom: TextView = findViewById(R.id.dateFrom)
+                val textDateTo: TextView = findViewById(R.id.dateTo)
                 button.setOnClickListener {
                     mainViewModel.filterTrans(
                         mainViewModel.transSuccessLiveData.value!!,
@@ -517,64 +349,75 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.menu8 -> {
                 setContentView(R.layout.activity_input_output)
-                val toolbar: Toolbar = findViewById(R.id.toolBar)
-                toolbar.setTitleTextColor(getColor(R.color.white))
-                setSupportActionBar(toolbar)
-                aaChartView = findViewById(R.id.AAChartView)
-                val button: Button = findViewById(R.id.input_graph_draw)
-                val textDateFrom: TextView = findViewById(R.id.input_DateFrom)
-                val textDateTo: TextView = findViewById(R.id.input_DateTo)
-                textDateFrom.text =
-                    SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
-                textDateTo.text = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
-                val cal = Calendar.getInstance()
-                val myFormat = "dd.MM.yyyy"
-                val dateSetListenerFrom =
-                    DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-                        cal.set(Calendar.YEAR, year)
-                        cal.set(Calendar.MONTH, monthOfYear)
-                        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-
-
-                        val sdf = SimpleDateFormat(myFormat, Locale.US)
-                        textDateFrom.text = sdf.format(cal.time)
-                    }
-                textDateFrom.setOnClickListener {
-                    DatePickerDialog(
-                        this, dateSetListenerFrom,
-                        cal.get(Calendar.YEAR),
-                        cal.get(Calendar.MONTH),
-                        cal.get(Calendar.DAY_OF_MONTH)
-                    ).show()
-                }
-
-                val dateSetListenerTo =
-                    DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-                        cal.set(Calendar.YEAR, year)
-                        cal.set(Calendar.MONTH, monthOfYear)
-                        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-
-                        val sdf = SimpleDateFormat(myFormat, Locale.US)
-                        textDateTo.text = sdf.format(cal.time)
-                    }
-                textDateTo.setOnClickListener {
-                    DatePickerDialog(
-                        this, dateSetListenerTo,
-                        cal.get(Calendar.YEAR),
-                        cal.get(Calendar.MONTH),
-                        cal.get(Calendar.DAY_OF_MONTH)
-                    ).show()
-                }
+                setCalendars()
+                val button: Button = findViewById(R.id.graph_draw)
+                val textDateFrom: TextView = findViewById(R.id.dateFrom)
+                val textDateTo: TextView = findViewById(R.id.dateTo)
                 button.setOnClickListener {
-                    mainViewModel.filterTradesTrans( mainViewModel.transSuccessLiveData.value!!, mainViewModel.tradesSuccessLiveData.value!!,
+                    mainViewModel.filterTradesTrans(
+                        mainViewModel.transSuccessLiveData.value!!,
+                        mainViewModel.tradesSuccessLiveData.value!!,
                         textDateFrom.text.toString(),
-                        textDateTo.text.toString())
+                        textDateTo.text.toString()
+                    )
                 }
                 true
             }
             else -> false
         }
 
+    }
+    private fun setToolbar(){
+        val toolbar: Toolbar = findViewById(R.id.toolBar)
+        toolbar.setTitleTextColor(getColor(R.color.white))
+        setSupportActionBar(toolbar)
+    }
+    private fun setCalendars() {
+        setToolbar()
+        aaChartView = findViewById(R.id.AAChartView)
+        val textDateFrom: TextView = findViewById(R.id.dateFrom)
+        val textDateTo: TextView = findViewById(R.id.dateTo)
+        textDateFrom.text =
+            SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
+        textDateTo.text = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
+        val cal = Calendar.getInstance()
+        val myFormat = "dd.MM.yyyy"
+        val dateSetListenerFrom =
+            DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+                cal.set(Calendar.YEAR, year)
+                cal.set(Calendar.MONTH, monthOfYear)
+                cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+
+                val sdf = SimpleDateFormat(myFormat, Locale.US)
+                textDateFrom.text = sdf.format(cal.time)
+            }
+        textDateFrom.setOnClickListener {
+            DatePickerDialog(
+                this, dateSetListenerFrom,
+                cal.get(Calendar.YEAR),
+                cal.get(Calendar.MONTH),
+                cal.get(Calendar.DAY_OF_MONTH)
+            ).show()
+        }
+
+        val dateSetListenerTo =
+            DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+                cal.set(Calendar.YEAR, year)
+                cal.set(Calendar.MONTH, monthOfYear)
+                cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+                val sdf = SimpleDateFormat(myFormat, Locale.US)
+                textDateTo.text = sdf.format(cal.time)
+            }
+        textDateTo.setOnClickListener {
+            DatePickerDialog(
+                this, dateSetListenerTo,
+                cal.get(Calendar.YEAR),
+                cal.get(Calendar.MONTH),
+                cal.get(Calendar.DAY_OF_MONTH)
+            ).show()
+        }
     }
 
     private fun registerObservers() {
@@ -766,7 +609,11 @@ class MainActivity : AppCompatActivity() {
         }
         )
         mainViewModel.resSuccessLiveData.observe(this, Observer {
-            inputOutputAdapter.setInputChart(aaChartView, it, mainViewModel.valuesForInput.value!!.second)
+            inputOutputAdapter.setInputChart(
+                aaChartView,
+                it,
+                mainViewModel.valuesForInput.value!!.second
+            )
         }
         )
         mainViewModel.incomeFilterSuccessLiveData.observe(this, Observer {

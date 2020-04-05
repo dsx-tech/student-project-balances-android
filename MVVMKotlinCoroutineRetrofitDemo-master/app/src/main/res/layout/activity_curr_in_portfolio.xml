@@ -22,17 +22,18 @@
             android:layout_weight="5"
             android:orientation="horizontal">
 
-            <Spinner
-                android:id="@+id/balanceCur"
+            <AutoCompleteTextView
+                android:id="@+id/autoCoCur1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:hint = "Cur"
-                android:textColorHint="@color/whiteHint">
-            </Spinner>
+                android:textColorHint="@color/whiteHint"
+                android:textColor="@color/white"
+                android:hint="Cur1" >
+            </AutoCompleteTextView>
 
             <TextView
-                android:id="@+id/curDateFrom"
+                android:id="@+id/dateFrom"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -41,7 +42,7 @@
                 android:text="Date from">
             </TextView>
             <TextView
-                android:id="@+id/curDateTo"
+                android:id="@+id/dateTo"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -53,7 +54,7 @@
 
 
             <Button
-                android:id="@+id/cur_balance_graph_draw"
+                android:id="@+id/graph_draw"
                 android:layout_weight="1"
                 android:layout_width="match_parent"
                 android:text="Go"

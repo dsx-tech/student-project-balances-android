@@ -25,7 +25,7 @@
 
 
             <TextView
-                android:id="@+id/input_DateFrom"
+                android:id="@+id/dateFrom"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -35,7 +35,7 @@
                 >
             </TextView>
             <TextView
-                android:id="@+id/input_DateTo"
+                android:id="@+id/dateTo"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -47,7 +47,7 @@
 
 
             <Button
-                android:id="@+id/input_graph_draw"
+                android:id="@+id/graph_draw"
                 android:layout_weight="1"
                 android:layout_width="match_parent"
                 android:text="Go"

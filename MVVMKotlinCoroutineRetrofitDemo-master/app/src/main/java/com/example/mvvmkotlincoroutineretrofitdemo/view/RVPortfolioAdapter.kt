@@ -13,7 +13,6 @@ import com.example.mvvmkotlincoroutineretrofitdemo.model.Portfolio
 import com.example.mvvmkotlincoroutineretrofitdemo.viewmodel.MainViewModel
 
 class RVPortfolioAdapter  : RecyclerView.Adapter<RVPortfolioAdapter.ViewHolder>() {
-    private var mainViewModel = MainViewModel()
     val selectedPortfolioLiveData = MutableLiveData<Pair<String, Int>>()
     val deletePortfolioLiveData = MutableLiveData<Int>()
     private val portfolioList : MutableList<Portfolio> = mutableListOf()
