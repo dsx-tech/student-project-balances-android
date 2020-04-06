@@ -1,7 +1,7 @@
-package com.example.mvvmkotlincoroutineretrofitdemo.view
+package com.example.portfolio.view
 
 
-import com.example.mvvmkotlincoroutineretrofitdemo.model.Rate
+import com.example.portfolio.model.Rate
 
 class RateAdapter {
 

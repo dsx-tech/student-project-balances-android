@@ -1,4 +1,4 @@
-package com.example.mvvmkotlincoroutineretrofitdemo.view
+package com.example.portfolio.view
 
 import android.app.Activity
 import android.content.Context
@@ -11,9 +11,9 @@ import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.example.mvvmkotlincoroutineretrofitdemo.R
-import com.example.mvvmkotlincoroutineretrofitdemo.model.RegisterBody
-import com.example.mvvmkotlincoroutineretrofitdemo.viewmodel.MainViewModel
+import com.example.portfolio.R
+import com.example.portfolio.model.RegisterBody
+import com.example.portfolio.viewmodel.MainViewModel
 import android.content.Intent
 import android.widget.TextView
 

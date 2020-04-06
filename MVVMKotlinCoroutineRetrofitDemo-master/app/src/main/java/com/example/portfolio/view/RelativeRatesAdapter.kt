@@ -1,9 +1,9 @@
-package com.example.mvvmkotlincoroutineretrofitdemo.view
+package com.example.portfolio.view
 
 import com.aachartmodel.aainfographics.AAInfographicsLib.AAChartConfiger.*
-import com.example.mvvmkotlincoroutineretrofitdemo.R
-import com.example.mvvmkotlincoroutineretrofitdemo.constants.Colors
-import com.example.mvvmkotlincoroutineretrofitdemo.model.Rate
+import com.example.portfolio.R
+import com.example.portfolio.constants.Colors
+import com.example.portfolio.model.Rate
 import java.math.BigDecimal
 import java.text.SimpleDateFormat
 
