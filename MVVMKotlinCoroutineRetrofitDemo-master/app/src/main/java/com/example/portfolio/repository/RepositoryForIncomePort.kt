@@ -104,10 +104,12 @@ class RepositoryForIncomePort {
                 instruments += "${it.tradedQuantityCurrency}-usd,"
             }
         }
-        instruments = instruments.substring(0, instruments.length - 1)
-        transFilter = filteredTrans
-        tradesFilter = filteredTrades
-        incomeFilterSuccessLiveData.postValue(Pair(instruments, Pair(time1!!, time2!!)))
+        if (instruments != "") {
+            instruments = instruments.substring(0, instruments.length - 1)
+            transFilter = filteredTrans
+            tradesFilter = filteredTrades
+            incomeFilterSuccessLiveData.postValue(Pair(instruments, Pair(time1!!, time2!!)))
+        }
     }
 
     suspend fun getRatesForIncome(instruments: String, time1: Long, time2: Long) {
