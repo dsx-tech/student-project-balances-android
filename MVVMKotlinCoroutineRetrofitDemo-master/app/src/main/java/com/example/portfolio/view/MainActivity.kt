@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.Dialog
+import android.app.ProgressDialog
 import android.content.Context
 import android.os.Bundle
 import android.view.*
@@ -59,9 +60,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var repositoryForInputOutput: RepositoryForInputOutput
     private lateinit var inputOutputAdapter: InputOutputAdapter
 
-
+    private lateinit var  dialog  : Dialog
     private var aaChartView: AAChartView? = null
     private var chart: PieChart? = null
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,7 +71,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         pref = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE)
         setContentView(R.layout.activity_portfolios)
-
+        dialog = Dialog(this, android.R.style.Theme_Translucent_NoTitleBar)
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         rateAdapter = RateAdapter()
         transAdapter = TransAdapter()
@@ -103,6 +105,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.login_activity)
         val register: TextView = findViewById(R.id.register)
         val back: RelativeLayout = findViewById(R.id.back)
+
+
         back.setOnClickListener {
             hideKeyboardFrom(this, it)
         }
@@ -113,8 +117,13 @@ class MainActivity : AppCompatActivity() {
         val loginButton: Button = findViewById(R.id.loginButton)
 
         loginButton.setOnClickListener {
+            val view :View = this.layoutInflater.inflate(R.layout.full_screen_progress_bar, null)
+            dialog.setContentView(view)
+            dialog.setCancelable(false)
+            dialog.show()
             val username: EditText = findViewById(R.id.userName)
             val passwordActual: EditText = findViewById(R.id.password)
+
             mainViewModel.auth(LoginBody(username.text.toString(), passwordActual.text.toString()))
 
         }
@@ -461,6 +470,15 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
+        mainViewModel.deletePortfolioSuccessLiveData.observe(this, Observer { portfolioList ->
+
+            //if it is not null then we will display all users
+            portfolioList?.let {
+                rvPortfolioAdapter.deletePortfolio()
+                setPortfolios()
+            }
+
+        })
         mainViewModel.tradesFailureLiveData.observe(this, Observer { isFailed ->
 
             //if it is not null then we will display all users
@@ -523,6 +541,7 @@ class MainActivity : AppCompatActivity() {
             val editor = pref.edit()
             editor.putString(APP_PREFERENCES_TOKEN, it)
             editor.apply()
+            dialog.dismiss()
             completedAuth()
 
         }
@@ -583,6 +602,7 @@ class MainActivity : AppCompatActivity() {
 
         mainViewModel.authFailureLiveData.observe(this, Observer { isFailed ->
             isFailed?.let {
+                dialog.dismiss()
                 Toast.makeText(this, "Oops! something went wrong", Toast.LENGTH_SHORT).show()
             }
 
@@ -605,7 +625,7 @@ class MainActivity : AppCompatActivity() {
             if (pref.contains(APP_PREFERENCES_TOKEN)) {
                 token = pref.getString(APP_PREFERENCES_TOKEN, "-");
             }
-            mainViewModel.deletePortfolio(it, token!!)
+            mainViewModel.deletePortfolio(it.first, token!!)
         }
         )
         mainViewModel.resSuccessLiveData.observe(this, Observer {

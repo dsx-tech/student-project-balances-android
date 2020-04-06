@@ -12,7 +12,7 @@ import com.example.portfolio.model.Portfolio
 
 class RVPortfolioAdapter  : RecyclerView.Adapter<RVPortfolioAdapter.ViewHolder>() {
     val selectedPortfolioLiveData = MutableLiveData<Pair<String, Int>>()
-    val deletePortfolioLiveData = MutableLiveData<Int>()
+    val deletePortfolioLiveData = MutableLiveData<Pair<Int, String>>()
     private val portfolioList : MutableList<Portfolio> = mutableListOf()
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ViewHolder {
@@ -32,6 +32,11 @@ class RVPortfolioAdapter  : RecyclerView.Adapter<RVPortfolioAdapter.ViewHolder>(
         portfolioList.add(0, portfolio)
 
     }
+    fun deletePortfolio() {
+
+        portfolioList.remove(Portfolio(deletePortfolioLiveData.value!!.first, deletePortfolioLiveData.value!!.second))
+
+    }
     override fun getItemCount(): Int {
         return portfolioList.size
     }
@@ -40,7 +45,7 @@ class RVPortfolioAdapter  : RecyclerView.Adapter<RVPortfolioAdapter.ViewHolder>(
         p0.name?.text = portfolioList[p1].name
         p0.count?.text = portfolioList[p1].id.toString()
         p0.button.setOnClickListener {
-          deletePortfolioLiveData.postValue(p0.count.text.toString().toInt())
+          deletePortfolioLiveData.postValue( Pair(portfolioList[p1].id,  portfolioList[p1].name))
         }
     }
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

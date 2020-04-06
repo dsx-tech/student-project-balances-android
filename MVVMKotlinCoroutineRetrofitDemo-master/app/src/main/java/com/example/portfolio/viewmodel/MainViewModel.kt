@@ -50,6 +50,7 @@ class MainViewModel : ViewModel() {
 
     var portfolioSuccessLiveData = repositoryForPortfolios.portfolioSuccessLiveData
     var addPortfolioSuccessLiveData = repositoryForPortfolios.addPortfolioSuccessLiveData
+    var deletePortfolioSuccessLiveData = repositoryForPortfolios.deletePortfolioSuccessLiveData
 
     var rateCurSuccessLiveData = repositoryForRelativeRates.rateCurSuccessLiveData
     var rateCurFailureLiveData = repositoryForRelativeRates.rateCurFailureLiveData
@@ -61,6 +62,7 @@ class MainViewModel : ViewModel() {
     var incomeFilterSuccessLiveData = repositoryForIncomePort.incomeFilterSuccessLiveData
     var incomePortSuccessLiveData = repositoryForIncomePort.incomePortSuccessLiveData
     var resultIncomePortLiveData = repositoryForIncomePort.resultIncomePortLiveData
+
 
 
     fun auth(login:LoginBody){
