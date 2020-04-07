@@ -26,7 +26,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 import android.content.Intent
 import android.content.SharedPreferences
+import com.example.portfolio.model.Correlation
 import com.example.portfolio.model.Portfolio
+import com.example.portfolio.repository.RepositoryForCorrelation
 import com.example.portfolio.repository.RepositoryForInputOutput
 import com.example.portfolio.repository.RepositoryForRelativeRates
 import com.github.mikephil.charting.charts.PieChart
@@ -55,9 +57,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var incomeChartAdapter: IncomeChartAdapter
     private lateinit var curBalanceChartAdapter: CurBalanceChartAdapter
     private lateinit var rvPortfolioAdapter: RVPortfolioAdapter
+    private lateinit var rvCorrelationAdapter: RVCorrelationAdapter
     private lateinit var relativeRatesAdapter: RelativeRatesAdapter
     private lateinit var repositoryForRelativeRates: RepositoryForRelativeRates
     private lateinit var repositoryForInputOutput: RepositoryForInputOutput
+    private lateinit var repositoryForCorrelation: RepositoryForCorrelation
     private lateinit var inputOutputAdapter: InputOutputAdapter
 
     private lateinit var  dialog  : Dialog
@@ -82,8 +86,10 @@ class MainActivity : AppCompatActivity() {
         incomeChartAdapter = IncomeChartAdapter()
         curBalanceChartAdapter = CurBalanceChartAdapter()
         rvPortfolioAdapter = RVPortfolioAdapter()
+        rvCorrelationAdapter = RVCorrelationAdapter()
         relativeRatesAdapter = RelativeRatesAdapter()
         repositoryForRelativeRates = RepositoryForRelativeRates()
+        repositoryForCorrelation = RepositoryForCorrelation()
         repositoryForInputOutput = RepositoryForInputOutput()
         inputOutputAdapter = InputOutputAdapter()
 
@@ -135,6 +141,12 @@ class MainActivity : AppCompatActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         recyclerView.adapter = rvPortfolioAdapter
+    }
+
+    private fun setCorr() {
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        recyclerView.adapter = rvCorrelationAdapter
     }
 
     private fun completedAuth() {
@@ -369,6 +381,46 @@ class MainActivity : AppCompatActivity() {
                         textDateFrom.text.toString(),
                         textDateTo.text.toString()
                     )
+                }
+                true
+            }
+            R.id.menu9 -> {
+                setContentView(R.layout.activity_correlation)
+                setToolbar()
+                val button: Button = findViewById(R.id.add_instrument)
+                val currencies: AutoCompleteTextView = findViewById(R.id.corCur)
+                val currencies1: AutoCompleteTextView = findViewById(R.id.corCur1)
+                val currencies2: AutoCompleteTextView = findViewById(R.id.corCur2)
+                val adapter = ArrayAdapter(
+                    this,
+                    android.R.layout.simple_list_item_1,
+                    Currencies.currenciesArray
+                )
+                currencies.threshold = 0
+                currencies.setAdapter(adapter)
+                currencies.setOnFocusChangeListener { _, b -> if (b) currencies.showDropDown() }
+                val adapter2 = ArrayAdapter(
+                    this,
+                    android.R.layout.simple_list_item_1,
+                    Currencies.currenciesArray
+                )
+                currencies1.threshold = 0
+                currencies1.setAdapter(adapter2)
+                currencies1.setOnFocusChangeListener { _, b -> if (b) currencies1.showDropDown() }
+                currencies2.threshold = 0
+                currencies2.setAdapter(adapter2)
+                currencies2.setOnFocusChangeListener { _, b -> if (b) currencies2.showDropDown() }
+                val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+                recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+                recyclerView.adapter = rvCorrelationAdapter
+                button.setOnClickListener {
+                    button.clearFocus()
+                    val timeNow = Calendar.getInstance().timeInMillis / 1000
+                    val time = timeNow - Days.MONTH_IN_SEC
+                    mainViewModel.getRatesForCor("${currencies1.text.toString().toLowerCase()}-${currencies.text.toString().toLowerCase()},${currencies2.text.toString().toLowerCase()}-${currencies.text.toString().toLowerCase()}", time, timeNow)
+
+
+                    hideKeyboardFrom(this, it)
                 }
                 true
             }
@@ -646,6 +698,18 @@ class MainActivity : AppCompatActivity() {
         )
         mainViewModel.resultIncomePortLiveData.observe(this, Observer {
             incomeChartAdapter.setIncomeChart(aaChartView, it.first, it.second)
+        }
+        )
+        rvCorrelationAdapter.deleteCorLiveData.observe(this, Observer {
+            setCorr()
+        })
+        mainViewModel.rateCorSuccessLiveData.observe(this, Observer {
+            mainViewModel.calcCorr()
+        }
+        )
+        mainViewModel.correlationSuccessLiveData.observe(this, Observer {
+            rvCorrelationAdapter.addCorrelation(Correlation(it.first, it.second))
+            setCorr()
         }
         )
     }

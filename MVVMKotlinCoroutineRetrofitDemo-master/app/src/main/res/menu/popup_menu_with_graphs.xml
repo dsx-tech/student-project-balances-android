@@ -35,5 +35,8 @@
     <item
         android:id="@+id/menu8"
         android:title="Portfolio income"/>
+    <item
+        android:id="@+id/menu9"
+        android:title="Correlation"/>
 
 </menu>

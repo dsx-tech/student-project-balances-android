@@ -20,6 +20,7 @@ class MainViewModel : ViewModel() {
     private val repositoryForRelativeRates = RepositoryForRelativeRates()
     private val repositoryForInputOutput = RepositoryForInputOutput()
     private val repositoryForIncomePort = RepositoryForIncomePort()
+    private val repositoryForCorrelation = RepositoryForCorrelation()
 
 
 
@@ -62,6 +63,8 @@ class MainViewModel : ViewModel() {
     var incomeFilterSuccessLiveData = repositoryForIncomePort.incomeFilterSuccessLiveData
     var incomePortSuccessLiveData = repositoryForIncomePort.incomePortSuccessLiveData
     var resultIncomePortLiveData = repositoryForIncomePort.resultIncomePortLiveData
+    var rateCorSuccessLiveData = repositoryForCorrelation.rateCorSuccessLiveData
+    var correlationSuccessLiveData = repositoryForCorrelation.correlationLiveData
 
 
 
@@ -143,6 +146,14 @@ class MainViewModel : ViewModel() {
     fun filterTradesTrans(allTrans : MutableList<Transaction>, allTrades : MutableList<Trade>, time1:String, time2:String){
         viewModelScope.launch { repositoryForIncomePort.filterTradesTrans(allTrans, allTrades, time1, time2) }
     }
+    fun getRatesForCor(instrument: String, time1: Long, time2: Long){
+        viewModelScope.launch { repositoryForCorrelation.getRatesForTime(instrument, time1, time2) }
+    }
+    fun calcCorr(){
+        viewModelScope.launch { repositoryForCorrelation.calcCorr() }
+    }
+
+
 
 
 
