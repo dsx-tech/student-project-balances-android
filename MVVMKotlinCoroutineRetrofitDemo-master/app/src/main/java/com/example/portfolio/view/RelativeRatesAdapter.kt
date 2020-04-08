@@ -1,6 +1,7 @@
 package com.example.portfolio.view
 
 import com.aachartmodel.aainfographics.AAInfographicsLib.AAChartConfiger.*
+import com.aachartmodel.aainfographics.AAInfographicsLib.AAOptionsModel.AADataLabels
 import com.example.portfolio.R
 import com.example.portfolio.constants.Colors
 import com.example.portfolio.model.Rate
@@ -45,8 +46,7 @@ class RelativeRatesAdapter {
                 rates.add((it.exchangeRate - minValue!!)/(maxValue-minValue!!))
             }
             flagDate = true
-            data.add( AASeriesElement().data(rates.toTypedArray())
-                .name(key)
+            data.add( AASeriesElement().data(rates.toTypedArray()).name(key)
             )
         }
 

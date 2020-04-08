@@ -225,7 +225,7 @@ class MainActivity : AppCompatActivity() {
                     button.clearFocus()
 
                     val timeNow = Calendar.getInstance().timeInMillis / 1000
-                    val time = timeNow - Days.MONTH_IN_SEC
+                    val time = timeNow - Days.MONTH_IN_SEC*3
                     mainViewModel.getRates(
                         "${currencies1.text.toString().toLowerCase()}-${currencies2.text.toString().toLowerCase()}",
                         time, timeNow

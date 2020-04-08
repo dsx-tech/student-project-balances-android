@@ -48,7 +48,7 @@
             android:id="@+id/AAChartView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#1D122C"
+            android:background="@color/colorBackground"
             android:layout_weight="50">
 
 
