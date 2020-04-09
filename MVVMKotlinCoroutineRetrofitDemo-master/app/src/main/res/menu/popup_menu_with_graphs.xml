@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/infMenu"
     >
     <item
-        android:id="@+id/load"
-        android:title="Upload"
-        />
-    <item
-        android:id="@+id/backTo"
-        android:title="Back to portfolios"
-        />
+        android:id = "@+id/upload"
+        android:title = "upload"
+        android:orderInCategory = "100"
+        android:icon = "@drawable/load"
+        app:showAsAction = "always"/>
+
     <item
         android:id="@+id/menu1"
         android:title="Portfolio"

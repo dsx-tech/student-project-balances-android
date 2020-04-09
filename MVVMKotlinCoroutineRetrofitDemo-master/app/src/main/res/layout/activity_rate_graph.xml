@@ -43,7 +43,7 @@
             </AutoCompleteTextView>
 
             <Button
-                android:id="@+id/rate_graph_draw"
+                android:id="@+id/graph_draw"
                 android:layout_weight="1"
                 android:layout_width="match_parent"
                 android:text="Go"

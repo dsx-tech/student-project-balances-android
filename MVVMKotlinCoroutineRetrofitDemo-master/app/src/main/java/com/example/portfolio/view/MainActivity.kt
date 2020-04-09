@@ -99,13 +99,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    override fun onStop() {
-        super.onStop()
 
-        val editor = pref.edit()
-        editor.clear()
-        editor.apply()
-    }
 
     private fun loginSetup() {
         setContentView(R.layout.login_activity)
@@ -141,6 +135,7 @@ class MainActivity : AppCompatActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         recyclerView.adapter = rvPortfolioAdapter
+
     }
 
     private fun setCorr() {
@@ -175,8 +170,12 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         return when (item.itemId) {
-            R.id.backTo -> {
-                setPortfolios()
+            R.id.upload -> {
+                val intent = Intent()
+                    .setType("*/*")
+                    .setAction(Intent.ACTION_GET_CONTENT)
+
+                startActivityForResult(Intent.createChooser(intent, "Select a file"), 111)
                 true
             }
             R.id.menu1 -> {
@@ -199,28 +198,10 @@ class MainActivity : AppCompatActivity() {
 
                 setContentView(R.layout.activity_rate_graph)
                 setToolbar()
-                val button: Button = findViewById(R.id.rate_graph_draw)
+                setCur()
                 val currencies1: AutoCompleteTextView = findViewById(R.id.autoCoCur1)
-                val adapter = ArrayAdapter(
-                    this,
-                    android.R.layout.simple_list_item_1,
-                    Currencies.currenciesArray
-                )
-                currencies1.threshold = 0
-                currencies1.setAdapter(adapter)
-                currencies1.setOnFocusChangeListener { _, b -> if (b) currencies1.showDropDown() }
-
                 val currencies2: AutoCompleteTextView = findViewById(R.id.autoCoCur2)
-                val adapter2 = ArrayAdapter(
-                    this,
-                    android.R.layout.simple_list_item_1,
-                    Currencies.currenciesArray
-                )
-                currencies2.threshold = 0
-                currencies2.setAdapter(adapter2)
-                currencies2.setOnFocusChangeListener { _, b -> if (b) currencies2.showDropDown() }
-
-
+                val button: Button = findViewById(R.id.graph_draw)
                 button.setOnClickListener {
                     button.clearFocus()
 
@@ -315,28 +296,11 @@ class MainActivity : AppCompatActivity() {
             R.id.menu6 -> {
                 setContentView(R.layout.activity_for_relative_correl)
                 setToolbar()
+                setCur()
                 aaChartView = findViewById(R.id.AAChartView)
-                val button: Button = findViewById(R.id.rate_cor_graph_draw)
-                val currencies1: AutoCompleteTextView = findViewById(R.id.corCur1)
-                val adapter = ArrayAdapter(
-                    this,
-                    android.R.layout.simple_list_item_1,
-                    Currencies.currenciesArray
-                )
-                currencies1.threshold = 0
-                currencies1.setAdapter(adapter)
-                currencies1.setOnFocusChangeListener { _, b -> if (b) currencies1.showDropDown() }
-
-                val currencies2: AutoCompleteTextView = findViewById(R.id.corCur2)
-                val adapter2 = ArrayAdapter(
-                    this,
-                    android.R.layout.simple_list_item_1,
-                    Currencies.currenciesArray
-                )
-                currencies2.threshold = 0
-                currencies2.setAdapter(adapter2)
-                currencies2.setOnFocusChangeListener { _, b -> if (b) currencies2.showDropDown() }
-
+                val button: Button = findViewById(R.id.graph_draw)
+                val currencies1: AutoCompleteTextView = findViewById(R.id.autoCoCur1)
+                val currencies2: AutoCompleteTextView = findViewById(R.id.autoCoCur2)
 
                 button.setOnClickListener {
                     button.clearFocus()
@@ -387,10 +351,12 @@ class MainActivity : AppCompatActivity() {
             R.id.menu9 -> {
                 setContentView(R.layout.activity_correlation)
                 setToolbar()
+                setCur()
                 val button: Button = findViewById(R.id.add_instrument)
                 val currencies: AutoCompleteTextView = findViewById(R.id.corCur)
-                val currencies1: AutoCompleteTextView = findViewById(R.id.corCur1)
-                val currencies2: AutoCompleteTextView = findViewById(R.id.corCur2)
+                val currencies1: AutoCompleteTextView = findViewById(R.id.autoCoCur1)
+                val currencies2: AutoCompleteTextView = findViewById(R.id.autoCoCur2)
+
                 val adapter = ArrayAdapter(
                     this,
                     android.R.layout.simple_list_item_1,
@@ -399,17 +365,7 @@ class MainActivity : AppCompatActivity() {
                 currencies.threshold = 0
                 currencies.setAdapter(adapter)
                 currencies.setOnFocusChangeListener { _, b -> if (b) currencies.showDropDown() }
-                val adapter2 = ArrayAdapter(
-                    this,
-                    android.R.layout.simple_list_item_1,
-                    Currencies.currenciesArray
-                )
-                currencies1.threshold = 0
-                currencies1.setAdapter(adapter2)
-                currencies1.setOnFocusChangeListener { _, b -> if (b) currencies1.showDropDown() }
-                currencies2.threshold = 0
-                currencies2.setAdapter(adapter2)
-                currencies2.setOnFocusChangeListener { _, b -> if (b) currencies2.showDropDown() }
+
                 val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
                 recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
                 recyclerView.adapter = rvCorrelationAdapter
@@ -431,7 +387,11 @@ class MainActivity : AppCompatActivity() {
     private fun setToolbar(){
         val toolbar: Toolbar = findViewById(R.id.toolBar)
         toolbar.setTitleTextColor(getColor(R.color.white))
+        toolbar.setNavigationIcon(R.drawable.lock)
         setSupportActionBar(toolbar)
+        toolbar.setNavigationOnClickListener{
+            setPortfolios()
+        }
     }
     private fun setCalendars() {
         setToolbar()
@@ -481,6 +441,31 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun setCur()
+    {
+
+        val currencies1: AutoCompleteTextView = findViewById(R.id.autoCoCur1)
+        val adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_list_item_1,
+            Currencies.currenciesArray
+        )
+        currencies1.threshold = 0
+        currencies1.setAdapter(adapter)
+        currencies1.setOnFocusChangeListener { _, b -> if (b) currencies1.showDropDown() }
+
+        val currencies2: AutoCompleteTextView = findViewById(R.id.autoCoCur2)
+        val adapter2 = ArrayAdapter(
+            this,
+            android.R.layout.simple_list_item_1,
+            Currencies.currenciesArray
+        )
+        currencies2.threshold = 0
+        currencies2.setAdapter(adapter2)
+        currencies2.setOnFocusChangeListener { _, b -> if (b) currencies2.showDropDown() }
+
+
+    }
     private fun registerObservers() {
 
         mainViewModel.rateSuccessLiveData.observe(this, Observer { rates ->
@@ -590,7 +575,9 @@ class MainActivity : AppCompatActivity() {
         })
 
         mainViewModel.authSuccessLiveData.observe(this, Observer {
+
             val editor = pref.edit()
+            editor.clear()
             editor.putString(APP_PREFERENCES_TOKEN, it)
             editor.apply()
             dialog.dismiss()

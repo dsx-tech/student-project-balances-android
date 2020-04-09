@@ -2,6 +2,7 @@ package com.example.portfolio.interfaces
 
 import com.example.portfolio.model.*
 import kotlinx.coroutines.Deferred
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -33,6 +34,6 @@ interface ApiService {
     @Headers("Content-Type: application/json")
     @Multipart
     @POST("/bcv/portfolios/{id}/trades/upload")
-    fun uploadTrades(@Header("Authorization") token: String, @Path("id") id: Int) : Deferred<Response<Portfolio>>
+    fun uploadTrades(@Part  doc: MultipartBody.Part, @Header("Authorization") token: String, @Path("id") id: Int) : Deferred<Response<Void>>
 }
 

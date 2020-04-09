@@ -21,7 +21,7 @@
             android:layout_weight="5"
             android:orientation="horizontal">
             <AutoCompleteTextView
-                android:id="@+id/corCur1"
+                android:id="@+id/autoCoCur1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -31,7 +31,7 @@
             </AutoCompleteTextView>
 
             <AutoCompleteTextView
-                android:id="@+id/corCur2"
+                android:id="@+id/autoCoCur2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -41,7 +41,7 @@
             </AutoCompleteTextView>
 
             <Button
-                android:id="@+id/rate_cor_graph_draw"
+                android:id="@+id/graph_draw"
                 android:layout_weight="1"
                 android:layout_width="match_parent"
                 android:text="Go"
