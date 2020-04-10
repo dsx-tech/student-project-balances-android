@@ -1,42 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/infMenu"
-    >
+    android:id="@+id/infMenu">
     <item
-        android:id = "@+id/upload"
-        android:title = "upload"
-        android:orderInCategory = "100"
-        android:icon = "@drawable/load"
-        app:showAsAction = "always"/>
+        android:id="@+id/upload"
+        android:icon="@drawable/load"
+        android:orderInCategory="100"
+        android:title="upload"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/upload_trades"
+                android:title="Trades" />
+            <item
+                android:id="@+id/upload_trans"
+                android:title="Transactions" />
+        </menu>
+    </item>
 
     <item
         android:id="@+id/menu1"
-        android:title="Portfolio"
-        />
+        android:title="Portfolio" />
     <item
         android:id="@+id/menu2"
-        android:title="Currency rates"/>
+        android:title="Currency rates" />
     <item
         android:id="@+id/menu3"
-        android:title="Balances for time"/>
+        android:title="Balances for time" />
     <item
         android:id="@+id/menu4"
-        android:title="Income"/>
+        android:title="Income" />
     <item
         android:id="@+id/menu5"
-        android:title="Currency balance"/>
+        android:title="Currency balance" />
     <item
         android:id="@+id/menu6"
-        android:title="Relative rates"/>
+        android:title="Relative rates" />
     <item
         android:id="@+id/menu7"
-        android:title="Input/Output"/>
+        android:title="Input/Output" />
     <item
         android:id="@+id/menu8"
-        android:title="Portfolio income"/>
+        android:title="Portfolio income" />
     <item
         android:id="@+id/menu9"
-        android:title="Correlation"/>
+        android:title="Correlation" />
 
 </menu>

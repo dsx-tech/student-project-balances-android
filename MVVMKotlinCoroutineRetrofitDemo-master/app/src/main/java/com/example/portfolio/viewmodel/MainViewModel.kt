@@ -1,10 +1,13 @@
 package com.example.portfolio.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.portfolio.model.*
 import com.example.portfolio.repository.*
 import kotlinx.coroutines.launch
+import okhttp3.MediaType
+import java.io.File
 
 class MainViewModel : ViewModel() {
 
@@ -21,6 +24,7 @@ class MainViewModel : ViewModel() {
     private val repositoryForInputOutput = RepositoryForInputOutput()
     private val repositoryForIncomePort = RepositoryForIncomePort()
     private val repositoryForCorrelation = RepositoryForCorrelation()
+    private val repositoryForUpload= RepositoryForUpload()
 
 
 
@@ -65,6 +69,7 @@ class MainViewModel : ViewModel() {
     var resultIncomePortLiveData = repositoryForIncomePort.resultIncomePortLiveData
     var rateCorSuccessLiveData = repositoryForCorrelation.rateCorSuccessLiveData
     var correlationSuccessLiveData = repositoryForCorrelation.correlationLiveData
+    var uploadSuccessLiveData = repositoryForUpload.uploadSuccessLiveData
 
 
 
@@ -152,6 +157,13 @@ class MainViewModel : ViewModel() {
     fun calcCorr(){
         viewModelScope.launch { repositoryForCorrelation.calcCorr() }
     }
+    fun uploadFiles(fileUri : Uri, file: File, id: Int, token: String, type: MediaType?){
+        viewModelScope.launch { repositoryForUpload.uploadFiles(fileUri, file, id, token, type) }
+    }
+    fun uploadTrans(fileUri : Uri, file: File, id: Int, token: String, type: MediaType?){
+        viewModelScope.launch { repositoryForUpload.uploadTrans(fileUri, file, id, token, type) }
+    }
+
 
 
 

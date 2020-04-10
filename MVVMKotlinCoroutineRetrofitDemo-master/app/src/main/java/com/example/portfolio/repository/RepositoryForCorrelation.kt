@@ -45,7 +45,7 @@ class RepositoryForCorrelation {
                 del2 += b.multiply(b)
                 cov += a.multiply(b)
             }
-            val instrument = keys[0].substring(0, keys[0].indexOf('-') + 1) + keys[1].substring(0, keys[1].indexOf('-'))
+            val instrument = "${keys[0]} / ${keys[1]}"
             correlationLiveData.postValue( Pair(instrument, cov.toFloat() / (sqrt(del1.multiply(del2).toFloat()))))
         }
     }
