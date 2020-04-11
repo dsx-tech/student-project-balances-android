@@ -85,11 +85,11 @@ class MainViewModel : ViewModel() {
     fun getRelevantRates(instruments: String) {
         viewModelScope.launch { repositoryForPieGraph.getRate(instruments) }
     }
-    fun getTrans(token:String) {
-        viewModelScope.launch { mainRepository.getTrans(token) }
+    fun getTrans(token:String, id:Int) {
+        viewModelScope.launch { mainRepository.getTrans(token, id) }
     }
-    fun getTrades(token:String) {
-        viewModelScope.launch { mainRepository.getTrades(token) }
+    fun getTrades(token:String, id:Int) {
+        viewModelScope.launch { mainRepository.getTrades(token, id) }
     }
     fun countingBalance() {
         viewModelScope.launch { repositoryForPieGraph.countingBalance(tradesSuccessLiveData.value!!, transSuccessLiveData.value!!) }
@@ -160,6 +160,7 @@ class MainViewModel : ViewModel() {
     fun uploadFiles(fileUri : Uri, file: File, id: Int, token: String, type: MediaType?){
         viewModelScope.launch { repositoryForUpload.uploadFiles(fileUri, file, id, token, type) }
     }
+
     fun uploadTrans(fileUri : Uri, file: File, id: Int, token: String, type: MediaType?){
         viewModelScope.launch { repositoryForUpload.uploadTrans(fileUri, file, id, token, type) }
     }

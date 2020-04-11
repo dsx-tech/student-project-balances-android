@@ -72,7 +72,7 @@ class RepositoryForPieGraph {
         if (!transactions.isNullOrEmpty()) {
             transactions.sortBy { it.dateTime }
         }
-        if ((!transactions.isNullOrEmpty()) and (!trades.isNullOrEmpty())) {
+        if ((!transactions.isNullOrEmpty()) or (!trades.isNullOrEmpty())) {
             balancesAtTheEnd.postValue(balanceForDate(LocalDateTime.now(),trades, transactions ))
         }
 
@@ -93,12 +93,12 @@ class RepositoryForPieGraph {
         var flagTransactions = false
         var nextTrade: Trade? = null
         var nextTransaction: Transaction? = null
-        if (trades== null) {
+        if (trades.isNullOrEmpty()) {
             flagTrades = true
         } else {
             nextTrade = trades[0]
         }
-        if (transactions == null) {
+        if (transactions!!.isEmpty()) {
             flagTransactions = true
         } else {
             nextTransaction = transactions[0]

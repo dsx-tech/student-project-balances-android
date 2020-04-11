@@ -21,14 +21,14 @@ class MainRepository {
     var tradesSuccessLiveData = MutableLiveData<MutableList<Trade>>()
     var tradesFailureLiveData = MutableLiveData<Boolean>()
 
-    suspend fun getTrans(token:String) {
+    suspend fun getTrans(token:String, id: Int) {
 
         try {
 
             //here api calling became so simple just 1 line of code
             //there is no callback needed
 
-            val response = transTradesApi.getTrans("Token_$token").await()
+            val response = transTradesApi.getTrans("Token_$token", id).await()
 
             Log.d(TAG, "$response")
 
@@ -64,14 +64,14 @@ class MainRepository {
 
     }
 
-    suspend fun getTrades(token:String) {
+    suspend fun getTrades(token:String, id: Int) {
 
         try {
 
             //here api calling became so simple just 1 line of code
             //there is no callback needed
 
-            val response = transTradesApi.getTrades("Token_$token").await()
+            val response = transTradesApi.getTrades("Token_$token", id).await()
 
             Log.d(TAG, "$response")
 

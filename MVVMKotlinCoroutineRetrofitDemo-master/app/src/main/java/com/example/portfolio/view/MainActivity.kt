@@ -173,8 +173,12 @@ class MainActivity : AppCompatActivity() {
         if (pref.contains(APP_PREFERENCES_TOKEN)) {
             token = pref.getString(APP_PREFERENCES_TOKEN, "-");
         }
-        mainViewModel.getTrades(token!!)
-        mainViewModel.getTrans(token)
+        var id: String? = null
+        if (pref.contains(APP_PREFERENCES_ID)) {
+            id = pref.getString(APP_PREFERENCES_ID, "0");
+        }
+        mainViewModel.getTrades(token!!, id!!.toInt())
+        mainViewModel.getTrans(token, id.toInt())
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -248,8 +252,12 @@ class MainActivity : AppCompatActivity() {
                     if (pref.contains(APP_PREFERENCES_TOKEN)) {
                         token = pref.getString(APP_PREFERENCES_TOKEN, "-");
                     }
-                    mainViewModel.getTrades(token!!)
-                    mainViewModel.getTrans(token)
+                    var id: String? = null
+                    if (pref.contains(APP_PREFERENCES_ID)) {
+                        id = pref.getString(APP_PREFERENCES_ID, "0");
+                    }
+                    mainViewModel.getTrades(token!!, id!!.toInt())
+                    mainViewModel.getTrans(token, id.toInt())
                 }
                 true
             }
@@ -448,12 +456,12 @@ class MainActivity : AppCompatActivity() {
 
         if (requestCode == 111 && resultCode == RESULT_OK) {
             val selectedFile = data?.data //The uri with the location of the file
-            var file = File(selectedFile!!.path)
-            var split = file.path.split(":")
-            var filer = split[1]
-            var f = File(filer)
+            val file = File(selectedFile!!.path)
+            val split = file.path.split(":")
+            val filer = split[1]
+            val f = File(filer)
             var token: String? = null
-            var type = MediaType.parse(contentResolver.getType(selectedFile))
+            val type = MediaType.parse(contentResolver.getType(selectedFile))
             if (pref.contains(APP_PREFERENCES_TOKEN)) {
                 token = pref.getString(APP_PREFERENCES_TOKEN, "-");
             }
@@ -466,12 +474,12 @@ class MainActivity : AppCompatActivity() {
         else
         if (requestCode == 222 && resultCode == RESULT_OK) {
             val selectedFile = data?.data //The uri with the location of the file
-            var file = File(selectedFile!!.path)
-            var split = file.path.split(":")
-            var filer = split[1]
-            var f = File(filer)
+            val file = File(selectedFile!!.path)
+            val split = file.path.split(":")
+            val filer = split[1]
+            val f = File(filer)
             var token: String? = null
-            var type = MediaType.parse(contentResolver.getType(selectedFile))
+            val type = MediaType.parse(contentResolver.getType(selectedFile))
             if (pref.contains(APP_PREFERENCES_TOKEN)) {
                 token = pref.getString(APP_PREFERENCES_TOKEN, "-");
             }
@@ -636,12 +644,15 @@ class MainActivity : AppCompatActivity() {
         tradesAdapter.tradesDownloaded.observe(this, Observer {
             if (transAdapter.transDownloaded.value == true) {
                 mainViewModel.countingBalance()
+                transAdapter.transDownloaded.postValue(false)
+                tradesAdapter.tradesDownloaded.postValue(false)
             }
         })
         transAdapter.transDownloaded.observe(this, Observer {
             if (tradesAdapter.tradesDownloaded.value == true) {
                 mainViewModel.countingBalance()
-
+                transAdapter.transDownloaded.postValue(false)
+                tradesAdapter.tradesDownloaded.postValue(false)
             }
         })
         mainViewModel.balancesAtTheEnd.observe(this, Observer {
@@ -800,6 +811,19 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.correlationSuccessLiveData.observe(this, Observer {
             rvCorrelationAdapter.addCorrelation(Correlation(it.first, it.second))
             setCorr()
+        }
+        )
+        mainViewModel.uploadSuccessLiveData.observe(this, Observer {
+            var token: String? = null
+            if (pref.contains(APP_PREFERENCES_TOKEN)) {
+                token = pref.getString(APP_PREFERENCES_TOKEN, "-");
+            }
+            var id: String? = null
+            if (pref.contains(APP_PREFERENCES_ID)) {
+                id = pref.getString(APP_PREFERENCES_ID, "0");
+            }
+            mainViewModel.getTrades(token!!, id!!.toInt())
+            mainViewModel.getTrans(token!!, id.toInt())
         }
         )
     }

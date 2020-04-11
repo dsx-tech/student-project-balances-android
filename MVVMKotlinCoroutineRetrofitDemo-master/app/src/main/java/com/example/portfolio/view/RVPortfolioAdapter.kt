@@ -1,5 +1,6 @@
 package com.example.portfolio.view
 
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,6 +45,10 @@ class RVPortfolioAdapter  : RecyclerView.Adapter<RVPortfolioAdapter.ViewHolder>(
 
         p0.name?.text = portfolioList[p1].name
         p0.count?.text = portfolioList[p1].id.toString()
+        if (p1 == portfolioList.size - 1){
+            p0.button.visibility = View.INVISIBLE
+            p0.count.visibility = View.INVISIBLE
+        }
         p0.button.setOnClickListener {
           deletePortfolioLiveData.postValue( Pair(portfolioList[p1].id,  portfolioList[p1].name))
         }

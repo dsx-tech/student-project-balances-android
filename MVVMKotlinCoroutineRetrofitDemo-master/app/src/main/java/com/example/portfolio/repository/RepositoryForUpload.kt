@@ -4,11 +4,12 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.portfolio.manager.RetrofitManager
+import okhttp3.*
+import retrofit2.Call
 
-import okhttp3.MediaType
-import okhttp3.MultipartBody
-
-import okhttp3.RequestBody
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.await
 import java.io.File
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -22,8 +23,9 @@ class RepositoryForUpload {
     var uploadSuccessLiveData = MutableLiveData<Boolean>()
     var uploadFailureLiveData = MutableLiveData<Boolean>()
     suspend fun uploadFiles(fileUri : Uri1, file1: File, id: Int, token: String, type: MediaType?) {
+
         var filePart: RequestBody = RequestBody.create(type, file1)
-        var file : MultipartBody.Part = MultipartBody.Part.createFormData("doc",file1.name,  filePart)
+        var file : MultipartBody.Part = MultipartBody.Part.createFormData("file",file1.name,  filePart)
         try {
             val response = RetrofitManager.transTradesApi.uploadTrades(file, "Token_$token",  id).await()
 
@@ -57,7 +59,7 @@ class RepositoryForUpload {
 
     suspend fun uploadTrans(fileUri : Uri1, file1: File, id: Int, token: String, type: MediaType?) {
         var filePart: RequestBody = RequestBody.create(type, file1)
-        var file : MultipartBody.Part = MultipartBody.Part.createFormData("doc",file1.name,  filePart)
+        var file : MultipartBody.Part = MultipartBody.Part.createFormData("file",file1.name,  filePart)
         try {
             val response = RetrofitManager.transTradesApi.uploadTrans(file, "Token_$token",  id).await()
 
@@ -88,5 +90,7 @@ class RepositoryForUpload {
         }
 //
     }
+
+
 
 }
