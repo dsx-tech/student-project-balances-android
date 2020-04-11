@@ -23,30 +23,31 @@ class RepositoryForCorrelation {
             flag = true
         }
         if (!flag) {
-            var avg1 = BigDecimal("0")
-            var avg2 = BigDecimal("0")
-            var cov = BigDecimal("0")
-            var del1 = BigDecimal("0")
-            var del2 = BigDecimal("0")
-            var a: BigDecimal
-            var b: BigDecimal
+            var avg1 = 0f
+            var avg2 = 0f
+            var cov = 0f
+            var del1 = 0f
+            var del2 = 0f
+            var a: Float
+            var b: Float
             rateCorSuccessLiveData.value!![keys[0]]!!.forEach {
-                avg1 += it.exchangeRate
+                avg1 += it.exchangeRate.toFloat()
             }
-            avg1 = avg1.divide(BigDecimal(rateCorSuccessLiveData.value!![keys[0]]!!.size))
+            var f = BigDecimal(rateCorSuccessLiveData.value!![keys[0]]!!.size)
+            avg1 /= ((rateCorSuccessLiveData.value!![keys[0]]!!.size))
             rateCorSuccessLiveData.value!![keys[1]]!!.forEach {
-                avg2 += it.exchangeRate
+                avg2 += it.exchangeRate.toFloat()
             }
-            avg2 = avg2.divide(BigDecimal(rateCorSuccessLiveData.value!![keys[1]]!!.size))
+            avg2 /= ((rateCorSuccessLiveData.value!![keys[1]]!!.size))
             for (i in 0 until rateCorSuccessLiveData.value!![keys[1]]!!.size){
-                a = rateCorSuccessLiveData.value!![keys[0]]!![i].exchangeRate - avg1
-                b = rateCorSuccessLiveData.value!![keys[1]]!![i].exchangeRate - avg2
-                del1 += a.multiply(a)
-                del2 += b.multiply(b)
-                cov += a.multiply(b)
+                a = rateCorSuccessLiveData.value!![keys[0]]!![i].exchangeRate.toFloat() - avg1
+                b = rateCorSuccessLiveData.value!![keys[1]]!![i].exchangeRate.toFloat() - avg2
+                del1 += a*a
+                del2 += b*b
+                cov += a*b
             }
             val instrument = "${keys[0]} / ${keys[1]}"
-            correlationLiveData.postValue( Pair(instrument, cov.toFloat() / (sqrt(del1.multiply(del2).toFloat()))))
+            correlationLiveData.postValue( Pair(instrument, cov/ (sqrt(del1*(del2)))))
         }
     }
 

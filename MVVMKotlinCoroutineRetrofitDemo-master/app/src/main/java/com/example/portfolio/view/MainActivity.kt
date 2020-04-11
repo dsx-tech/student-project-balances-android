@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
@@ -17,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.aachartmodel.aainfographics.AAInfographicsLib.AAChartConfiger.AAChartView
 import com.example.portfolio.R
-import com.example.portfolio.viewmodel.MainViewModel
 import com.example.portfolio.constants.Days
 import com.example.portfolio.constants.Currencies
 import com.example.portfolio.model.LoginBody
@@ -30,15 +28,13 @@ import com.example.portfolio.model.Portfolio
 import com.example.portfolio.repository.RepositoryForCorrelation
 import com.example.portfolio.repository.RepositoryForInputOutput
 import com.example.portfolio.repository.RepositoryForRelativeRates
+import com.example.portfolio.viewmodel.*
 import com.github.mikephil.charting.charts.PieChart
 import com.karumi.dexter.Dexter
-import com.karumi.dexter.DexterBuilder
-import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.karumi.dexter.listener.single.PermissionListener
 import okhttp3.MediaType
 import java.io.File
@@ -59,6 +55,15 @@ class MainActivity : AppCompatActivity() {
     private val APP_PREFERENCES_ID = ""
     lateinit var pref: SharedPreferences
     private lateinit var mainViewModel: MainViewModel
+    private lateinit var correlationViewModel: CorrelationViewModel
+    private lateinit var inputViewModel: InputViewModel
+    private lateinit var incomePortViewModel: IncomePortViewModel
+    private lateinit var portfolioViewModel: PortfolioViewModel
+    private lateinit var columnViewModel: ColumnViewModel
+    private lateinit var uploadViewModel: UploadViewModel
+    private lateinit var incomeViewModel: IncomeViewModel
+    private lateinit var curBalanceViewModel: CurBalanceViewModel
+
     private lateinit var rateAdapter: RateAdapter
     private lateinit var transAdapter: TransAdapter
     private lateinit var tradesAdapter: TradesAdapter
@@ -88,6 +93,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_portfolios)
         dialog = Dialog(this, android.R.style.Theme_Translucent_NoTitleBar)
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+        correlationViewModel = ViewModelProviders.of(this).get(CorrelationViewModel::class.java)
+        inputViewModel = ViewModelProviders.of(this).get(InputViewModel::class.java)
+        incomePortViewModel = ViewModelProviders.of(this).get(IncomePortViewModel::class.java)
+        portfolioViewModel = ViewModelProviders.of(this).get(PortfolioViewModel::class.java)
+        columnViewModel = ViewModelProviders.of(this).get(ColumnViewModel::class.java)
+        uploadViewModel = ViewModelProviders.of(this).get(UploadViewModel::class.java)
+        incomeViewModel = ViewModelProviders.of(this).get(IncomeViewModel::class.java)
+        curBalanceViewModel = ViewModelProviders.of(this).get(CurBalanceViewModel::class.java)
+
         rateAdapter = RateAdapter()
         transAdapter = TransAdapter()
         tradesAdapter = TradesAdapter()
@@ -157,11 +171,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun completedAuth() {
 
-        var token: String? = null
-        if (pref.contains(APP_PREFERENCES_TOKEN)) {
-            token = pref.getString(APP_PREFERENCES_TOKEN, "-");
-        }
-        mainViewModel.getPortfolios(token!!)
+        val token = getToken()
+        portfolioViewModel.getPortfolios(token)
 
     }
 
@@ -169,13 +180,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setToolbar()
         chart = findViewById(R.id.chart)
-        var token: String? = null
-        if (pref.contains(APP_PREFERENCES_TOKEN)) {
-            token = pref.getString(APP_PREFERENCES_TOKEN, "-");
-        }
+        val token = getToken()
         var id: String? = null
         if (pref.contains(APP_PREFERENCES_ID)) {
-            id = pref.getString(APP_PREFERENCES_ID, "0");
+            id = pref.getString(APP_PREFERENCES_ID, "0")
         }
         mainViewModel.getTrades(token!!, id!!.toInt())
         mainViewModel.getTrans(token, id.toInt())
@@ -248,15 +256,12 @@ class MainActivity : AppCompatActivity() {
                 if (!mainViewModel.balancesAtTheEnd.value.isNullOrEmpty())
                     mainViewModel.getStringWithInstruments()
                 else {
-                    var token: String? = null
-                    if (pref.contains(APP_PREFERENCES_TOKEN)) {
-                        token = pref.getString(APP_PREFERENCES_TOKEN, "-");
-                    }
+                    val token = getToken()
                     var id: String? = null
                     if (pref.contains(APP_PREFERENCES_ID)) {
-                        id = pref.getString(APP_PREFERENCES_ID, "0");
+                        id = pref.getString(APP_PREFERENCES_ID, "0")
                     }
-                    mainViewModel.getTrades(token!!, id!!.toInt())
+                    mainViewModel.getTrades(token, id!!.toInt())
                     mainViewModel.getTrans(token, id.toInt())
                 }
                 true
@@ -292,7 +297,7 @@ class MainActivity : AppCompatActivity() {
                     try {
 
                         if ((mainViewModel.tradesSuccessLiveData.value?.isNotEmpty() == true) or (mainViewModel.transSuccessLiveData.value?.isNotEmpty() == true))
-                            mainViewModel.modelingColumnGraph(
+                            columnViewModel.modelingColumnGraph(
                                 editText.text.toString().toInt(),
                                 mainViewModel.tradesSuccessLiveData.value,
                                 mainViewModel.transSuccessLiveData.value
@@ -324,7 +329,7 @@ class MainActivity : AppCompatActivity() {
 
                 button.setOnClickListener {
                     button.clearFocus()
-                    mainViewModel.getRatesForIncome(
+                    incomeViewModel.getRatesForIncome(
                         currencies1.text.toString().toLowerCase(),
                         textDateFrom.text.toString(),
                         textDateTo.text.toString()
@@ -351,7 +356,7 @@ class MainActivity : AppCompatActivity() {
                 currencies1.setOnFocusChangeListener { _, b -> if (b) currencies1.showDropDown() }
                 button.setOnClickListener {
                     button.clearFocus()
-                    mainViewModel.getRatesForCurBalance(
+                    curBalanceViewModel.getRatesForCurBalance(
                         currencies1.text.toString().toLowerCase(),
                         textDateFrom.text.toString(),
                         textDateTo.text.toString()
@@ -391,7 +396,7 @@ class MainActivity : AppCompatActivity() {
                 val textDateFrom: TextView = findViewById(R.id.dateFrom)
                 val textDateTo: TextView = findViewById(R.id.dateTo)
                 button.setOnClickListener {
-                    mainViewModel.filterTrans(
+                    inputViewModel.filterTrans(
                         mainViewModel.transSuccessLiveData.value!!,
                         textDateFrom.text.toString(),
                         textDateTo.text.toString()
@@ -406,7 +411,7 @@ class MainActivity : AppCompatActivity() {
                 val textDateFrom: TextView = findViewById(R.id.dateFrom)
                 val textDateTo: TextView = findViewById(R.id.dateTo)
                 button.setOnClickListener {
-                    mainViewModel.filterTradesTrans(
+                    incomePortViewModel.filterTradesTrans(
                         mainViewModel.transSuccessLiveData.value!!,
                         mainViewModel.tradesSuccessLiveData.value!!,
                         textDateFrom.text.toString(),
@@ -440,7 +445,7 @@ class MainActivity : AppCompatActivity() {
                     button.clearFocus()
                     val timeNow = Calendar.getInstance().timeInMillis / 1000
                     val time = timeNow - Days.MONTH_IN_SEC*2
-                    mainViewModel.getRatesForCor("${currencies1.text.toString().toLowerCase()},${currencies2.text.toString().toLowerCase()}", time, timeNow)
+                    correlationViewModel.getRatesForCor("${currencies1.text.toString().toLowerCase()},${currencies2.text.toString().toLowerCase()}", time, timeNow)
 
 
                     hideKeyboardFrom(this, it)}
@@ -460,16 +465,13 @@ class MainActivity : AppCompatActivity() {
             val split = file.path.split(":")
             val filer = split[1]
             val f = File(filer)
-            var token: String? = null
             val type = MediaType.parse(contentResolver.getType(selectedFile))
-            if (pref.contains(APP_PREFERENCES_TOKEN)) {
-                token = pref.getString(APP_PREFERENCES_TOKEN, "-");
-            }
+            val token = getToken()
             var id: String? = null
             if (pref.contains(APP_PREFERENCES_ID)) {
-                id = pref.getString(APP_PREFERENCES_ID, "0");
+                id = pref.getString(APP_PREFERENCES_ID, "0")
             }
-            mainViewModel.uploadFiles(selectedFile, f, id!!.toInt(), token!!,  type )
+            uploadViewModel.uploadFiles(selectedFile, f, id!!.toInt(), token,  type )
         }
         else
         if (requestCode == 222 && resultCode == RESULT_OK) {
@@ -478,16 +480,13 @@ class MainActivity : AppCompatActivity() {
             val split = file.path.split(":")
             val filer = split[1]
             val f = File(filer)
-            var token: String? = null
             val type = MediaType.parse(contentResolver.getType(selectedFile))
-            if (pref.contains(APP_PREFERENCES_TOKEN)) {
-                token = pref.getString(APP_PREFERENCES_TOKEN, "-");
-            }
+            val token = getToken()
             var id: String? = null
             if (pref.contains(APP_PREFERENCES_ID)) {
-                id = pref.getString(APP_PREFERENCES_ID, "0");
+                id = pref.getString(APP_PREFERENCES_ID, "0")
             }
-            mainViewModel.uploadTrans(selectedFile, f, id!!.toInt(), token!!,  type )
+            uploadViewModel.uploadTrans(selectedFile, f, id!!.toInt(), token,  type )
         }
     }
 
@@ -548,7 +547,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun setCur(array: Array<String>)
+    private fun setCur(array: Array<String>)
     {
 
         val currencies1: AutoCompleteTextView = findViewById(R.id.autoCoCur1)
@@ -605,7 +604,7 @@ class MainActivity : AppCompatActivity() {
                 transAdapter.setTrans(it)
             }
         })
-        mainViewModel.addPortfolioSuccessLiveData.observe(this, Observer { portfolioList ->
+        portfolioViewModel.addPortfolioSuccessLiveData.observe(this, Observer { portfolioList ->
 
             //if it is not null then we will display all users
             portfolioList?.let {
@@ -614,7 +613,7 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
-        mainViewModel.deletePortfolioSuccessLiveData.observe(this, Observer { portfolioList ->
+        portfolioViewModel.deletePortfolioSuccessLiveData.observe(this, Observer { portfolioList ->
 
             //if it is not null then we will display all users
             portfolioList?.let {
@@ -671,17 +670,17 @@ class MainActivity : AppCompatActivity() {
             chartAdapter.setChart(it, chart!!)
         }
         )
-        mainViewModel.columnGraphData.observe(this, Observer {
+        columnViewModel.columnGraphData.observe(this, Observer {
             val k = findViewById<EditText>(R.id.year)
             aaChartView = findViewById(R.id.AAChartView)
             columnChartAdapter.setColumnChart(aaChartView, it, k.text.toString().toInt())
         })
-        mainViewModel.yearBalanceLiveData.observe(this, Observer {
-            mainViewModel.getStringWithInstrumentsForColumn(it[12].keys.toMutableList())
+        columnViewModel.yearBalanceLiveData.observe(this, Observer {
+            columnViewModel.getStringWithInstrumentsForColumn(it[12].keys.toMutableList())
         })
-        mainViewModel.stringWithInstruments2.observe(this, Observer {
+        columnViewModel.stringWithInstruments2.observe(this, Observer {
             val k = findViewById<EditText>(R.id.year)
-            mainViewModel.getRatesForTime(it, k.text.toString().toInt())
+            columnViewModel.getRatesForTime(it, k.text.toString().toInt())
         })
 
         mainViewModel.authSuccessLiveData.observe(this, Observer {
@@ -696,31 +695,31 @@ class MainActivity : AppCompatActivity() {
         }
         )
 
-        mainViewModel.ratesIncomeSuccessLiveData.observe(this, Observer {
-            mainViewModel.modelingSeriesForIncome(
+        incomeViewModel.ratesIncomeSuccessLiveData.observe(this, Observer {
+            incomeViewModel.modelingSeriesForIncome(
                 it.keys.first(),
                 mainViewModel.tradesSuccessLiveData.value,
                 mainViewModel.transSuccessLiveData.value
             )
         }
         )
-        mainViewModel.resultIncomeLiveData.observe(this, Observer {
+        incomeViewModel.resultIncomeLiveData.observe(this, Observer {
             incomeChartAdapter.setIncomeChart(aaChartView, it.first, it.second)
         }
         )
-        mainViewModel.ratesCurSuccessLiveData.observe(this, Observer {
-            mainViewModel.modelingSeriesForRateInPortfolio(
+        curBalanceViewModel.ratesCurSuccessLiveData.observe(this, Observer {
+            curBalanceViewModel.modelingSeriesForRateInPortfolio(
                 mainViewModel.tradesSuccessLiveData.value,
                 mainViewModel.transSuccessLiveData.value,
                 it.keys.first()
             )
         }
         )
-        mainViewModel.resultCurLiveData.observe(this, Observer {
+        curBalanceViewModel.resultCurLiveData.observe(this, Observer {
             curBalanceChartAdapter.setCurBalanceChart(aaChartView, it.first, it.second)
         }
         )
-        mainViewModel.portfolioSuccessLiveData.observe(this, Observer {
+        portfolioViewModel.portfolioSuccessLiveData.observe(this, Observer {
             it.add(Portfolio(-1, "Add"))
             rvPortfolioAdapter.setPortfolios(it)
             setPortfolios()
@@ -741,11 +740,8 @@ class MainActivity : AppCompatActivity() {
                 val button: Button = dialog.findViewById(R.id.addPortfolio)
                 dialog.show()
                 button.setOnClickListener {
-                    var token: String? = null
-                    if (pref.contains(APP_PREFERENCES_TOKEN)) {
-                        token = pref.getString(APP_PREFERENCES_TOKEN, "-");
-                    }
-                    mainViewModel.addPortfolio(Portfolio(0, name.text.toString()), token!!)
+                    val token = getToken()
+                    portfolioViewModel.addPortfolio(Portfolio(0, name.text.toString()), token)
                     dialog.dismiss()
                 }
 
@@ -765,67 +761,72 @@ class MainActivity : AppCompatActivity() {
             relativeRatesAdapter.setRatesChart(it, aaChartView)
         }
         )
-        mainViewModel.valuesForInput.observe(this, Observer {
-            mainViewModel.getRatesForTimeInput(it.first, it.second.first, it.second.second)
+        inputViewModel.valuesForInput.observe(this, Observer {
+            inputViewModel.getRatesForTimeInput(it.first, it.second.first, it.second.second)
         }
         )
-        mainViewModel.inOutSuccessLiveData.observe(this, Observer {
-            mainViewModel.calculationInput()
+        inputViewModel.inOutSuccessLiveData.observe(this, Observer {
+            inputViewModel.calculationInput()
         }
         )
         rvPortfolioAdapter.deletePortfolioLiveData.observe(this, Observer {
             var token: String? = null
             if (pref.contains(APP_PREFERENCES_TOKEN)) {
-                token = pref.getString(APP_PREFERENCES_TOKEN, "-");
+                token = pref.getString(APP_PREFERENCES_TOKEN, "-")
             }
-            mainViewModel.deletePortfolio(it.first, token!!)
+            portfolioViewModel.deletePortfolio(it.first, token!!)
         }
         )
-        mainViewModel.resSuccessLiveData.observe(this, Observer {
+        inputViewModel.resSuccessLiveData.observe(this, Observer {
             inputOutputAdapter.setInputChart(
                 aaChartView,
                 it,
-                mainViewModel.valuesForInput.value!!.second
+                inputViewModel.valuesForInput.value!!.second
             )
         }
         )
-        mainViewModel.incomeFilterSuccessLiveData.observe(this, Observer {
-            mainViewModel.getRatesForIncome(it.first, it.second.first, it.second.second)
+        incomePortViewModel.incomeFilterSuccessLiveData.observe(this, Observer {
+            incomePortViewModel.getRatesForIncome(it.first, it.second.first, it.second.second)
         }
         )
-        mainViewModel.incomePortSuccessLiveData.observe(this, Observer {
-            mainViewModel.modelingSeriesForIncome()
+        incomePortViewModel.incomePortSuccessLiveData.observe(this, Observer {
+            incomePortViewModel.modelingSeriesForIncome()
         }
         )
-        mainViewModel.resultIncomePortLiveData.observe(this, Observer {
+        incomePortViewModel.resultIncomePortLiveData.observe(this, Observer {
             incomeChartAdapter.setIncomeChart(aaChartView, it.first, it.second)
         }
         )
         rvCorrelationAdapter.deleteCorLiveData.observe(this, Observer {
             setCorr()
         })
-        mainViewModel.rateCorSuccessLiveData.observe(this, Observer {
-            mainViewModel.calcCorr()
+        correlationViewModel.rateCorSuccessLiveData.observe(this, Observer {
+            correlationViewModel.calcCorr()
         }
         )
-        mainViewModel.correlationSuccessLiveData.observe(this, Observer {
+        correlationViewModel.correlationSuccessLiveData.observe(this, Observer {
             rvCorrelationAdapter.addCorrelation(Correlation(it.first, it.second))
             setCorr()
         }
         )
-        mainViewModel.uploadSuccessLiveData.observe(this, Observer {
-            var token: String? = null
-            if (pref.contains(APP_PREFERENCES_TOKEN)) {
-                token = pref.getString(APP_PREFERENCES_TOKEN, "-");
-            }
+        uploadViewModel.uploadSuccessLiveData.observe(this, Observer {
+            val token = getToken()
             var id: String? = null
             if (pref.contains(APP_PREFERENCES_ID)) {
-                id = pref.getString(APP_PREFERENCES_ID, "0");
+                id = pref.getString(APP_PREFERENCES_ID, "0")
             }
-            mainViewModel.getTrades(token!!, id!!.toInt())
-            mainViewModel.getTrans(token!!, id.toInt())
+            mainViewModel.getTrades(token, id!!.toInt())
+            mainViewModel.getTrans(token, id.toInt())
         }
         )
+    }
+
+    private fun getToken():String{
+        var token: String? = null
+        if (pref.contains(APP_PREFERENCES_TOKEN)) {
+            token = pref.getString(APP_PREFERENCES_TOKEN, "-")
+        }
+        return token!!
     }
 
     private fun hideKeyboardFrom(context: Context, view: View) {
