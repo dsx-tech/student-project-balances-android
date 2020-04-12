@@ -10,6 +10,7 @@ import com.example.portfolio.model.Transaction
 import java.math.BigDecimal
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.util.*
@@ -37,6 +38,7 @@ class RepositoryForColumnGraph {
         val result: ArrayList<AASeriesElement> = arrayListOf()
         var dataStart: LocalDateTime
         var dataEnd: LocalDateTime = mainRepository.dateTimeFormatter("${year}-02-01T00:00:00")
+
         var balanceForMonth = repositoryForPieGraph.balanceForDate(dataEnd, trades, transactions)
         currencies.clear()
         for (key in balanceForMonth.keys)
@@ -103,9 +105,11 @@ class RepositoryForColumnGraph {
 
 
     fun multiplyRes() {
+        var months = LocalDateTime.now().month.value - 1
         var yearBalance = yearBalanceLiveData.value!!
         val result: ArrayList<AASeriesElement> = arrayListOf()
-        for (i in 1..12) {
+
+        for (i in 1..months) {
             yearBalance[i].keys.forEach {
                 yearBalance[i][it] =
                     yearBalance[i][it]!!.multiply(rateSuccessLiveData.value!!["$it-usd"]!![i - 1].exchangeRate)
@@ -113,7 +117,7 @@ class RepositoryForColumnGraph {
         }
         for (key in currencies) {
             val dat: ArrayList<BigDecimal?> = arrayListOf()
-            for (m in 1..12) {
+            for (m in 1..months) {
                 if (yearBalance[m].containsKey(key))
                     dat.add(yearBalance[m].getValue(key)!!)
                 else
@@ -234,7 +238,10 @@ class RepositoryForColumnGraph {
     suspend fun getRatesForTime(instrument: String, year: Int) {
 
         val timeFrom = LocalDateTime.of(year, 1, 1, 3, 0).toEpochSecond(ZoneOffset.UTC)
-        val timeTo = LocalDateTime.of(year + 1, 1, 1, 3, 0).toEpochSecond(ZoneOffset.UTC)
+        var timeTo = LocalDateTime.of(year + 1, 1, 1, 3, 0).toEpochSecond(ZoneOffset.UTC)
+        if (timeTo > LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)){
+            timeTo = LocalDateTime.of(year , LocalDateTime.now().month.value, 1, 3, 0).toEpochSecond(ZoneOffset.UTC)
+        }
         try {
 
             //here api calling became so simple just 1 line of code
