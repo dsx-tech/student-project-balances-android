@@ -10,8 +10,10 @@ import retrofit2.http.*
 
 interface ApiService {
 
-    @GET("/bcv/quotes/bars/{instrument}/{timeFrom}/{timeTo}")
+    @GET("/bcv/quotes/dailyBars/{instrument}/{timeFrom}/{timeTo}")
     fun getRatesForTime(@Path("instrument") instrument:String, @Path("timeFrom") timeFrom: Long, @Path("timeTo") timeTo: Long): Deferred<Response< MutableMap<String, MutableList<Rate>>>>
+    @GET("/bcv/quotes/monthlyBars/{instrument}/{timeFrom}/{timeTo}")
+    fun getRatesForTimeM(@Path("instrument") instrument:String, @Path("timeFrom") timeFrom: Long, @Path("timeTo") timeTo: Long): Deferred<Response< MutableMap<String, MutableList<Rate>>>>
     @GET("/bcv/quotes/ticker/{instruments}")
     fun getRate(@Path("instruments") instruments: String): Deferred<Response<MutableMap<String, RelevantRate>>>
     @GET("/bcv/portfolios/{id}/transactions")

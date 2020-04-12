@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorBackground">#2C0C58</color>
+    <color name="colorBackground">#141B3D</color>
     <color name="colorBackground2">#4F562994</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#414171B8</color>
     <color name="colorText">#C9FFFFFF</color>
     <color name="white">#FFFFFF</color>
     <color name="whiteHint">#4BFFFFFF</color>
-    <color name="gradient1">#8BC34A</color>
+    <color name="gradient1">#2C0858</color>
     <color name="gradient2">#9C27B0</color>
     <color name="gradient3">#3F51B5</color>
-    <color name="Chart4">#FF5722</color>
-    <color name="Chart5">#FFC107</color>
+    <color name="radioChecked">#45681DD1</color>
+    <color name="radioUnchecked">#34384EEB</color>
+    <color name="border">#A6A007FD</color>
     <color name="Invis">#00FFC107</color>
     <color name="black">#000000</color>
-
-
 </resources>

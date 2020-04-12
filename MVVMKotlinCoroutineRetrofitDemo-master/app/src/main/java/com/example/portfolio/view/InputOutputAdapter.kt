@@ -8,6 +8,7 @@ import java.math.BigDecimal
 import java.text.SimpleDateFormat
 
 class InputOutputAdapter {
+
     fun setInputChart(aaChartView: AAChartView?, inOut: MutableList<Pair<BigDecimal, BigDecimal>>, time: Pair<Long, Long>){
 
 

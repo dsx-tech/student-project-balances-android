@@ -1,13 +1,11 @@
 package com.example.portfolio.viewmodel
 
-import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.portfolio.model.*
 import com.example.portfolio.repository.*
 import kotlinx.coroutines.launch
-import okhttp3.MediaType
-import java.io.File
+
 
 class MainViewModel : ViewModel() {
 

@@ -23,6 +23,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Color
+import androidx.appcompat.widget.AppCompatRadioButton
 import com.example.portfolio.model.Correlation
 import com.example.portfolio.model.Portfolio
 import com.example.portfolio.repository.RepositoryForCorrelation
@@ -74,6 +76,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var curBalanceChartAdapter: CurBalanceChartAdapter
     private lateinit var rvPortfolioAdapter: RVPortfolioAdapter
     private lateinit var rvCorrelationAdapter: RVCorrelationAdapter
+    private lateinit var rvRatesAdapter: RVRatesAdapter
     private lateinit var relativeRatesAdapter: RelativeRatesAdapter
     private lateinit var repositoryForRelativeRates: RepositoryForRelativeRates
     private lateinit var repositoryForInputOutput: RepositoryForInputOutput
@@ -111,6 +114,7 @@ class MainActivity : AppCompatActivity() {
         incomeChartAdapter = IncomeChartAdapter()
         curBalanceChartAdapter = CurBalanceChartAdapter()
         rvPortfolioAdapter = RVPortfolioAdapter()
+        rvRatesAdapter = RVRatesAdapter()
         rvCorrelationAdapter = RVCorrelationAdapter()
         relativeRatesAdapter = RelativeRatesAdapter()
         repositoryForRelativeRates = RepositoryForRelativeRates()
@@ -125,6 +129,11 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    private fun setRates(){
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        recyclerView.adapter = rvRatesAdapter
+    }
 
     private fun loginSetup() {
         setContentView(R.layout.login_activity)
@@ -187,6 +196,7 @@ class MainActivity : AppCompatActivity() {
         }
         mainViewModel.getTrades(token!!, id!!.toInt())
         mainViewModel.getTrans(token, id.toInt())
+
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -264,6 +274,7 @@ class MainActivity : AppCompatActivity() {
                     mainViewModel.getTrades(token, id!!.toInt())
                     mainViewModel.getTrans(token, id.toInt())
                 }
+
                 true
             }
             R.id.menu2 -> {
@@ -274,11 +285,20 @@ class MainActivity : AppCompatActivity() {
                 val currencies1: AutoCompleteTextView = findViewById(R.id.autoCoCur1)
                 val currencies2: AutoCompleteTextView = findViewById(R.id.autoCoCur2)
                 val button: Button = findViewById(R.id.graph_draw)
+                val radio1: RadioButton = findViewById(R.id.radio1)
+                val radio2: RadioButton = findViewById(R.id.radio2)
+                val radio3: RadioButton = findViewById(R.id.radio3)
+                var i = 1
                 button.setOnClickListener {
+                    when {
+                        radio1.isChecked -> i = 1
+                        radio2.isChecked -> i = 2
+                        radio3.isChecked -> i = 3
+                    }
                     button.clearFocus()
 
                     val timeNow = Calendar.getInstance().timeInMillis / 1000
-                    val time = timeNow - Days.MONTH_IN_SEC*3
+                    val time = timeNow - Days.MONTH_IN_SEC*i
                     mainViewModel.getRates(
                         "${currencies1.text.toString().toLowerCase()}-${currencies2.text.toString().toLowerCase()}",
                         time, timeNow
@@ -582,12 +602,13 @@ class MainActivity : AppCompatActivity() {
             }
             val cur1: AutoCompleteTextView = findViewById(R.id.autoCoCur1)
             val cur2: AutoCompleteTextView = findViewById(R.id.autoCoCur2)
-            ratesChartAdapter.setRatesChart(
+            if (rates.isNotEmpty())
+                ratesChartAdapter.setRatesChart(
                 mainViewModel.rateSuccessLiveData.value!!,
                 aaChartView,
                 cur1.text.toString(),
                 cur2.text.toString()
-            )
+                )
         })
 
         mainViewModel.tradesSuccessLiveData.observe(this, Observer { tradesList ->
@@ -661,6 +682,7 @@ class MainActivity : AppCompatActivity() {
 
         mainViewModel.relevantRatesSuccessLiveData.observe(this, Observer {
 
+            rvRatesAdapter.setRates(it)
             mainViewModel.multiplyRelevant()
         }
         )
@@ -668,6 +690,8 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.balancesMultRates.observe(this, Observer {
 
             chartAdapter.setChart(it, chart!!)
+            setRates()
+
         }
         )
         columnViewModel.columnGraphData.observe(this, Observer {
@@ -833,6 +857,7 @@ class MainActivity : AppCompatActivity() {
         val imm = context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
+
 }
 
 
