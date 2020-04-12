@@ -23,8 +23,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.Color
-import androidx.appcompat.widget.AppCompatRadioButton
 import com.example.portfolio.model.Correlation
 import com.example.portfolio.model.Portfolio
 import com.example.portfolio.repository.RepositoryForCorrelation
@@ -83,10 +81,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var repositoryForCorrelation: RepositoryForCorrelation
     private lateinit var inputOutputAdapter: InputOutputAdapter
 
-    private lateinit var  dialog  : Dialog
+    private lateinit var dialog: Dialog
     private var aaChartView: AAChartView? = null
     private var chart: PieChart? = null
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -129,7 +126,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun setRates(){
+    private fun setRates() {
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         recyclerView.adapter = rvRatesAdapter
@@ -151,7 +148,7 @@ class MainActivity : AppCompatActivity() {
         val loginButton: Button = findViewById(R.id.loginButton)
 
         loginButton.setOnClickListener {
-            val view :View = this.layoutInflater.inflate(R.layout.full_screen_progress_bar, null)
+            val view: View = this.layoutInflater.inflate(R.layout.full_screen_progress_bar, null)
             dialog.setContentView(view)
             dialog.setCancelable(false)
             dialog.show()
@@ -194,7 +191,7 @@ class MainActivity : AppCompatActivity() {
         if (pref.contains(APP_PREFERENCES_ID)) {
             id = pref.getString(APP_PREFERENCES_ID, "0")
         }
-        mainViewModel.getTrades(token!!, id!!.toInt())
+        mainViewModel.getTrades(token, id!!.toInt())
         mainViewModel.getTrans(token, id.toInt())
 
     }
@@ -205,29 +202,36 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.upload_trades -> {
 
-               Dexter.withActivity(this@MainActivity)
-                   .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                   .withListener(object: PermissionListener {
-                       override fun onPermissionDenied(p0: PermissionDeniedResponse?) {
-                           Toast.makeText(this@MainActivity, "You don't have permission", Toast.LENGTH_SHORT).show()
-                       }
-//
-                       override fun onPermissionGranted(p0: PermissionGrantedResponse?) {
+                Dexter.withActivity(this@MainActivity)
+                    .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    .withListener(object : PermissionListener {
+                        override fun onPermissionDenied(p0: PermissionDeniedResponse?) {
+                            Toast.makeText(
+                                this@MainActivity,
+                                "You don't have permission",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
 
-                           val intent = Intent()
-                               .setType("*/*")
-                               .setAction(Intent.ACTION_GET_CONTENT)
-                           startActivityForResult(Intent.createChooser(intent, "Select a file"), 111)
-                       }
-//
-                       override fun onPermissionRationaleShouldBeShown(
-                           p0: PermissionRequest?,
-                           token: PermissionToken?
-                       ) {
-                           token?.continuePermissionRequest()
-                       }
-                   })
-                   .check()
+                        override fun onPermissionGranted(p0: PermissionGrantedResponse?) {
+
+                            val intent = Intent()
+                                .setType("*/*")
+                                .setAction(Intent.ACTION_GET_CONTENT)
+                            startActivityForResult(
+                                Intent.createChooser(intent, "Select a file"),
+                                111
+                            )
+                        }
+
+                        override fun onPermissionRationaleShouldBeShown(
+                            p0: PermissionRequest?,
+                            token: PermissionToken?
+                        ) {
+                            token?.continuePermissionRequest()
+                        }
+                    })
+                    .check()
 
                 true
             }
@@ -235,19 +239,22 @@ class MainActivity : AppCompatActivity() {
 
                 Dexter.withActivity(this@MainActivity)
                     .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                    .withListener(object: PermissionListener {
+                    .withListener(object : PermissionListener {
                         override fun onPermissionDenied(p0: PermissionDeniedResponse?) {
                             Toast.makeText(this@MainActivity, "1", Toast.LENGTH_SHORT).show()
                         }
-                        //
+
                         override fun onPermissionGranted(p0: PermissionGrantedResponse?) {
                             Toast.makeText(this@MainActivity, "2", Toast.LENGTH_SHORT).show()
                             val intent = Intent()
                                 .setType("*/*")
                                 .setAction(Intent.ACTION_GET_CONTENT)
-                            startActivityForResult(Intent.createChooser(intent, "Select a file"), 222)
+                            startActivityForResult(
+                                Intent.createChooser(intent, "Select a file"),
+                                222
+                            )
                         }
-                        //
+
                         override fun onPermissionRationaleShouldBeShown(
                             p0: PermissionRequest?,
                             token: PermissionToken?
@@ -298,7 +305,7 @@ class MainActivity : AppCompatActivity() {
                     button.clearFocus()
 
                     val timeNow = Calendar.getInstance().timeInMillis / 1000
-                    val time = timeNow - Days.MONTH_IN_SEC*i
+                    val time = timeNow - Days.MONTH_IN_SEC * i
                     mainViewModel.getRates(
                         "${currencies1.text.toString().toLowerCase()}-${currencies2.text.toString().toLowerCase()}",
                         time, timeNow
@@ -446,9 +453,9 @@ class MainActivity : AppCompatActivity() {
                 val button: Button = findViewById(R.id.add_instrument)
                 val currencies1: AutoCompleteTextView = findViewById(R.id.autoCoCur1)
                 val currencies2: AutoCompleteTextView = findViewById(R.id.autoCoCur2)
-                val c =  Currencies.currenciesArray
-                val curInstr : MutableList<String> = mutableListOf()
-                c.forEach {  it1 ->
+                val c = Currencies.currenciesArray
+                val curInstr: MutableList<String> = mutableListOf()
+                c.forEach { it1 ->
                     c.forEach {
                         if (it != it1)
                             curInstr.add("$it1-$it")
@@ -461,14 +468,19 @@ class MainActivity : AppCompatActivity() {
                 recyclerView.adapter = rvCorrelationAdapter
 
                 button.setOnClickListener {
-                    if (currencies1.text.toString() != currencies2.text.toString().toLowerCase()){
-                    button.clearFocus()
-                    val timeNow = Calendar.getInstance().timeInMillis / 1000
-                    val time = timeNow - Days.MONTH_IN_SEC*2
-                    correlationViewModel.getRatesForCor("${currencies1.text.toString().toLowerCase()},${currencies2.text.toString().toLowerCase()}", time, timeNow)
+                    if (currencies1.text.toString() != currencies2.text.toString().toLowerCase()) {
+                        button.clearFocus()
+                        val timeNow = Calendar.getInstance().timeInMillis / 1000
+                        val time = timeNow - Days.MONTH_IN_SEC * 2
+                        correlationViewModel.getRatesForCor(
+                            "${currencies1.text.toString().toLowerCase()},${currencies2.text.toString().toLowerCase()}",
+                            time,
+                            timeNow
+                        )
 
 
-                    hideKeyboardFrom(this, it)}
+                        hideKeyboardFrom(this, it)
+                    }
                 }
                 true
             }
@@ -476,6 +488,7 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -491,34 +504,34 @@ class MainActivity : AppCompatActivity() {
             if (pref.contains(APP_PREFERENCES_ID)) {
                 id = pref.getString(APP_PREFERENCES_ID, "0")
             }
-            uploadViewModel.uploadFiles(selectedFile, f, id!!.toInt(), token,  type )
-        }
-        else
-        if (requestCode == 222 && resultCode == RESULT_OK) {
-            val selectedFile = data?.data //The uri with the location of the file
-            val file = File(selectedFile!!.path)
-            val split = file.path.split(":")
-            val filer = split[1]
-            val f = File(filer)
-            val type = MediaType.parse(contentResolver.getType(selectedFile))
-            val token = getToken()
-            var id: String? = null
-            if (pref.contains(APP_PREFERENCES_ID)) {
-                id = pref.getString(APP_PREFERENCES_ID, "0")
+            uploadViewModel.uploadFiles(selectedFile, f, id!!.toInt(), token, type)
+        } else
+            if (requestCode == 222 && resultCode == RESULT_OK) {
+                val selectedFile = data?.data //The uri with the location of the file
+                val file = File(selectedFile!!.path)
+                val split = file.path.split(":")
+                val filer = split[1]
+                val f = File(filer)
+                val type = MediaType.parse(contentResolver.getType(selectedFile))
+                val token = getToken()
+                var id: String? = null
+                if (pref.contains(APP_PREFERENCES_ID)) {
+                    id = pref.getString(APP_PREFERENCES_ID, "0")
+                }
+                uploadViewModel.uploadTrans(selectedFile, f, id!!.toInt(), token, type)
             }
-            uploadViewModel.uploadTrans(selectedFile, f, id!!.toInt(), token,  type )
-        }
     }
 
-    private fun setToolbar(){
+    private fun setToolbar() {
         val toolbar: Toolbar = findViewById(R.id.toolBar)
         toolbar.setTitleTextColor(getColor(R.color.white))
         toolbar.setNavigationIcon(R.drawable.lock)
         setSupportActionBar(toolbar)
-        toolbar.setNavigationOnClickListener{
+        toolbar.setNavigationOnClickListener {
             setPortfolios()
         }
     }
+
     private fun setCalendars() {
         setToolbar()
         aaChartView = findViewById(R.id.AAChartView)
@@ -567,8 +580,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setCur(array: Array<String>)
-    {
+    private fun setCur(array: Array<String>) {
 
         val currencies1: AutoCompleteTextView = findViewById(R.id.autoCoCur1)
         val adapter = ArrayAdapter(
@@ -592,11 +604,12 @@ class MainActivity : AppCompatActivity() {
 
 
     }
+
     private fun registerObservers() {
 
         mainViewModel.rateSuccessLiveData.observe(this, Observer { rates ->
             aaChartView = findViewById(R.id.AAChartView)
-            //if it is not null then we will display all users
+
             rates?.let {
                 rateAdapter.setRates(it)
             }
@@ -604,30 +617,27 @@ class MainActivity : AppCompatActivity() {
             val cur2: AutoCompleteTextView = findViewById(R.id.autoCoCur2)
             if (rates.isNotEmpty())
                 ratesChartAdapter.setRatesChart(
-                mainViewModel.rateSuccessLiveData.value!!,
-                aaChartView,
-                cur1.text.toString(),
-                cur2.text.toString()
+                    mainViewModel.rateSuccessLiveData.value!!,
+                    aaChartView,
+                    cur1.text.toString(),
+                    cur2.text.toString()
                 )
         })
 
         mainViewModel.tradesSuccessLiveData.observe(this, Observer { tradesList ->
 
-            //if it is not null then we will display all users
             tradesList?.let {
                 tradesAdapter.setTrades(it)
             }
         })
         mainViewModel.transSuccessLiveData.observe(this, Observer { transactionList ->
 
-            //if it is not null then we will display all users
             transactionList?.let {
                 transAdapter.setTrans(it)
             }
         })
         portfolioViewModel.addPortfolioSuccessLiveData.observe(this, Observer { portfolioList ->
 
-            //if it is not null then we will display all users
             portfolioList?.let {
                 rvPortfolioAdapter.addPortfolio(it)
                 setPortfolios()
@@ -636,7 +646,6 @@ class MainActivity : AppCompatActivity() {
         })
         portfolioViewModel.deletePortfolioSuccessLiveData.observe(this, Observer { portfolioList ->
 
-            //if it is not null then we will display all users
             portfolioList?.let {
                 rvPortfolioAdapter.deletePortfolio()
                 setPortfolios()
@@ -645,14 +654,12 @@ class MainActivity : AppCompatActivity() {
         })
         mainViewModel.tradesFailureLiveData.observe(this, Observer { isFailed ->
 
-            //if it is not null then we will display all users
             isFailed?.let {
                 Toast.makeText(this, "Oops! something went wrong", Toast.LENGTH_SHORT).show()
             }
         })
         mainViewModel.transFailureLiveData.observe(this, Observer { isFailed ->
 
-            //if it is not null then we will display all users
             isFailed?.let {
                 Toast.makeText(this, "Oops! something went wrong", Toast.LENGTH_SHORT).show()
             }
@@ -706,6 +713,9 @@ class MainActivity : AppCompatActivity() {
             val k = findViewById<EditText>(R.id.year)
             columnViewModel.getRatesForTime(it, k.text.toString().toInt())
         })
+        columnViewModel.rateSuccessLiveData.observe(this, Observer {
+            columnViewModel.multiplyRes()
+        })
 
         mainViewModel.authSuccessLiveData.observe(this, Observer {
 
@@ -753,11 +763,13 @@ class MainActivity : AppCompatActivity() {
         rvPortfolioAdapter.selectedPortfolioLiveData.observe(this, Observer {
             if (it.second != -1) {
                 val editor = pref.edit()
-                editor.putString(APP_PREFERENCES_ID, rvPortfolioAdapter.selectedPortfolioLiveData.value!!.second.toString())
+                editor.putString(
+                    APP_PREFERENCES_ID,
+                    rvPortfolioAdapter.selectedPortfolioLiveData.value!!.second.toString()
+                )
                 editor.apply()
                 showGraphs()
-            }
-            else {
+            } else {
                 val dialog = Dialog(this)
                 dialog.setContentView(R.layout.add_portfolio)
                 val name: EditText = dialog.findViewById(R.id.portfolioName)
@@ -843,9 +855,10 @@ class MainActivity : AppCompatActivity() {
             mainViewModel.getTrans(token, id.toInt())
         }
         )
+
     }
 
-    private fun getToken():String{
+    private fun getToken(): String {
         var token: String? = null
         if (pref.contains(APP_PREFERENCES_TOKEN)) {
             token = pref.getString(APP_PREFERENCES_TOKEN, "-")

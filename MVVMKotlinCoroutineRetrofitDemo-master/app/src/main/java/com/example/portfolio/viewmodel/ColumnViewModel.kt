@@ -13,6 +13,7 @@ class ColumnViewModel: ViewModel() {
     var stringWithInstruments2 = repositoryForColumnGraph.stringWithInstruments
     var columnGraphData = repositoryForColumnGraph.columnGraphData
     val yearBalanceLiveData = repositoryForColumnGraph.yearBalanceLiveData
+    val rateSuccessLiveData = repositoryForColumnGraph.rateSuccessLiveData
 
 
     fun modelingColumnGraph(year: Int, trades: MutableList<Trade>?, transactions: MutableList<Transaction>?){
@@ -23,5 +24,8 @@ class ColumnViewModel: ViewModel() {
     }
     fun getStringWithInstrumentsForColumn(currencies: MutableList<String>){
         viewModelScope.launch { repositoryForColumnGraph.getStringWithInstruments(currencies) }
+    }
+    fun multiplyRes(){
+        viewModelScope.launch { repositoryForColumnGraph.multiplyRes() }
     }
 }

@@ -19,12 +19,21 @@ import kotlin.collections.ArrayList
 class RepositoryForColumnGraph {
     private val mainRepository = MainRepository()
     private val repositoryForPieGraph = RepositoryForPieGraph()
-    var columnGraphData = MutableLiveData< Array<AASeriesElement>>()
+    var columnGraphData = MutableLiveData<Array<AASeriesElement>>()
     var stringWithInstruments = MutableLiveData<String>()
     val currencies: LinkedList<String> = LinkedList()
     val yearBalanceLiveData = MutableLiveData<ArrayList<MutableMap<String, BigDecimal?>>>()
+    val yearMultLiveData = MutableLiveData<ArrayList<MutableMap<String, BigDecimal?>>>()
+    private val rateApi = RetrofitManager.rateApi
+    val rateSuccessLiveData = MutableLiveData<MutableMap<String, MutableList<Rate>>>()
+    val rateFailureLiveData = MutableLiveData<Boolean>()
 
-    suspend fun modelingSeriesForGraph(year: Int, trades: MutableList<Trade>?, transactions: MutableList<Transaction>?){
+
+    fun modelingSeriesForGraph(
+        year: Int,
+        trades: MutableList<Trade>?,
+        transactions: MutableList<Transaction>?
+    ) {
         val result: ArrayList<AASeriesElement> = arrayListOf()
         var dataStart: LocalDateTime
         var dataEnd: LocalDateTime = mainRepository.dateTimeFormatter("${year}-02-01T00:00:00")
@@ -76,16 +85,57 @@ class RepositoryForColumnGraph {
                     .stack("1")
             )
         }
+        yearBalance.forEach {
+            if (it.keys.contains("eurs")) {
+                it.remove("eurs")
+            }
+            if (it.keys.contains("bsv")) {
+                it.remove("bsv")
+            }
+            if (it.keys.contains("bch")) {
+                it.remove("bch")
+            }
+        }
+
         yearBalanceLiveData.postValue(yearBalance)
+
+    }
+
+
+    fun multiplyRes() {
+        var yearBalance = yearBalanceLiveData.value!!
+        val result: ArrayList<AASeriesElement> = arrayListOf()
+        for (i in 1..12) {
+            yearBalance[i].keys.forEach {
+                yearBalance[i][it] =
+                    yearBalance[i][it]!!.multiply(rateSuccessLiveData.value!!["$it-usd"]!![i - 1].exchangeRate)
+            }
+        }
+        for (key in currencies) {
+            val dat: ArrayList<BigDecimal?> = arrayListOf()
+            for (m in 1..12) {
+                if (yearBalance[m].containsKey(key))
+                    dat.add(yearBalance[m].getValue(key)!!)
+                else
+                    dat.add(BigDecimal(0))
+            }
+            result.add(
+                AASeriesElement()
+                    .name(key)
+                    .data(dat.toArray())
+                    .stack("1")
+            )
+        }
         columnGraphData.postValue(result.toTypedArray())
     }
 
 
-
-
-
-
-        private fun balanceFromDateToDate( dateStart: LocalDateTime, dateEnd: LocalDateTime, trades: MutableList<Trade>?, transactions: MutableList<Transaction>?): MutableMap<String, BigDecimal?> {
+    private fun balanceFromDateToDate(
+        dateStart: LocalDateTime,
+        dateEnd: LocalDateTime,
+        trades: MutableList<Trade>?,
+        transactions: MutableList<Transaction>?
+    ): MutableMap<String, BigDecimal?> {
         val result: MutableMap<String, BigDecimal?> = mutableMapOf()
         var flagTrades = false
         var flagTransactions = false
@@ -170,29 +220,27 @@ class RepositoryForColumnGraph {
         }
         return result
     }
-    fun getStringWithInstruments(currencies: MutableList<String>){
+
+    fun getStringWithInstruments(currencies: MutableList<String>) {
         var s = ""
-        for (key in currencies){
-            if ((key != "BSV") and (key != "EURS") and (key != "BCH"))
+        for (key in currencies) {
+            if ((key != "bsv") and (key != "eurs") and (key != "bch"))
                 s += "${key.toLowerCase()}-usd,"
         }
         s = s.substring(0, s.length.minus(1))
         stringWithInstruments.postValue(s)
     }
-    private val rateApi = RetrofitManager.rateApi
-    val rateSuccessLiveData = MutableLiveData<MutableMap<String, MutableList<Rate>>>()
-    val rateFailureLiveData = MutableLiveData<Boolean>()
 
     suspend fun getRatesForTime(instrument: String, year: Int) {
 
-        val timeFrom = LocalDateTime.of(year, 1,1,3,0).toEpochSecond(ZoneOffset.UTC)
-        val timeTo = LocalDateTime.of(year+1, 1,1,3,0).toEpochSecond(ZoneOffset.UTC)
+        val timeFrom = LocalDateTime.of(year, 1, 1, 3, 0).toEpochSecond(ZoneOffset.UTC)
+        val timeTo = LocalDateTime.of(year + 1, 1, 1, 3, 0).toEpochSecond(ZoneOffset.UTC)
         try {
 
             //here api calling became so simple just 1 line of code
             //there is no callback needed
 
-            val response = rateApi.getRatesForTime(instrument,timeFrom,timeTo).await()
+            val response = rateApi.getRatesForTimeM(instrument, timeFrom, timeTo).await()
 
             Log.d(MainRepository.TAG, "$response")
 
