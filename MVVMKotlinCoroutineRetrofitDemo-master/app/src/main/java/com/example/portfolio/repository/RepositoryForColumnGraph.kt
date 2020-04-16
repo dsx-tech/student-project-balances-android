@@ -24,10 +24,10 @@ class RepositoryForColumnGraph {
     var stringWithInstruments = MutableLiveData<String>()
     val currencies: LinkedList<String> = LinkedList()
     val yearBalanceLiveData = MutableLiveData<ArrayList<MutableMap<String, BigDecimal?>>>()
-    val yearMultLiveData = MutableLiveData<ArrayList<MutableMap<String, BigDecimal?>>>()
     private val rateApi = RetrofitManager.rateApi
     val rateSuccessLiveData = MutableLiveData<MutableMap<String, MutableList<Rate>>>()
     val rateFailureLiveData = MutableLiveData<Boolean>()
+    var yearValue = 2020
 
 
     fun modelingSeriesForGraph(
@@ -35,6 +35,7 @@ class RepositoryForColumnGraph {
         trades: MutableList<Trade>?,
         transactions: MutableList<Transaction>?
     ) {
+        yearValue = year
         val result: ArrayList<AASeriesElement> = arrayListOf()
         var dataStart: LocalDateTime
         var dataEnd: LocalDateTime = mainRepository.dateTimeFormatter("${year}-02-01T00:00:00")
@@ -104,15 +105,21 @@ class RepositoryForColumnGraph {
     }
 
 
-    fun multiplyRes() {
-        var months = LocalDateTime.now().month.value - 1
+    fun multiplyRes(baseCur : String) {
+        var months:Int
+        if (yearValue == LocalDateTime.now().year)
+            months = LocalDateTime.now().month.value - 1
+        else months = 12
         var yearBalance = yearBalanceLiveData.value!!
         val result: ArrayList<AASeriesElement> = arrayListOf()
 
         for (i in 1..months) {
+
             yearBalance[i].keys.forEach {
+                if (i<= rateSuccessLiveData.value!!["$it-$baseCur"]!!.size)
                 yearBalance[i][it] =
-                    yearBalance[i][it]!!.multiply(rateSuccessLiveData.value!!["$it-usd"]!![i - 1].exchangeRate)
+                    yearBalance[i][it]!!.multiply(rateSuccessLiveData.value!!["$it-$baseCur"]!![i - 1].exchangeRate)
+                else  yearBalance[i][it] = BigDecimal("0")
             }
         }
         for (key in currencies) {
@@ -225,14 +232,15 @@ class RepositoryForColumnGraph {
         return result
     }
 
-    fun getStringWithInstruments(currencies: MutableList<String>) {
+    fun getStringWithInstruments(currencies: MutableList<String>,baseCur : String) {
         var s = ""
         for (key in currencies) {
             if ((key != "bsv") and (key != "eurs") and (key != "bch"))
-                s += "${key.toLowerCase()}-usd,"
+                s += "${key.toLowerCase()}-$baseCur,"
         }
+        if (s.isNotEmpty()){
         s = s.substring(0, s.length.minus(1))
-        stringWithInstruments.postValue(s)
+        stringWithInstruments.postValue(s)}
     }
 
     suspend fun getRatesForTime(instrument: String, year: Int) {

@@ -12,9 +12,9 @@ class RepositoryForRelativeRates {
     val rateCurSuccessLiveData = MutableLiveData<MutableMap<String, MutableList<Rate>>>()
     val rateCurFailureLiveData = MutableLiveData<Boolean>()
 
-    suspend fun getRatesForTime(currencies: Pair<String, String>, timeFrom: Long, timeTo: Long) {
+    suspend fun getRatesForTime(currencies: Pair<String, String>, timeFrom: Long, timeTo: Long, baseCur : String) {
 
-        var s = "${currencies.first}-usd,${currencies.second}-usd"
+        var s = "${currencies.first}-$baseCur,${currencies.second}-$baseCur"
         try {
 
             val response = rateApi.getRatesForTime(s, timeFrom, timeTo).await()

@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat
 
 class InputOutputAdapter {
 
-    fun setInputChart(aaChartView: AAChartView?, inOut: MutableList<Pair<BigDecimal, BigDecimal>>, time: Pair<Long, Long>){
+    fun setInputChart(aaChartView: AAChartView?, inOut: MutableList<Pair<BigDecimal, BigDecimal>>, time: Pair<Long, Long>, baseCur : String){
 
 
         val categories: MutableList<String> = mutableListOf()
@@ -52,10 +52,10 @@ class InputOutputAdapter {
             .series(
                 arrayOf(
                     AASeriesElement()
-                        .name("Input $")
+                        .name("Input in $baseCur")
                         .data(inputData.toTypedArray()),
                     AASeriesElement()
-                        .name("Output $")
+                        .name("Output in $baseCur")
                         .data(outputData.toTypedArray())
                 )
             )

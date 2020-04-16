@@ -21,7 +21,7 @@ import com.github.mikephil.charting.utils.ColorTemplate
 
 class ChartAdapter  {
 
-    fun setChart(dataLiveData: MutableMap<String, BigDecimal?>, chart: PieChart) {
+    fun setChart(dataLiveData: MutableMap<String, BigDecimal?>, chart: PieChart, baseCur: String) {
         val entries:MutableList<PieEntry> = arrayListOf()
         var sum = 0F
         for (key in dataLiveData.keys){
@@ -42,7 +42,7 @@ class ChartAdapter  {
         chart.data = dat
         chart.setHoleColor(R.color.colorBackground)
         chart.holeRadius = 60F
-        chart.centerText = "$:$sum"
+        chart.centerText = "$baseCur:$sum"
         chart.transparentCircleRadius = 65f
         chart.setDrawEntryLabels(false)
         chart.description.isEnabled = false
@@ -54,10 +54,10 @@ class ChartAdapter  {
         chart.setOnChartValueSelectedListener(object :OnChartValueSelectedListener{
             override fun onValueSelected(e: Entry?, h: Highlight?) {
                 val pe = e as PieEntry
-                chart.centerText = "${pe.label} in usd:\n ${e.y}"
+                chart.centerText = "${pe.label} in $baseCur:\n ${e.y}"
             }
             override fun onNothingSelected() {
-                chart.centerText = "$:$sum"
+                chart.centerText = "$baseCur:$sum"
             }
         })
         val l = chart.legend

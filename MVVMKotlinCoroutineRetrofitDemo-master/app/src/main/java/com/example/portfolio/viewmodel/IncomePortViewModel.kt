@@ -17,10 +17,10 @@ class IncomePortViewModel :ViewModel() {
     fun getRatesForIncome(instruments: String, time1: Long, time2: Long){
         viewModelScope.launch { repositoryForIncomePort.getRatesForIncome(instruments, time1, time2) }
     }
-    fun modelingSeriesForIncome(){
-        viewModelScope.launch { repositoryForIncomePort.modelingSeriesForIncome() }
+    fun modelingSeriesForIncome(baseCur : String){
+        viewModelScope.launch { repositoryForIncomePort.modelingSeriesForIncome(baseCur) }
     }
-    fun filterTradesTrans(allTrans : MutableList<Transaction>, allTrades : MutableList<Trade>, time1:String, time2:String){
-        viewModelScope.launch { repositoryForIncomePort.filterTradesTrans(allTrans, allTrades, time1, time2) }
+    fun filterTradesTrans(allTrans : MutableList<Transaction>, allTrades : MutableList<Trade>, time1:String, time2:String, baseCur : String){
+        viewModelScope.launch { repositoryForIncomePort.filterTradesTrans(allTrans, allTrades, time1, time2, baseCur) }
     }
 }

@@ -5,7 +5,7 @@ import com.example.portfolio.R
 import com.example.portfolio.constants.Colors
 
 class ColumnChartAdapter {
-    fun setColumnChart(aaChartView: AAChartView?, data: Array<AASeriesElement>, year: Int){
+    fun setColumnChart(aaChartView: AAChartView?, data: Array<AASeriesElement>, year: Int, baseCur : String){
         val aaChartModel = AAChartModel()
             .title("Portfolio")
             .titleFontColor(Colors.WHITE)
@@ -13,7 +13,7 @@ class ColumnChartAdapter {
             .subtitleFontColor(Colors.WHITE)
             .titleFontWeight(AAChartFontWeightType.Bold)
             .subtitle(year.toString())
-            .yAxisTitle("Values in $")
+            .yAxisTitle("Values in $baseCur")
             .chartType(AAChartType.Column)
             .axesTextColor(Colors.WHITE)
             .dataLabelsFontColor(Colors.WHITE)

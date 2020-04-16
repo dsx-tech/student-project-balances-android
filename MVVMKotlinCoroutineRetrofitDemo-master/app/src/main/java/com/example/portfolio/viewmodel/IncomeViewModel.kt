@@ -16,7 +16,7 @@ class IncomeViewModel: ViewModel() {
     fun modelingSeriesForIncome(currency : String, allTrades: MutableList<Trade>?, allTransactions: MutableList<Transaction>?){
         viewModelScope.launch { repositoryForIncome.modelingSeriesForIncome(currency, allTrades, allTransactions ) }
     }
-    fun getRatesForIncome(currency: String, timeFrom: String, timeTo: String){
-        viewModelScope.launch { repositoryForIncome.getRatesForIncome(currency, timeFrom, timeTo) }
+    fun getRatesForIncome(currency: String, timeFrom: String, timeTo: String, baseCur : String){
+        viewModelScope.launch { repositoryForIncome.getRatesForIncome(currency, timeFrom, timeTo, baseCur) }
     }
 }

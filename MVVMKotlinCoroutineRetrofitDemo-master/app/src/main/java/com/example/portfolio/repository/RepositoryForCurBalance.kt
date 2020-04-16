@@ -24,7 +24,7 @@ class RepositoryForCurBalance {
     var time2 = 0L
     val formatter = SimpleDateFormat("dd/MM/yyyy")
     private val mainRepository = MainRepository()
-    suspend fun getRatesForCurBalance(currency: String, timeFrom: String, timeTo: String) {
+    suspend fun getRatesForCurBalance(currency: String, timeFrom: String, timeTo: String, baseCur : String) {
         try {
 
             time1 = LocalDate.parse(timeFrom, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
@@ -34,7 +34,7 @@ class RepositoryForCurBalance {
             //here api calling became so simple just 1 line of code
             //there is no callback needed
             val response = rateApi.getRatesForTime(
-                "$currency-usd", time1,
+                "$currency-$baseCur", time1,
                 time2
             ).await()
 

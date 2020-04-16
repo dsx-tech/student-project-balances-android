@@ -31,7 +31,15 @@
     android:layout_marginBottom="100dp"/>
 
     </LinearLayout>
-
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:gravity="bottom"
+        android:layout_height="wrap_content">
+<Button
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:drawable = "@drawable/lock"
+    android:layout_above="@id/recyclerView"/>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_weight="2"
@@ -39,5 +47,6 @@
         android:layout_height="200dp"
         android:layout_margin="5dp"
         android:layout_gravity="bottom"/>
+    </RelativeLayout>
 </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

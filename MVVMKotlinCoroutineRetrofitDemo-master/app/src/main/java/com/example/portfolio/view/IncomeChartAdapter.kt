@@ -6,7 +6,7 @@ import com.example.portfolio.constants.Colors
 import java.math.BigDecimal
 
 class IncomeChartAdapter {
-    fun setIncomeChart(aaChartView: AAChartView?, dates : ArrayList<String>, rates:ArrayList<BigDecimal> ) {
+    fun setIncomeChart(aaChartView: AAChartView?, dates : ArrayList<String>, rates:ArrayList<BigDecimal> , baseCur: String) {
 
         val aaChartModel = AAChartModel()
             .chartType(AAChartType.Spline)
@@ -25,7 +25,7 @@ class IncomeChartAdapter {
             .dataLabelsFontColor(Colors.WHITE)
             .dataLabelsFontSize(1f)
             .xAxisTickInterval(2)
-            .yAxisTitle("USD")
+            .yAxisTitle(baseCur)
             .yAxisGridLineWidth(0.8f)
             .xAxisGridLineWidth(0.8f)
             .gradientColorEnable(true)
@@ -40,7 +40,7 @@ class IncomeChartAdapter {
             .series(
                 arrayOf(
                     AASeriesElement()
-                        .name("USD")
+                        .name(baseCur)
                         .data(rates.toTypedArray())
                 )
             )

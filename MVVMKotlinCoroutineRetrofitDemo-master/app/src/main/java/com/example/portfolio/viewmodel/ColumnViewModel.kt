@@ -22,10 +22,10 @@ class ColumnViewModel: ViewModel() {
     fun getRatesForTime(instruments: String, year: Int){
         viewModelScope.launch { repositoryForColumnGraph.getRatesForTime(instruments, year) }
     }
-    fun getStringWithInstrumentsForColumn(currencies: MutableList<String>){
-        viewModelScope.launch { repositoryForColumnGraph.getStringWithInstruments(currencies) }
+    fun getStringWithInstrumentsForColumn(currencies: MutableList<String>, baseCur : String){
+        viewModelScope.launch { repositoryForColumnGraph.getStringWithInstruments(currencies, baseCur) }
     }
-    fun multiplyRes(){
-        viewModelScope.launch { repositoryForColumnGraph.multiplyRes() }
+    fun multiplyRes(baseCur : String){
+        viewModelScope.launch { repositoryForColumnGraph.multiplyRes(baseCur) }
     }
 }

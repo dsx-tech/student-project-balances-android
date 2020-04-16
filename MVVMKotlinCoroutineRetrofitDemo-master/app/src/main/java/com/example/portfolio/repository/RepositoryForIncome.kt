@@ -102,7 +102,7 @@ class RepositoryForIncome {
 
     }
 
-    suspend fun getRatesForIncome(currency: String, timeFrom: String, timeTo: String) {
+    suspend fun getRatesForIncome(currency: String, timeFrom: String, timeTo: String, baseCur : String) {
         try {
 
             time1 = LocalDate.parse(timeFrom, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
@@ -112,7 +112,7 @@ class RepositoryForIncome {
             //here api calling became so simple just 1 line of code
             //there is no callback needed
             val response = rateApi.getRatesForTime(
-                "$currency-usd", time1!!,
+                "$currency-$baseCur", time1!!,
                 time2!!
             ).await()
 

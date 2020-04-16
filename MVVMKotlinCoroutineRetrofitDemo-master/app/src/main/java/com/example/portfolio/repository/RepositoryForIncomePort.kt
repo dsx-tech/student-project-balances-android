@@ -26,7 +26,7 @@ class RepositoryForIncomePort {
     var time1: Long? = null
     var time2: Long? = null
     private val mainRepository = MainRepository()
-    fun modelingSeriesForIncome(
+    fun modelingSeriesForIncome( baseCur : String
     ) {
         val dates: ArrayList<String> = arrayListOf()
         val rates: ArrayList<BigDecimal> = arrayListOf()
@@ -46,12 +46,12 @@ class RepositoryForIncomePort {
                     ) {
                         when {
                             (trade.tradeType == "Sell") -> {
-                                income += (trade.tradedQuantity * trade.tradedPrice - trade.commission) * incomePortSuccessLiveData.value!!["${trade.tradedPriceCurrency}-usd"]!![i].exchangeRate
-                                income -= trade.tradedQuantity* incomePortSuccessLiveData.value!!["${trade.tradedQuantityCurrency}-usd"]!![i].exchangeRate
+                                income += (trade.tradedQuantity * trade.tradedPrice - trade.commission) * incomePortSuccessLiveData.value!!["${trade.tradedPriceCurrency}-$baseCur"]!![i].exchangeRate
+                                income -= trade.tradedQuantity* incomePortSuccessLiveData.value!!["${trade.tradedQuantityCurrency}-$baseCur"]!![i].exchangeRate
                             }
                             (trade.tradeType == "Buy") -> {
-                                income += (trade.tradedQuantity - trade.commission) * incomePortSuccessLiveData.value!!["${trade.tradedQuantityCurrency}-usd"]!![i].exchangeRate
-                                income -= (trade.tradedQuantity * trade.tradedPrice) * incomePortSuccessLiveData.value!!["${trade.tradedPriceCurrency}-usd"]!![i].exchangeRate
+                                income += (trade.tradedQuantity - trade.commission) * incomePortSuccessLiveData.value!!["${trade.tradedQuantityCurrency}-$baseCur"]!![i].exchangeRate
+                                income -= (trade.tradedQuantity * trade.tradedPrice) * incomePortSuccessLiveData.value!!["${trade.tradedPriceCurrency}-$baseCur"]!![i].exchangeRate
                             }
                         }
                     }
@@ -62,10 +62,10 @@ class RepositoryForIncomePort {
                     ) {
                         when {
                             (transaction.transactionType == "Deposit") -> {
-                                income -= (transaction.amount + transaction.commission) * incomePortSuccessLiveData.value!!["${transaction.currency}-usd"]!![i].exchangeRate
+                                income -= (transaction.amount + transaction.commission) * incomePortSuccessLiveData.value!!["${transaction.currency}-$baseCur"]!![i].exchangeRate
                             }
                             (transaction.transactionType == "Withdraw") -> {
-                                income += (transaction.amount - transaction.commission) * incomePortSuccessLiveData.value!!["${transaction.currency}-usd"]!![i].exchangeRate
+                                income += (transaction.amount - transaction.commission) * incomePortSuccessLiveData.value!!["${transaction.currency}-$baseCur"]!![i].exchangeRate
                             }
                         }
                     }
@@ -77,7 +77,7 @@ class RepositoryForIncomePort {
         resultIncomePortLiveData.postValue(Pair(dates, rates))
 
     }
-    fun filterTradesTrans(allTrans : MutableList<Transaction>,allTrades : MutableList<Trade>, timeFrom:String, timeTo:String){
+    fun filterTradesTrans(allTrans : MutableList<Transaction>,allTrades : MutableList<Trade>, timeFrom:String, timeTo:String, baseCur : String){
         time1 = LocalDate.parse(timeFrom, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
             .atStartOfDay(ZoneOffset.UTC).toInstant().epochSecond
         time2 = LocalDate.parse(timeTo, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
@@ -91,17 +91,17 @@ class RepositoryForIncomePort {
         filteredTrans.forEach{
             if (!currencies.contains(it.currency)){
                 currencies.add(it.currency)
-                instruments += "${it.currency}-usd,"
+                instruments += "${it.currency}-$baseCur,"
             }
         }
         filteredTrades.forEach{
             if (!currencies.contains(it.tradedPriceCurrency)){
                 currencies.add(it.tradedPriceCurrency)
-                instruments += "${it.tradedPriceCurrency}-usd,"
+                instruments += "${it.tradedPriceCurrency}-$baseCur,"
             }
             if (!currencies.contains(it.tradedQuantityCurrency)){
                 currencies.add(it.tradedQuantityCurrency)
-                instruments += "${it.tradedQuantityCurrency}-usd,"
+                instruments += "${it.tradedQuantityCurrency}-$baseCur,"
             }
         }
         if (instruments != "") {

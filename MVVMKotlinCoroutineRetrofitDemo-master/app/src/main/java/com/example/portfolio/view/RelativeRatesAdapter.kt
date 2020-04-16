@@ -9,7 +9,7 @@ import java.math.BigDecimal
 import java.text.SimpleDateFormat
 
 class RelativeRatesAdapter {
-    fun setRatesChart( dataLiveData:MutableMap<String, MutableList<Rate>>, aaChartView: AAChartView?) {
+    fun setRatesChart( dataLiveData:MutableMap<String, MutableList<Rate>>, aaChartView: AAChartView?, baseCur: String) {
         val dates: ArrayList<String> = arrayListOf()
         val formatter = SimpleDateFormat("dd/MM/yyyy")
 
@@ -20,7 +20,7 @@ class RelativeRatesAdapter {
             var minValue :BigDecimal? = null
             var maxValue =BigDecimal("0")
             var flag = false
-            if(key =="usd-usd"){
+            if(key =="$baseCur-$baseCur"){
                 minValue = BigDecimal("0")
                 maxValue = BigDecimal("1")
             }

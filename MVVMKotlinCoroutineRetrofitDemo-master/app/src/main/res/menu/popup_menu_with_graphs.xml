@@ -3,6 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/infMenu">
     <item
+        android:id="@+id/settings"
+        android:icon="@drawable/settings"
+        android:orderInCategory="100"
+        android:title="Settings"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/base_currency"
+                android:title="Base currency" />
+        </menu>
+    </item>
+    <item
         android:id="@+id/upload"
         android:icon="@drawable/load"
         android:orderInCategory="100"
@@ -17,6 +29,7 @@
                 android:title="Transactions" />
         </menu>
     </item>
+
 
     <item
         android:id="@+id/menu1"

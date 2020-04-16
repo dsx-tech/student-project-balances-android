@@ -6,7 +6,7 @@ import com.example.portfolio.constants.Colors
 import java.math.BigDecimal
 
 class CurBalanceChartAdapter {
-    fun setCurBalanceChart(aaChartView: AAChartView?, dates : ArrayList<String>, rates:ArrayList<BigDecimal> ) {
+    fun setCurBalanceChart(aaChartView: AAChartView?, dates : ArrayList<String>, rates:ArrayList<BigDecimal>, baseCur : String ) {
     val  aaChartModel = AAChartModel()
         .chartType(AAChartType.Areaspline)
         .title("Currency n portfolio")
@@ -23,7 +23,7 @@ class CurBalanceChartAdapter {
         .dataLabelsFontColor(Colors.WHITE)
         .dataLabelsFontSize(1f)
         .xAxisTickInterval(2)
-        .yAxisTitle("in usd")
+        .yAxisTitle("in $baseCur")
         .backgroundColor(R.color.colorBackground)
         .yAxisGridLineWidth(0.8f)
         .xAxisGridLineWidth(0.8f)
@@ -39,7 +39,7 @@ class CurBalanceChartAdapter {
         .series(
             arrayOf(
                 AASeriesElement()
-                    .name("in usd")
+                    .name("in $baseCur")
                     .data(rates.toArray())
             )
         )

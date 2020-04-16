@@ -78,10 +78,10 @@ class RepositoryForPieGraph {
 
     }
 
-    fun getStringWithInstruments(){
+    fun getStringWithInstruments(baseCur : String){
         var s = ""
         for (key in balancesAtTheEnd.value!!.keys){
-            s += "${key.toLowerCase()}-usd,"
+            s += "${key.toLowerCase()}-$baseCur,"
         }
         s = s.substring(0, s.length.minus(1))
         stringWithInstruments.postValue(s)
@@ -161,7 +161,7 @@ class RepositoryForPieGraph {
                 }
             }
             if (!flagTransactions) {
-                if (transactions!!.size == i) {
+                if (transactions.size == i) {
                     flagTransactions = true
                 } else {
                     nextTransaction = transactions[i]
@@ -175,11 +175,11 @@ class RepositoryForPieGraph {
         return result
     }
 
-    fun multiplyRelevant(){
+    fun multiplyRelevant(baseCur:String){
         val balancesMult : MutableMap<String, BigDecimal?> = mutableMapOf()
         for (key in balancesAtTheEnd.value!!.keys){
-            if (relevantRatesSuccessLiveData.value!!.containsKey("${key.toLowerCase()}-usd")){
-                balancesMult[key] = (balancesAtTheEnd.value!![key])!!.multiply(relevantRatesSuccessLiveData.value!!["${key.toLowerCase()}-usd"]!!.exchangeRate)
+            if (relevantRatesSuccessLiveData.value!!.containsKey("${key.toLowerCase()}-$baseCur")){
+                balancesMult[key] = (balancesAtTheEnd.value!![key])!!.multiply(relevantRatesSuccessLiveData.value!!["${key.toLowerCase()}-$baseCur"]!!.exchangeRate)
             }
             else{
                 balancesMult[key] = BigDecimal("0")

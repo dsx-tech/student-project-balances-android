@@ -59,13 +59,13 @@ class MainViewModel : ViewModel() {
     fun countingBalance() {
         viewModelScope.launch { repositoryForPieGraph.countingBalance(tradesSuccessLiveData.value!!, transSuccessLiveData.value!!) }
     }
-    fun getStringWithInstruments(){
-        viewModelScope.launch { repositoryForPieGraph.getStringWithInstruments() }
+    fun getStringWithInstruments(baseCur : String){
+        viewModelScope.launch { repositoryForPieGraph.getStringWithInstruments(baseCur) }
     }
-    fun multiplyRelevant(){
-        viewModelScope.launch { repositoryForPieGraph.multiplyRelevant() }
+    fun multiplyRelevant(baseCur : String){
+        viewModelScope.launch { repositoryForPieGraph.multiplyRelevant(baseCur) }
     }
-    fun getRatesCor(currencies: Pair<String, String>, timeFrom: Long, timeTo: Long){
-        viewModelScope.launch { repositoryForRelativeRates.getRatesForTime(currencies, timeFrom, timeTo) }
+    fun getRatesCor(currencies: Pair<String, String>, timeFrom: Long, timeTo: Long, baseCur : String){
+        viewModelScope.launch { repositoryForRelativeRates.getRatesForTime(currencies, timeFrom, timeTo, baseCur) }
     }
 }

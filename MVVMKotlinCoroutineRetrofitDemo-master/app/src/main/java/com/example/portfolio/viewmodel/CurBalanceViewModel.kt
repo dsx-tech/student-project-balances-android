@@ -13,8 +13,8 @@ class CurBalanceViewModel: ViewModel() {
     var ratesCurSuccessLiveData = repositoryForCurBalance.ratesCurSuccessLiveData
     var resultCurLiveData = repositoryForCurBalance.resultCurLiveData
 
-    fun getRatesForCurBalance(currency: String, timeFrom: String, timeTo: String){
-        viewModelScope.launch { repositoryForCurBalance.getRatesForCurBalance(currency, timeFrom, timeTo) }
+    fun getRatesForCurBalance(currency: String, timeFrom: String, timeTo: String, baseCur : String){
+        viewModelScope.launch { repositoryForCurBalance.getRatesForCurBalance(currency, timeFrom, timeTo, baseCur) }
     }
     fun modelingSeriesForRateInPortfolio(allTrades: MutableList<Trade>?, allTransactions: MutableList<Transaction>?, currency: String){
         viewModelScope.launch { repositoryForCurBalance.modelingSeriesForRateInPortfolio(allTrades, allTransactions,  currency) }

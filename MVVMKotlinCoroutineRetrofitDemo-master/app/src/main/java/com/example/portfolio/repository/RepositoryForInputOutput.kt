@@ -20,7 +20,7 @@ class RepositoryForInputOutput {
     val inOutFailureLiveData = MutableLiveData<Boolean>()
     var transFilter : List<Transaction> = listOf()
     var resSuccessLiveData = MutableLiveData<MutableList<Pair<BigDecimal, BigDecimal>>>()
-    fun filterTrans(allTrans : MutableList<Transaction>, timeFrom:String, timeTo:String){
+    fun filterTrans(allTrans : MutableList<Transaction>, timeFrom:String, timeTo:String, baseCur : String){
         val time1 = LocalDate.parse(timeFrom, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
             .atStartOfDay(ZoneOffset.UTC).toInstant().epochSecond
         val time2 = LocalDate.parse(timeTo, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
@@ -32,7 +32,7 @@ class RepositoryForInputOutput {
         filteredTrans.forEach{
             if (!currencies.contains(it.currency)){
                 currencies.add(it.currency)
-                instruments += "${it.currency}-usd,"
+                instruments += "${it.currency}-$baseCur,"
             }
         }
         if (instruments != "" ){
@@ -42,7 +42,7 @@ class RepositoryForInputOutput {
         transFilter = filteredTrans
     }
 
-    fun calculationInput(){
+    fun calculationInput(baseCur : String){
         var flag = false
         val res :MutableList<Pair<BigDecimal, BigDecimal>> = mutableListOf()
         var resDayDep= BigDecimal("0")
@@ -61,10 +61,10 @@ class RepositoryForInputOutput {
                     ) {
                         when {
                             (transaction.transactionType == "Deposit") -> {
-                                resDayDep += (transaction.amount ) * inOutSuccessLiveData.value!!["${transaction.currency}-usd"]!![i].exchangeRate
+                                resDayDep += (transaction.amount ) * inOutSuccessLiveData.value!!["${transaction.currency}-$baseCur"]!![i].exchangeRate
                             }
                             (transaction.transactionType == "Withdraw") -> {
-                                resDayDraw += (transaction.amount ) * inOutSuccessLiveData.value!!["${transaction.currency}-usd"]!![i].exchangeRate
+                                resDayDraw += (transaction.amount ) * inOutSuccessLiveData.value!!["${transaction.currency}-$baseCur"]!![i].exchangeRate
                             }
                         }
                     }

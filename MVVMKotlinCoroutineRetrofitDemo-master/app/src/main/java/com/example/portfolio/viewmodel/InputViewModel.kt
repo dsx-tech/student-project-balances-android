@@ -16,10 +16,10 @@ class InputViewModel: ViewModel() {
     fun getRatesForTimeInput(instruments: String, time1: Long, time2: Long){
         viewModelScope.launch { repositoryForInputOutput.getRatesForTime(instruments, time1, time2) }
     }
-    fun filterTrans(allTrans : MutableList<Transaction>, time1:String, time2:String){
-        viewModelScope.launch { repositoryForInputOutput.filterTrans(allTrans, time1, time2) }
+    fun filterTrans(allTrans : MutableList<Transaction>, time1:String, time2:String, baseCur : String){
+        viewModelScope.launch { repositoryForInputOutput.filterTrans(allTrans, time1, time2, baseCur) }
     }
-    fun calculationInput(){
-        viewModelScope.launch { repositoryForInputOutput.calculationInput() }
+    fun calculationInput(baseCur : String){
+        viewModelScope.launch { repositoryForInputOutput.calculationInput(baseCur) }
     }
 }

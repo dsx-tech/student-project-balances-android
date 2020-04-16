@@ -23,7 +23,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import android.content.Intent
 import android.content.SharedPreferences
-import androidx.core.text.set
 import com.example.portfolio.model.Correlation
 import com.example.portfolio.model.Portfolio
 import com.example.portfolio.repository.RepositoryForCorrelation
@@ -53,6 +52,7 @@ class MainActivity : AppCompatActivity() {
 
     private val APP_PREFERENCES = "mysettings"
     private val APP_PREFERENCES_TOKEN = "token"
+    private var baseCur = "eur"
     private val APP_PREFERENCES_ID = ""
     lateinit var pref: SharedPreferences
     private lateinit var mainViewModel: MainViewModel
@@ -201,6 +201,22 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         return when (item.itemId) {
+            R.id.base_currency ->{
+                lateinit var dialog:AlertDialog
+                val array = Currencies.currenciesArray
+                val builder = AlertDialog.Builder(this)
+                builder.setTitle("Choose base currency.")
+                builder.setSingleChoiceItems(array,-1) { _, which->
+                    baseCur = array[which].toLowerCase()
+
+                        Toast.makeText(this@MainActivity,"$baseCur selected.", Toast.LENGTH_SHORT
+                        ).show()
+                    dialog.dismiss()
+                }
+                dialog = builder.create()
+                dialog.show()
+                true
+            }
             R.id.upload_trades -> {
 
                 Dexter.withActivity(this@MainActivity)
@@ -272,7 +288,7 @@ class MainActivity : AppCompatActivity() {
                 setToolbar()
                 chart = findViewById(R.id.chart)
                 if (!mainViewModel.balancesAtTheEnd.value.isNullOrEmpty())
-                    mainViewModel.getStringWithInstruments()
+                    mainViewModel.getStringWithInstruments(baseCur)
                 else {
                     val token = getToken()
                     var id: String? = null
@@ -287,7 +303,7 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.menu2 -> {
 
-                ratesGraphDraw("btc", "usd")
+                ratesGraphDraw("btc", baseCur)
                 true
             }
             R.id.menu3 -> {
@@ -335,7 +351,8 @@ class MainActivity : AppCompatActivity() {
                     incomeViewModel.getRatesForIncome(
                         currencies1.text.toString().toLowerCase(),
                         textDateFrom.text.toString(),
-                        textDateTo.text.toString()
+                        textDateTo.text.toString(),
+                        baseCur
                     )
                     hideKeyboardFrom(this, it)
                 }
@@ -362,7 +379,8 @@ class MainActivity : AppCompatActivity() {
                     curBalanceViewModel.getRatesForCurBalance(
                         currencies1.text.toString().toLowerCase(),
                         textDateFrom.text.toString(),
-                        textDateTo.text.toString()
+                        textDateTo.text.toString(),
+                        baseCur
                     )
                     hideKeyboardFrom(this, it)
                 }
@@ -386,7 +404,7 @@ class MainActivity : AppCompatActivity() {
                             currencies1.text.toString().toLowerCase(),
                             currencies2.text.toString().toLowerCase()
                         ),
-                        time, timeNow
+                        time, timeNow, baseCur
                     )
                     hideKeyboardFrom(this, it)
                 }
@@ -402,7 +420,8 @@ class MainActivity : AppCompatActivity() {
                     inputViewModel.filterTrans(
                         mainViewModel.transSuccessLiveData.value!!,
                         textDateFrom.text.toString(),
-                        textDateTo.text.toString()
+                        textDateTo.text.toString(),
+                        baseCur
                     )
                 }
                 true
@@ -418,7 +437,8 @@ class MainActivity : AppCompatActivity() {
                         mainViewModel.transSuccessLiveData.value!!,
                         mainViewModel.tradesSuccessLiveData.value!!,
                         textDateFrom.text.toString(),
-                        textDateTo.text.toString()
+                        textDateTo.text.toString(),
+                        baseCur
                     )
                 }
                 true
@@ -431,11 +451,9 @@ class MainActivity : AppCompatActivity() {
                 val currencies2: AutoCompleteTextView = findViewById(R.id.autoCoCur2)
                 val c = Currencies.currenciesArray
                 val curInstr: MutableList<String> = mutableListOf()
-                c.forEach { it1 ->
-                    c.forEach {
-                        if (it != it1)
-                            curInstr.add("$it1-$it")
-                    }
+                c.forEach {
+                            curInstr.add(it)
+
                 }
                 curInstr.distinct()
                 setCur(curInstr.toTypedArray())
@@ -446,14 +464,25 @@ class MainActivity : AppCompatActivity() {
                 button.setOnClickListener {
                     if (currencies1.text.toString() != currencies2.text.toString().toLowerCase()) {
                         button.clearFocus()
-                        val timeNow = Calendar.getInstance().timeInMillis / 1000
-                        val time = timeNow - Days.MONTH_IN_SEC * 2
-                        correlationViewModel.getRatesForCor(
-                            "${currencies1.text.toString().toLowerCase()},${currencies2.text.toString().toLowerCase()}",
-                            time,
-                            timeNow
-                        )
+                        if ((currencies1.text.toString().toLowerCase() == baseCur) or (currencies2.text.toString().toLowerCase() == baseCur) ){
+                            val builder = AlertDialog.Builder(this)
 
+                            with(builder)
+                            {
+                                setTitle("Ooops")
+                                setMessage("Please, choose another base currency or active")
+                                show()
+                            }
+                        }
+                        else {
+                            val timeNow = Calendar.getInstance().timeInMillis / 1000
+                            val time = timeNow - Days.MONTH_IN_SEC * 2
+                            correlationViewModel.getRatesForCor(
+                                "${currencies1.text.toString().toLowerCase()}-$baseCur,${currencies2.text.toString().toLowerCase()}-$baseCur",
+                                time,
+                                timeNow
+                            )
+                        }
 
                         hideKeyboardFrom(this, it)
                     }
@@ -697,20 +726,20 @@ class MainActivity : AppCompatActivity() {
             }
         })
         mainViewModel.balancesAtTheEnd.observe(this, Observer {
-            mainViewModel.getStringWithInstruments()
+            mainViewModel.getStringWithInstruments(baseCur)
         }
         )
 
         mainViewModel.relevantRatesSuccessLiveData.observe(this, Observer {
 
             rvRatesAdapter.setRates(it)
-            mainViewModel.multiplyRelevant()
+            mainViewModel.multiplyRelevant(baseCur)
         }
         )
 
         mainViewModel.balancesMultRates.observe(this, Observer {
 
-            chartAdapter.setChart(it, chart!!)
+            chartAdapter.setChart(it, chart!!, baseCur)
             setRates()
 
         }
@@ -718,17 +747,17 @@ class MainActivity : AppCompatActivity() {
         columnViewModel.columnGraphData.observe(this, Observer {
             val k = findViewById<EditText>(R.id.year)
             aaChartView = findViewById(R.id.AAChartView)
-            columnChartAdapter.setColumnChart(aaChartView, it, k.text.toString().toInt())
+            columnChartAdapter.setColumnChart(aaChartView, it, k.text.toString().toInt(), baseCur)
         })
         columnViewModel.yearBalanceLiveData.observe(this, Observer {
-            columnViewModel.getStringWithInstrumentsForColumn(it[12].keys.toMutableList())
+            columnViewModel.getStringWithInstrumentsForColumn(it[12].keys.toMutableList(), baseCur)
         })
         columnViewModel.stringWithInstruments2.observe(this, Observer {
             val k = findViewById<EditText>(R.id.year)
             columnViewModel.getRatesForTime(it, k.text.toString().toInt())
         })
         columnViewModel.rateSuccessLiveData.observe(this, Observer {
-            columnViewModel.multiplyRes()
+            columnViewModel.multiplyRes(baseCur)
         })
 
         mainViewModel.authSuccessLiveData.observe(this, Observer {
@@ -752,7 +781,7 @@ class MainActivity : AppCompatActivity() {
         }
         )
         incomeViewModel.resultIncomeLiveData.observe(this, Observer {
-            incomeChartAdapter.setIncomeChart(aaChartView, it.first, it.second)
+            incomeChartAdapter.setIncomeChart(aaChartView, it.first, it.second, baseCur)
         }
         )
         curBalanceViewModel.ratesCurSuccessLiveData.observe(this, Observer {
@@ -764,7 +793,7 @@ class MainActivity : AppCompatActivity() {
         }
         )
         curBalanceViewModel.resultCurLiveData.observe(this, Observer {
-            curBalanceChartAdapter.setCurBalanceChart(aaChartView, it.first, it.second)
+            curBalanceChartAdapter.setCurBalanceChart(aaChartView, it.first, it.second, baseCur)
         }
         )
         portfolioViewModel.portfolioSuccessLiveData.observe(this, Observer {
@@ -808,7 +837,7 @@ class MainActivity : AppCompatActivity() {
         }
         )
         mainViewModel.rateCurSuccessLiveData.observe(this, Observer {
-            relativeRatesAdapter.setRatesChart(it, aaChartView)
+            relativeRatesAdapter.setRatesChart(it, aaChartView, baseCur)
         }
         )
         inputViewModel.valuesForInput.observe(this, Observer {
@@ -816,7 +845,7 @@ class MainActivity : AppCompatActivity() {
         }
         )
         inputViewModel.inOutSuccessLiveData.observe(this, Observer {
-            inputViewModel.calculationInput()
+            inputViewModel.calculationInput(baseCur)
         }
         )
         rvPortfolioAdapter.deletePortfolioLiveData.observe(this, Observer {
@@ -831,7 +860,8 @@ class MainActivity : AppCompatActivity() {
             inputOutputAdapter.setInputChart(
                 aaChartView,
                 it,
-                inputViewModel.valuesForInput.value!!.second
+                inputViewModel.valuesForInput.value!!.second,
+                baseCur
             )
         }
         )
@@ -840,11 +870,11 @@ class MainActivity : AppCompatActivity() {
         }
         )
         incomePortViewModel.incomePortSuccessLiveData.observe(this, Observer {
-            incomePortViewModel.modelingSeriesForIncome()
+            incomePortViewModel.modelingSeriesForIncome(baseCur)
         }
         )
         incomePortViewModel.resultIncomePortLiveData.observe(this, Observer {
-            incomeChartAdapter.setIncomeChart(aaChartView, it.first, it.second)
+            incomeChartAdapter.setIncomeChart(aaChartView, it.first, it.second, baseCur)
         }
         )
         rvCorrelationAdapter.deleteCorLiveData.observe(this, Observer {
@@ -873,6 +903,11 @@ class MainActivity : AppCompatActivity() {
            ratesGraphDraw(it.first.substring(0, it.first.indexOf('-')), it.first.substring(it.first.indexOf('-') + 1, it.first.length))
         }
         )
+        rvRatesAdapter.deleteRateLiveData.observe(this, Observer {
+            rvRatesAdapter.deleteRate()
+            setRates()
+
+        })
 
     }
 
