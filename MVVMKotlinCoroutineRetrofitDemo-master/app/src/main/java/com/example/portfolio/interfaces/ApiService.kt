@@ -16,10 +16,10 @@ interface ApiService {
     fun getRatesForTimeM(@Path("instrument") instrument:String, @Path("timeFrom") timeFrom: Long, @Path("timeTo") timeTo: Long): Deferred<Response< MutableMap<String, MutableList<Rate>>>>
     @GET("/bcv/quotes/ticker/{instruments}")
     fun getRate(@Path("instruments") instruments: String): Deferred<Response<MutableMap<String, RelevantRate>>>
-    @GET("/bcv/portfolios/{id}/transactions")
-    fun getTrans(@Header("Authorization") token: String, @Path("id") id: Int): Deferred<Response<MutableList<Transaction>>>
-    @GET("/bcv/portfolios/{id}/trades")
-    fun getTrades(@Header("Authorization") token: String, @Path("id") id: Int): Deferred<Response<MutableList<Trade>>>
+    @GET("/bcv/transactions")
+    fun getTrans(@Header("Authorization") token: String, @Query("portfolioId") id: Int): Deferred<Response<MutableList<Transaction>>>
+    @GET("/bcv/trades")
+    fun getTrades(@Header("Authorization") token: String, @Query("portfolioId") id: Int): Deferred<Response<MutableList<Trade>>>
     @Headers("Content-Type: application/json")
     @POST("/bcv/auth/login")
     fun auth(@Body login: LoginBody) : Deferred<Response<LoginResponse>>
@@ -36,10 +36,14 @@ interface ApiService {
     @DELETE("/bcv/portfolios/{id}")
     fun deletePortfolio( @Path("id") id: Int, @Header("Authorization") token: String) : Deferred<Response<Void>>
     @Multipart
-    @POST("/bcv/portfolios/{id}/trades/upload")
-    fun uploadTrades(@Part doc: MultipartBody.Part, @Header("Authorization") token: String, @Path("id") id: Int) : Deferred<Response<Void>>
+    @POST("/bcv/trades/uploadFile")
+    fun uploadTrades(@Part doc: MultipartBody.Part, @Header("Authorization") token: String, @Query("portfolioId") id: Int, @Query("csvFileFormat") csvFileFormat: String) : Deferred<Response<Void>>
     @Multipart
-    @POST("/bcv/portfolios/{id}/transactions/upload")
-    fun uploadTrans(@Part  doc: MultipartBody.Part, @Header("Authorization") token: String, @Path("id") id: Int) : Deferred<Response<Void>>
+    @POST("/bcv/transactions/uploadFile")
+    fun uploadTrans(@Part  doc: MultipartBody.Part, @Header("Authorization") token: String, @Query("portfolioId") id: Int, @Query("csvFileFormat") csvFileFormat: String) : Deferred<Response<Void>>
+    @POST("/bcv/trades")
+    fun uploadTrade(@Header("Authorization") token: String, @Query("portfolioId") id: Int, @Body trade: Trade) : Deferred<Response<Void>>
+    @POST("/bcv/transactions")
+    fun uploadTransaction(@Header("Authorization") token: String, @Query("portfolioId") id: Int, @Body transaction: Transaction) : Deferred<Response<Void>>
 }
 

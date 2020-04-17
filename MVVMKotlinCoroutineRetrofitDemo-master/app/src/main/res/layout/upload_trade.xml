@@ -80,7 +80,7 @@
             />
     </RadioGroup>
     <EditText
-        android:id="@+id/tradedQuantity"
+        android:id="@+id/tradedq"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -105,15 +105,46 @@
         android:backgroundTint="@color/white"
         android:textColor="@color/white"
         android:textSize="20dp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:orientation="horizontal">
+        <AutoCompleteTextView
+            android:id="@+id/autoCoCur3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textColorHint="@color/whiteHint"
+            android:textColor="@color/white"
+            android:hint="Cur1" >
+        </AutoCompleteTextView>
+
+        <EditText
+            android:id="@+id/commission"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:inputType="textPersonName"
+            android:layout_weight="1"
+            android:hint="Commission"
+            android:textColorHint="@color/whiteHint"
+            android:backgroundTint="@color/white"
+            android:textColor="@color/white"
+            android:textSize="20dp" />
+
+    </LinearLayout>
+
+
     <EditText
-        android:id="@+id/commission"
+        android:id="@+id/tradeId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
         android:layout_gravity="center_horizontal"
         android:inputType="textPersonName"
         android:singleLine="false"
-        android:hint="Commission"
+        android:hint="Trade ID"
         android:textColorHint="@color/whiteHint"
         android:backgroundTint="@color/white"
         android:textColor="@color/white"

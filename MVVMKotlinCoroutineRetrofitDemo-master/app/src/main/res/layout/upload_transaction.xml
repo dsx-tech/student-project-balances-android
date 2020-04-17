@@ -96,6 +96,19 @@
         android:text="Date"
         >
     </TextView>
+    <EditText
+        android:id="@+id/transactionId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:layout_gravity="center_horizontal"
+        android:inputType="textPersonName"
+        android:singleLine="false"
+        android:hint="Transaction ID"
+        android:textColorHint="@color/whiteHint"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/white"
+        android:textSize="20dp" />
 
     <TextView
         android:id="@+id/time"

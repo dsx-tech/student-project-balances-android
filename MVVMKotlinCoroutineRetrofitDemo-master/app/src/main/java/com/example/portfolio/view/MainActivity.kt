@@ -18,13 +18,12 @@ import com.aachartmodel.aainfographics.AAInfographicsLib.AAChartConfiger.AAChart
 import com.example.portfolio.R
 import com.example.portfolio.constants.Days
 import com.example.portfolio.constants.Currencies
-import com.example.portfolio.model.LoginBody
 import java.text.SimpleDateFormat
 import java.util.*
 import android.content.Intent
 import android.content.SharedPreferences
-import com.example.portfolio.model.Correlation
-import com.example.portfolio.model.Portfolio
+import com.anychart.scales.DateTime
+import com.example.portfolio.model.*
 import com.example.portfolio.repository.RepositoryForCorrelation
 import com.example.portfolio.repository.RepositoryForInputOutput
 import com.example.portfolio.repository.RepositoryForRelativeRates
@@ -38,6 +37,9 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import okhttp3.MediaType
 import java.io.File
+import java.math.BigDecimal
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
 class MainActivity : AppCompatActivity() {
@@ -511,22 +513,17 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        var format =""
+        lateinit var dialog:AlertDialog
+        val array = arrayOf("Dsx", "Tinkoff")
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Choose base currency.")
+        builder.setSingleChoiceItems(array,-1) { _, which->
+            format = array[which]
 
-        if (requestCode == 111 && resultCode == RESULT_OK) {
-            val selectedFile = data?.data //The uri with the location of the file
-            val file = File(selectedFile!!.path)
-            val split = file.path.split(":")
-            val filer = split[1]
-            val f = File(filer)
-            val type = MediaType.parse(contentResolver.getType(selectedFile))
-            val token = getToken()
-            var id: String? = null
-            if (pref.contains(APP_PREFERENCES_ID)) {
-                id = pref.getString(APP_PREFERENCES_ID, "0")
-            }
-            uploadViewModel.uploadFiles(selectedFile, f, id!!.toInt(), token, type)
-        } else
-            if (requestCode == 222 && resultCode == RESULT_OK) {
+            Toast.makeText(this@MainActivity,"$format selected.", Toast.LENGTH_SHORT
+            ).show()
+            if (requestCode == 111 && resultCode == RESULT_OK) {
                 val selectedFile = data?.data //The uri with the location of the file
                 val file = File(selectedFile!!.path)
                 val split = file.path.split(":")
@@ -538,8 +535,28 @@ class MainActivity : AppCompatActivity() {
                 if (pref.contains(APP_PREFERENCES_ID)) {
                     id = pref.getString(APP_PREFERENCES_ID, "0")
                 }
-                uploadViewModel.uploadTrans(selectedFile, f, id!!.toInt(), token, type)
-            }
+                uploadViewModel.uploadFiles(selectedFile, f, id!!.toInt(), token, type, format)
+            } else
+                if (requestCode == 222 && resultCode == RESULT_OK) {
+                    val selectedFile = data?.data //The uri with the location of the file
+                    val file = File(selectedFile!!.path)
+                    val split = file.path.split(":")
+                    val filer = split[1]
+                    val f = File(filer)
+                    val type = MediaType.parse(contentResolver.getType(selectedFile))
+                    val token = getToken()
+                    var id: String? = null
+                    if (pref.contains(APP_PREFERENCES_ID)) {
+                        id = pref.getString(APP_PREFERENCES_ID, "0")
+                    }
+                    uploadViewModel.uploadTrans(selectedFile, f, id!!.toInt(), token, type, format)
+                }
+            dialog.dismiss()
+        }
+        dialog = builder.create()
+        dialog.setCancelable(false)
+        dialog.show()
+
     }
 
     private fun setUploadTr(flag: Int){
@@ -562,6 +579,8 @@ class MainActivity : AppCompatActivity() {
                setCur(Currencies.currenciesArray, currencies1)
                 val currencies2: AutoCompleteTextView = dialog.findViewById(R.id.autoCoCur2)
                 setCur(Currencies.currenciesArray, currencies2)
+                val currencies3: AutoCompleteTextView = dialog.findViewById(R.id.autoCoCur3)
+                setCur(Currencies.currenciesArray, currencies3)
                 time.setOnClickListener {  val cal = Calendar.getInstance()
                     val timeSetListener = TimePickerDialog.OnTimeSetListener { _, hour, minute ->
                         cal.set(Calendar.HOUR_OF_DAY, hour)
@@ -570,8 +589,41 @@ class MainActivity : AppCompatActivity() {
                     }
                     TimePickerDialog(this, timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show() }
                 val yesBtn = dialog .findViewById(R.id.upload) as Button
+
+                val radio1: RadioButton = dialog.findViewById(R.id.radio1)
+                val radio2: RadioButton = dialog.findViewById(R.id.radio2)
+                var type = ""
+                val tradedQ : EditText = dialog.findViewById(R.id.tradedq)
+                val tradePrice : EditText = dialog.findViewById(R.id.tradePrice)
+                val commission : EditText = dialog.findViewById(R.id.commission)
+                val tradeId : EditText = dialog.findViewById(R.id.tradeId)
+
+
+
                 yesBtn.setOnClickListener {
-                    dialog .dismiss()
+                    when {
+                        radio1.isChecked -> type = "Buy"
+                        radio2.isChecked -> type = "Sell"
+                    }
+                    val token = getToken()
+                    var dat = LocalDate.parse(date.text.toString(), DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+
+                    var id: String? = null
+                    if (pref.contains(APP_PREFERENCES_ID)) {
+                        id = pref.getString(APP_PREFERENCES_ID, "0")
+                    }
+                    try{uploadViewModel.uploadTrade(id!!.toInt(), token, Trade(id = 0, instrument = "${currencies1.text.toString().toLowerCase()}-${currencies2.text.toString().toLowerCase()}",
+                        tradeType = type, tradedQuantity = BigDecimal(tradedQ.text.toString()), tradedPrice = BigDecimal(tradePrice.text.toString()), commission = BigDecimal(commission.text.toString()),
+                        tradeValueId = tradeId.text.toString().toInt(), tradedQuantityCurrency = currencies1.text.toString().toLowerCase(), tradedPriceCurrency = currencies2.text.toString().toLowerCase(), commissionCurrency = currencies2.text.toString().toLowerCase(),
+                        dateTime = "${dat}T${time.text}:00.000Z"
+                        ))
+                    dialog .dismiss()}
+                    catch (e:Exception){
+                        Toast.makeText( this,
+                            "Something went wrong",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
                 dialog .show()
             }
@@ -582,6 +634,12 @@ class MainActivity : AppCompatActivity() {
                 dialog .setContentView(R.layout.upload_transaction)
 
                 val time = dialog.findViewById(R.id.time) as TextView
+                val radio1: RadioButton = dialog.findViewById(R.id.radio1)
+                val radio2: RadioButton = dialog.findViewById(R.id.radio2)
+                val commission : EditText = dialog.findViewById(R.id.commission)
+                val amount : EditText = dialog.findViewById(R.id.amount)
+                var type = ""
+                val transactionId : EditText = dialog.findViewById(R.id.transactionId)
                 time.text =
                     SimpleDateFormat("HH:mm").format(System.currentTimeMillis())
                 val date = dialog.findViewById(R.id.date) as TextView
@@ -591,6 +649,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 val currencies1: AutoCompleteTextView = dialog.findViewById(R.id.autoCoCur)
                 setCur(Currencies.currenciesArray, currencies1)
+
                 time.setOnClickListener {  val cal = Calendar.getInstance()
                     val timeSetListener = TimePickerDialog.OnTimeSetListener { _, hour, minute ->
                         cal.set(Calendar.HOUR_OF_DAY, hour)
@@ -600,7 +659,28 @@ class MainActivity : AppCompatActivity() {
                     TimePickerDialog(this, timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show() }
                 val yesBtn = dialog .findViewById(R.id.upload) as Button
                 yesBtn.setOnClickListener {
-                    dialog .dismiss()
+                    when {
+                        radio1.isChecked -> type = "Deposit"
+                        radio2.isChecked -> type = "Withdraw"
+                    }
+                    val token = getToken()
+                    var dat = LocalDate.parse(date.text.toString(), DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+
+                    var id: String? = null
+                    if (pref.contains(APP_PREFERENCES_ID)) {
+                        id = pref.getString(APP_PREFERENCES_ID, "0")
+                    }
+                   try{ uploadViewModel.uploadTransaction(id!!.toInt(), token, Transaction(id = 0,  commission = BigDecimal(commission.text.toString()), transactionType = type, currency = currencies1.text.toString().toLowerCase(),
+                        amount = BigDecimal(amount.text.toString()), transactionStatus = "Complete", transactionValueId = transactionId.text.toString().toInt(),
+                        dateTime = "${dat}T${time.text}:00.000Z"
+                    ))
+                    dialog .dismiss()}
+                   catch (e:Exception){
+                       Toast.makeText( this,
+                           "Something went wrong",
+                           Toast.LENGTH_SHORT
+                       ).show()
+                   }
                 }
                 dialog .show()
             }
