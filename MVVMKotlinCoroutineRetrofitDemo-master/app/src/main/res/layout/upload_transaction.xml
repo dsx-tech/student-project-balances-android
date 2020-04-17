@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/colorBackground"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:textColor="@color/white"
+        android:textSize="20dp"
+        android:gravity="center"
+        android:text="TRANSACTION"
+        >
+    </TextView>
+    <AutoCompleteTextView
+        android:id="@+id/autoCoCur"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:textColorHint="@color/whiteHint"
+        android:textColor="@color/white"
+        android:hint="Currency" />
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_marginBottom="10dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:paddingLeft="50dp"
+            android:paddingRight="50dp"
+            >
+        <RadioButton
+            android:id="@+id/radio1"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:textColor="@android:color/white"
+            android:layout_marginRight="10dp"
+            android:text="Deposit"
+            android:layout_weight="1"
+            android:checked="true"
+            android:button="@android:color/transparent"
+            android:gravity="center"
+            android:background="@drawable/radio_button_selector"
+            />
+        <RadioButton
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:id="@+id/radio2"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:textColor="@android:color/white"
+
+            android:text="Withdraw"
+            android:layout_weight="1"
+            android:checked="false"
+            android:button="@android:color/transparent"
+            android:background="@drawable/radio_button_selector"
+            android:gravity="center"
+            />
+    </RadioGroup>
+    <EditText
+        android:id="@+id/amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:singleLine="false"
+        android:hint="Amount"
+        android:layout_gravity="center_horizontal"
+        android:textColorHint="@color/whiteHint"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/white"
+        android:textSize="20dp" />
+    <EditText
+        android:id="@+id/commission"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:layout_gravity="center_horizontal"
+        android:inputType="textPersonName"
+        android:singleLine="false"
+        android:hint="Commission"
+        android:textColorHint="@color/whiteHint"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/white"
+        android:textSize="20dp" />
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:text="Date"
+        >
+    </TextView>
+
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:text="Time"
+        >
+    </TextView>
+
+    <Button
+        android:id="@+id/upload"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="30dp"
+        android:textColor="@color/border"
+        android:textSize="18dp"
+        android:background="@drawable/custom_button_login"
+        android:layout_gravity="center_horizontal"
+        android:text="UPLOAD"/>
+
+
+</LinearLayout>

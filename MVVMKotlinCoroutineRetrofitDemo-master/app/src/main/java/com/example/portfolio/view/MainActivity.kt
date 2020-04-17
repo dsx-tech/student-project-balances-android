@@ -183,6 +183,55 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    private fun uploadTradesTrans(flag: Int){
+        var info = ""
+        when (flag){
+            111 -> info = "trades"
+            222 -> info = "transactions"
+        }
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("?")
+        builder.setMessage("How you want to upload your $info")
+
+        builder.setPositiveButton("CSV") { _, _ ->
+            Dexter.withActivity(this@MainActivity)
+                .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                .withListener(object : PermissionListener {
+                    override fun onPermissionDenied(p0: PermissionDeniedResponse?) {
+                        Toast.makeText(
+                            this@MainActivity,
+                            "You don't have permission",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    override fun onPermissionGranted(p0: PermissionGrantedResponse?) {
+
+                        val intent = Intent()
+                            .setType("*/*")
+                            .setAction(Intent.ACTION_GET_CONTENT)
+                        startActivityForResult(
+                            Intent.createChooser(intent, "Select a file"),
+                            flag
+                        )
+                    }
+
+                    override fun onPermissionRationaleShouldBeShown(
+                        p0: PermissionRequest?,
+                        token: PermissionToken?
+                    ) {
+                        token?.continuePermissionRequest()
+                    }
+                })
+                .check()
+        }
+
+        builder.setNegativeButton("ENTER") { _, _ ->
+        setUploadTr(flag)
+
+        }
+        builder.show()
+    }
     private fun showGraphs() {
         setContentView(R.layout.activity_main)
         setToolbar()
@@ -218,69 +267,11 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             R.id.upload_trades -> {
-
-                Dexter.withActivity(this@MainActivity)
-                    .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                    .withListener(object : PermissionListener {
-                        override fun onPermissionDenied(p0: PermissionDeniedResponse?) {
-                            Toast.makeText(
-                                this@MainActivity,
-                                "You don't have permission",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-
-                        override fun onPermissionGranted(p0: PermissionGrantedResponse?) {
-
-                            val intent = Intent()
-                                .setType("*/*")
-                                .setAction(Intent.ACTION_GET_CONTENT)
-                            startActivityForResult(
-                                Intent.createChooser(intent, "Select a file"),
-                                111
-                            )
-                        }
-
-                        override fun onPermissionRationaleShouldBeShown(
-                            p0: PermissionRequest?,
-                            token: PermissionToken?
-                        ) {
-                            token?.continuePermissionRequest()
-                        }
-                    })
-                    .check()
-
+                uploadTradesTrans(111)
                 true
             }
             R.id.upload_trans -> {
-
-                Dexter.withActivity(this@MainActivity)
-                    .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                    .withListener(object : PermissionListener {
-                        override fun onPermissionDenied(p0: PermissionDeniedResponse?) {
-                            Toast.makeText(this@MainActivity, "1", Toast.LENGTH_SHORT).show()
-                        }
-
-                        override fun onPermissionGranted(p0: PermissionGrantedResponse?) {
-                            Toast.makeText(this@MainActivity, "2", Toast.LENGTH_SHORT).show()
-                            val intent = Intent()
-                                .setType("*/*")
-                                .setAction(Intent.ACTION_GET_CONTENT)
-                            startActivityForResult(
-                                Intent.createChooser(intent, "Select a file"),
-                                222
-                            )
-                        }
-
-                        override fun onPermissionRationaleShouldBeShown(
-                            p0: PermissionRequest?,
-                            token: PermissionToken?
-                        ) {
-                            token?.continuePermissionRequest()
-                        }
-                    })
-                    .check()
-
+                uploadTradesTrans(222)
                 true
             }
             R.id.menu1 -> {
@@ -335,17 +326,7 @@ class MainActivity : AppCompatActivity() {
                 val textDateTo: TextView = findViewById(R.id.dateTo)
                 val button: Button = findViewById(R.id.graph_draw)
                 val currencies1: AutoCompleteTextView = findViewById(R.id.autoCoCur1)
-                val adapter = ArrayAdapter(
-                    this,
-                    android.R.layout.simple_list_item_1,
-                    Currencies.currenciesArray
-                )
-                currencies1.threshold = 0
-                currencies1.setAdapter(adapter)
-                currencies1.setOnFocusChangeListener { _, b -> if (b) currencies1.showDropDown() }
-
-
-
+                setCur(Currencies.currenciesArray, currencies1)
                 button.setOnClickListener {
                     button.clearFocus()
                     incomeViewModel.getRatesForIncome(
@@ -366,14 +347,7 @@ class MainActivity : AppCompatActivity() {
                 val textDateFrom: TextView = findViewById(R.id.dateFrom)
                 val textDateTo: TextView = findViewById(R.id.dateTo)
                 val currencies1: AutoCompleteTextView = findViewById(R.id.autoCoCur1)
-                val adapter = ArrayAdapter(
-                    this,
-                    android.R.layout.simple_list_item_1,
-                    Currencies.currenciesArray
-                )
-                currencies1.threshold = 0
-                currencies1.setAdapter(adapter)
-                currencies1.setOnFocusChangeListener { _, b -> if (b) currencies1.showDropDown() }
+                setCur(Currencies.currenciesArray, currencies1)
                 button.setOnClickListener {
                     button.clearFocus()
                     curBalanceViewModel.getRatesForCurBalance(
@@ -389,16 +363,16 @@ class MainActivity : AppCompatActivity() {
             R.id.menu6 -> {
                 setContentView(R.layout.activity_for_relative_correl)
                 setToolbar()
-                setCur(Currencies.currenciesArray)
                 aaChartView = findViewById(R.id.AAChartView)
                 val button: Button = findViewById(R.id.graph_draw)
                 val currencies1: AutoCompleteTextView = findViewById(R.id.autoCoCur1)
                 val currencies2: AutoCompleteTextView = findViewById(R.id.autoCoCur2)
-
+                setCur(Currencies.currenciesArray, currencies1)
+                setCur(Currencies.currenciesArray, currencies2)
                 button.setOnClickListener {
                     button.clearFocus()
                     val timeNow = Calendar.getInstance().timeInMillis / 1000
-                    val time = timeNow - Days.MONTH_IN_SEC
+                    val time = timeNow - Days.MONTH_IN_SEC*2
                     mainViewModel.getRatesCor(
                         Pair(
                             currencies1.text.toString().toLowerCase(),
@@ -456,7 +430,8 @@ class MainActivity : AppCompatActivity() {
 
                 }
                 curInstr.distinct()
-                setCur(curInstr.toTypedArray())
+                setCur(curInstr.toTypedArray(),currencies1)
+                setCur(curInstr.toTypedArray(),currencies2)
                 val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
                 recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
                 recyclerView.adapter = rvCorrelationAdapter
@@ -495,18 +470,20 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun ratesGraphDraw(cur1: String, cur2: String){
+    private fun ratesGraphDraw(cur1: String, cur2: String){
         setContentView(R.layout.activity_rate_graph)
         setToolbar()
-        setCur(Currencies.currenciesArray)
+
         mainViewModel.getRates(
             "$cur1-$cur2",
             Calendar.getInstance().timeInMillis / 1000 - Days.MONTH_IN_SEC * 2, Calendar.getInstance().timeInMillis / 1000
         )
         val currencies1: AutoCompleteTextView = findViewById(R.id.autoCoCur1)
         currencies1.setText(cur1.toUpperCase())
+        setCur(Currencies.currenciesArray, currencies1)
         val currencies2: AutoCompleteTextView = findViewById(R.id.autoCoCur2)
         currencies2.setText(cur2.toUpperCase())
+        setCur(Currencies.currenciesArray, currencies2)
         val button: Button = findViewById(R.id.graph_draw)
         val radio1: RadioButton = findViewById(R.id.radio1)
         val radio2: RadioButton = findViewById(R.id.radio2)
@@ -565,6 +542,72 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
+    private fun setUploadTr(flag: Int){
+        when (flag){
+            111 ->{
+                val dialog = Dialog(this)
+                dialog .requestWindowFeature(Window.FEATURE_NO_TITLE)
+                dialog .setCancelable(true)
+                dialog .setContentView(R.layout.upload_trade)
+
+                val time = dialog.findViewById(R.id.time) as TextView
+                time.text =
+                    SimpleDateFormat("HH:mm").format(System.currentTimeMillis())
+                val date = dialog.findViewById(R.id.date) as TextView
+                date.text = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
+                date.setOnClickListener {
+                    setDate(date)
+                }
+                val currencies1: AutoCompleteTextView = dialog.findViewById(R.id.autoCoCur1)
+               setCur(Currencies.currenciesArray, currencies1)
+                val currencies2: AutoCompleteTextView = dialog.findViewById(R.id.autoCoCur2)
+                setCur(Currencies.currenciesArray, currencies2)
+                time.setOnClickListener {  val cal = Calendar.getInstance()
+                    val timeSetListener = TimePickerDialog.OnTimeSetListener { _, hour, minute ->
+                        cal.set(Calendar.HOUR_OF_DAY, hour)
+                        cal.set(Calendar.MINUTE, minute)
+                        time.text = SimpleDateFormat("HH:mm").format(cal.time)
+                    }
+                    TimePickerDialog(this, timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show() }
+                val yesBtn = dialog .findViewById(R.id.upload) as Button
+                yesBtn.setOnClickListener {
+                    dialog .dismiss()
+                }
+                dialog .show()
+            }
+            222 ->{
+                val dialog = Dialog(this)
+                dialog .requestWindowFeature(Window.FEATURE_NO_TITLE)
+                dialog .setCancelable(true)
+                dialog .setContentView(R.layout.upload_transaction)
+
+                val time = dialog.findViewById(R.id.time) as TextView
+                time.text =
+                    SimpleDateFormat("HH:mm").format(System.currentTimeMillis())
+                val date = dialog.findViewById(R.id.date) as TextView
+                date.text = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
+                date.setOnClickListener {
+                  setDate(date)
+                }
+                val currencies1: AutoCompleteTextView = dialog.findViewById(R.id.autoCoCur)
+                setCur(Currencies.currenciesArray, currencies1)
+                time.setOnClickListener {  val cal = Calendar.getInstance()
+                    val timeSetListener = TimePickerDialog.OnTimeSetListener { _, hour, minute ->
+                        cal.set(Calendar.HOUR_OF_DAY, hour)
+                        cal.set(Calendar.MINUTE, minute)
+                        time.text = SimpleDateFormat("HH:mm").format(cal.time)
+                    }
+                    TimePickerDialog(this, timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show() }
+                val yesBtn = dialog .findViewById(R.id.upload) as Button
+                yesBtn.setOnClickListener {
+                    dialog .dismiss()
+                }
+                dialog .show()
+            }
+        }
+    }
+
+
     private fun setToolbar() {
         val toolbar: Toolbar = findViewById(R.id.toolBar)
         toolbar.setTitleTextColor(getColor(R.color.white))
@@ -583,6 +626,10 @@ class MainActivity : AppCompatActivity() {
         textDateFrom.text =
             SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
         textDateTo.text = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
+       setDate(textDateFrom)
+        setDate(textDateTo)
+    }
+    private fun setDate(date: TextView){
         val cal = Calendar.getInstance()
         val myFormat = "dd.MM.yyyy"
         val dateSetListenerFrom =
@@ -590,12 +637,10 @@ class MainActivity : AppCompatActivity() {
                 cal.set(Calendar.YEAR, year)
                 cal.set(Calendar.MONTH, monthOfYear)
                 cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-
-
                 val sdf = SimpleDateFormat(myFormat, Locale.US)
-                textDateFrom.text = sdf.format(cal.time)
+                date.text = sdf.format(cal.time)
             }
-        textDateFrom.setOnClickListener {
+        date.setOnClickListener {
             DatePickerDialog(
                 this, dateSetListenerFrom,
                 cal.get(Calendar.YEAR),
@@ -603,29 +648,10 @@ class MainActivity : AppCompatActivity() {
                 cal.get(Calendar.DAY_OF_MONTH)
             ).show()
         }
-
-        val dateSetListenerTo =
-            DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-                cal.set(Calendar.YEAR, year)
-                cal.set(Calendar.MONTH, monthOfYear)
-                cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-
-                val sdf = SimpleDateFormat(myFormat, Locale.US)
-                textDateTo.text = sdf.format(cal.time)
-            }
-        textDateTo.setOnClickListener {
-            DatePickerDialog(
-                this, dateSetListenerTo,
-                cal.get(Calendar.YEAR),
-                cal.get(Calendar.MONTH),
-                cal.get(Calendar.DAY_OF_MONTH)
-            ).show()
-        }
     }
+    private fun setCur(array: Array<String>, currencies1: AutoCompleteTextView) {
 
-    private fun setCur(array: Array<String>) {
 
-        val currencies1: AutoCompleteTextView = findViewById(R.id.autoCoCur1)
         val adapter = ArrayAdapter(
             this,
             android.R.layout.simple_list_item_1,
@@ -634,18 +660,6 @@ class MainActivity : AppCompatActivity() {
         currencies1.threshold = 0
         currencies1.setAdapter(adapter)
         currencies1.setOnFocusChangeListener { _, b -> if (b) currencies1.showDropDown() }
-
-        val currencies2: AutoCompleteTextView = findViewById(R.id.autoCoCur2)
-        val adapter2 = ArrayAdapter(
-            this,
-            android.R.layout.simple_list_item_1,
-            array
-        )
-        currencies2.threshold = 0
-        currencies2.setAdapter(adapter2)
-        currencies2.setOnFocusChangeListener { _, b -> if (b) currencies2.showDropDown() }
-
-
     }
 
     private fun registerObservers() {
