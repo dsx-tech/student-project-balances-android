@@ -26,8 +26,8 @@ class RepositoryForUpload {
     var uploadFailureLiveData = MutableLiveData<Boolean>()
     suspend fun uploadFiles(fileUri : Uri1, file1: File, id: Int, token: String, type: MediaType?, format: String) {
 
-        var filePart: RequestBody = RequestBody.create(type, file1)
-        var file : MultipartBody.Part = MultipartBody.Part.createFormData("file",file1.name,  filePart)
+        val filePart: RequestBody = RequestBody.create(type, file1)
+        val file : MultipartBody.Part = MultipartBody.Part.createFormData("file",file1.name,  filePart)
         try {
             val response = RetrofitManager.transTradesApi.uploadTrades(file, "Token_$token",  id, format).await()
 
@@ -60,8 +60,8 @@ class RepositoryForUpload {
     }
 
     suspend fun uploadTrans(fileUri : Uri1, file1: File, id: Int, token: String, type: MediaType?, format : String) {
-        var filePart: RequestBody = RequestBody.create(type, file1)
-        var file : MultipartBody.Part = MultipartBody.Part.createFormData("file",file1.name,  filePart)
+        val filePart: RequestBody = RequestBody.create(type, file1)
+        val file : MultipartBody.Part = MultipartBody.Part.createFormData("file",file1.name,  filePart)
         try {
             val response = RetrofitManager.transTradesApi.uploadTrans(file, "Token_$token",  id, format).await()
 

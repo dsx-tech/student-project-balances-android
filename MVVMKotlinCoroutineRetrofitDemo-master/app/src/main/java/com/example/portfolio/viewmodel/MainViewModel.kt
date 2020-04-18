@@ -35,6 +35,7 @@ class MainViewModel : ViewModel() {
     val tradesFailureLiveData = mainRepository.tradesFailureLiveData
 
     var rateCurSuccessLiveData = repositoryForRelativeRates.rateCurSuccessLiveData
+    var rateRelSuccessLiveData = repositoryForRates.relevantRatesSuccessLiveData
 
 
 
@@ -67,5 +68,8 @@ class MainViewModel : ViewModel() {
     }
     fun getRatesCor(currencies: Pair<String, String>, timeFrom: Long, timeTo: Long, baseCur : String){
         viewModelScope.launch { repositoryForRelativeRates.getRatesForTime(currencies, timeFrom, timeTo, baseCur) }
+    }
+    fun getRatesRel(instruments: String) {
+        viewModelScope.launch { repositoryForRates.getRate(instruments) }
     }
 }

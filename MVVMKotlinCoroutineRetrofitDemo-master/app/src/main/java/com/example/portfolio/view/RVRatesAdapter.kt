@@ -34,6 +34,7 @@ class RVRatesAdapter  : RecyclerView.Adapter<RVRatesAdapter.ViewHolder>() {
     fun addRate(rate: Pair<String, BigDecimal>) {
 
         ratesList.add(0, Pair(rate.first, rate.second.toFloat()))
+        ratesList = ratesList.distinct().toMutableList()
 
     }
     fun deleteRate() {

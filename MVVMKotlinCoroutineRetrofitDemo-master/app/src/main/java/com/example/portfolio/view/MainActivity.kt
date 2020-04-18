@@ -132,6 +132,27 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun setRates() {
+        val addBtn = findViewById<Button>(R.id.addBtn)
+        addBtn.setOnClickListener {
+            val dialog = Dialog(this)
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            dialog.setCancelable(false)
+            dialog.setContentView(R.layout.dialog_rate_add)
+
+            val currencies1: AutoCompleteTextView = dialog.findViewById(R.id.autoCoCur1)
+            setCur(Currencies.currenciesArray, currencies1)
+            val currencies2: AutoCompleteTextView = dialog.findViewById(R.id.autoCoCur2)
+            setCur(Currencies.currenciesArray, currencies2)
+            val cancel = dialog.findViewById<Button>(R.id.cancel)
+            val add = dialog.findViewById<Button>(R.id.add)
+            cancel.setOnClickListener { dialog.dismiss() }
+            add.setOnClickListener{
+                mainViewModel.getRatesRel("${currencies1.text.toString().toLowerCase()}-${currencies2.text.toString().toLowerCase()}")
+                dialog.dismiss()
+            }
+            dialog.show()
+
+        }
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         recyclerView.adapter = rvRatesAdapter
@@ -888,6 +909,11 @@ class MainActivity : AppCompatActivity() {
         )
         rvRatesAdapter.deleteRateLiveData.observe(this, Observer {
             rvRatesAdapter.deleteRate()
+            setRates()
+
+        })
+        mainViewModel.rateRelSuccessLiveData.observe(this, Observer {
+            rvRatesAdapter.addRate(Pair(it.keys.first(), it.values.first().exchangeRate))
             setRates()
 
         })

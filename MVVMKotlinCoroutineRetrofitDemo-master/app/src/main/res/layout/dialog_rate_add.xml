@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/colorBackground"
+    android:id="@+id/layout"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:textColor="@color/white"
+        android:textSize="20dp"
+        android:gravity="center"
+        android:text="RATE"
+        >
+    </TextView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:orientation="horizontal">
+        <AutoCompleteTextView
+            android:id="@+id/autoCoCur1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textColorHint="@color/whiteHint"
+            android:textColor="@color/white"
+            android:hint="Cur1" >
+        </AutoCompleteTextView>
+
+        <AutoCompleteTextView
+            android:id="@+id/autoCoCur2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textColorHint="@color/whiteHint"
+            android:textColor="@color/white"
+            android:hint="Cur2" >
+        </AutoCompleteTextView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/add"
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:layout_marginTop="30dp"
+            android:textColor="@color/border"
+            android:textSize="18dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/custom_button_login"
+            android:layout_gravity="center_horizontal"
+            android:text="ADD"/>
+
+        <Button
+            android:id="@+id/cancel"
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:layout_margin="10dp"
+            android:layout_marginTop="30dp"
+            android:textColor="@color/border"
+            android:textSize="18dp"
+            android:background="@drawable/custom_button_login"
+            android:layout_gravity="center_horizontal"
+            android:text="CANCEL"/>
+    </LinearLayout>
+
+
+</LinearLayout>
