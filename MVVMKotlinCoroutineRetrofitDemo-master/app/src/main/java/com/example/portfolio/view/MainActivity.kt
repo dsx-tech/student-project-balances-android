@@ -83,6 +83,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var repositoryForInputOutput: RepositoryForInputOutput
     private lateinit var repositoryForCorrelation: RepositoryForCorrelation
     private lateinit var inputOutputAdapter: InputOutputAdapter
+    private lateinit var dialogUpload: DialogUpload
 
     private lateinit var dialog: Dialog
     private var aaChartView: AAChartView? = null
@@ -121,6 +122,7 @@ class MainActivity : AppCompatActivity() {
         repositoryForCorrelation = RepositoryForCorrelation()
         repositoryForInputOutput = RepositoryForInputOutput()
         inputOutputAdapter = InputOutputAdapter()
+        dialogUpload = DialogUpload()
 
         registerObservers()
         loginSetup()
@@ -185,9 +187,9 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun uploadTradesTrans(flag: Int){
+    private fun uploadTradesTrans(flag: Int) {
         var info = ""
-        when (flag){
+        when (flag) {
             111 -> info = "trades"
             222 -> info = "transactions"
         }
@@ -227,13 +229,13 @@ class MainActivity : AppCompatActivity() {
                 })
                 .check()
         }
-
         builder.setNegativeButton("ENTER") { _, _ ->
-        setUploadTr(flag)
+            setUploadTr(flag)
 
         }
         builder.show()
     }
+
     private fun showGraphs() {
         setContentView(R.layout.activity_main)
         setToolbar()
@@ -252,16 +254,17 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         return when (item.itemId) {
-            R.id.base_currency ->{
-                lateinit var dialog:AlertDialog
+            R.id.base_currency -> {
+                lateinit var dialog: AlertDialog
                 val array = Currencies.currenciesArray
                 val builder = AlertDialog.Builder(this)
                 builder.setTitle("Choose base currency.")
-                builder.setSingleChoiceItems(array,-1) { _, which->
+                builder.setSingleChoiceItems(array, -1) { _, which ->
                     baseCur = array[which].toLowerCase()
 
-                        Toast.makeText(this@MainActivity,"$baseCur selected.", Toast.LENGTH_SHORT
-                        ).show()
+                    Toast.makeText(
+                        this@MainActivity, "$baseCur selected.", Toast.LENGTH_SHORT
+                    ).show()
                     dialog.dismiss()
                 }
                 dialog = builder.create()
@@ -374,7 +377,7 @@ class MainActivity : AppCompatActivity() {
                 button.setOnClickListener {
                     button.clearFocus()
                     val timeNow = Calendar.getInstance().timeInMillis / 1000
-                    val time = timeNow - Days.MONTH_IN_SEC*2
+                    val time = timeNow - Days.MONTH_IN_SEC * 2
                     mainViewModel.getRatesCor(
                         Pair(
                             currencies1.text.toString().toLowerCase(),
@@ -428,12 +431,12 @@ class MainActivity : AppCompatActivity() {
                 val c = Currencies.currenciesArray
                 val curInstr: MutableList<String> = mutableListOf()
                 c.forEach {
-                            curInstr.add(it)
+                    curInstr.add(it)
 
                 }
                 curInstr.distinct()
-                setCur(curInstr.toTypedArray(),currencies1)
-                setCur(curInstr.toTypedArray(),currencies2)
+                setCur(curInstr.toTypedArray(), currencies1)
+                setCur(curInstr.toTypedArray(), currencies2)
                 val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
                 recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
                 recyclerView.adapter = rvCorrelationAdapter
@@ -441,7 +444,7 @@ class MainActivity : AppCompatActivity() {
                 button.setOnClickListener {
                     if (currencies1.text.toString() != currencies2.text.toString().toLowerCase()) {
                         button.clearFocus()
-                        if ((currencies1.text.toString().toLowerCase() == baseCur) or (currencies2.text.toString().toLowerCase() == baseCur) ){
+                        if ((currencies1.text.toString().toLowerCase() == baseCur) or (currencies2.text.toString().toLowerCase() == baseCur)) {
                             val builder = AlertDialog.Builder(this)
 
                             with(builder)
@@ -450,8 +453,7 @@ class MainActivity : AppCompatActivity() {
                                 setMessage("Please, choose another base currency or active")
                                 show()
                             }
-                        }
-                        else {
+                        } else {
                             val timeNow = Calendar.getInstance().timeInMillis / 1000
                             val time = timeNow - Days.MONTH_IN_SEC * 2
                             correlationViewModel.getRatesForCor(
@@ -472,13 +474,14 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun ratesGraphDraw(cur1: String, cur2: String){
+    private fun ratesGraphDraw(cur1: String, cur2: String) {
         setContentView(R.layout.activity_rate_graph)
         setToolbar()
 
         mainViewModel.getRates(
             "$cur1-$cur2",
-            Calendar.getInstance().timeInMillis / 1000 - Days.MONTH_IN_SEC * 2, Calendar.getInstance().timeInMillis / 1000
+            Calendar.getInstance().timeInMillis / 1000 - Days.MONTH_IN_SEC * 2,
+            Calendar.getInstance().timeInMillis / 1000
         )
         val currencies1: AutoCompleteTextView = findViewById(R.id.autoCoCur1)
         currencies1.setText(cur1.toUpperCase())
@@ -510,18 +513,18 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        var format =""
-        lateinit var dialog:AlertDialog
+        var format = ""
+        lateinit var dialog: AlertDialog
         val array = arrayOf("Dsx", "Tinkoff")
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Choose base currency.")
-        builder.setSingleChoiceItems(array,-1) { _, which->
+        builder.setSingleChoiceItems(array, -1) { _, which ->
             format = array[which]
 
-            Toast.makeText(this@MainActivity,"$format selected.", Toast.LENGTH_SHORT
+            Toast.makeText(
+                this@MainActivity, "$format selected.", Toast.LENGTH_SHORT
             ).show()
             if (requestCode == 111 && resultCode == RESULT_OK) {
                 val selectedFile = data?.data //The uri with the location of the file
@@ -559,132 +562,13 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun setUploadTr(flag: Int){
-        when (flag){
-            111 ->{
-                val dialog = Dialog(this)
-                dialog .requestWindowFeature(Window.FEATURE_NO_TITLE)
-                dialog .setCancelable(true)
-                dialog .setContentView(R.layout.upload_trade)
-
-                val time = dialog.findViewById(R.id.time) as TextView
-                time.text =
-                    SimpleDateFormat("HH:mm").format(System.currentTimeMillis())
-                val date = dialog.findViewById(R.id.date) as TextView
-                date.text = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
-                date.setOnClickListener {
-                    setDate(date)
-                }
-                val currencies1: AutoCompleteTextView = dialog.findViewById(R.id.autoCoCur1)
-               setCur(Currencies.currenciesArray, currencies1)
-                val currencies2: AutoCompleteTextView = dialog.findViewById(R.id.autoCoCur2)
-                setCur(Currencies.currenciesArray, currencies2)
-                val currencies3: AutoCompleteTextView = dialog.findViewById(R.id.autoCoCur3)
-                setCur(Currencies.currenciesArray, currencies3)
-                time.setOnClickListener {  val cal = Calendar.getInstance()
-                    val timeSetListener = TimePickerDialog.OnTimeSetListener { _, hour, minute ->
-                        cal.set(Calendar.HOUR_OF_DAY, hour)
-                        cal.set(Calendar.MINUTE, minute)
-                        time.text = SimpleDateFormat("HH:mm").format(cal.time)
-                    }
-                    TimePickerDialog(this, timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show() }
-                val yesBtn = dialog .findViewById(R.id.upload) as Button
-
-                val radio1: RadioButton = dialog.findViewById(R.id.radio1)
-                val radio2: RadioButton = dialog.findViewById(R.id.radio2)
-                var type = ""
-                val tradedQ : EditText = dialog.findViewById(R.id.tradedq)
-                val tradePrice : EditText = dialog.findViewById(R.id.tradePrice)
-                val commission : EditText = dialog.findViewById(R.id.commission)
-                val tradeId : EditText = dialog.findViewById(R.id.tradeId)
-
-
-
-                yesBtn.setOnClickListener {
-                    when {
-                        radio1.isChecked -> type = "Buy"
-                        radio2.isChecked -> type = "Sell"
-                    }
-                    val token = getToken()
-                    var dat = LocalDate.parse(date.text.toString(), DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-
-                    var id: String? = null
-                    if (pref.contains(APP_PREFERENCES_ID)) {
-                        id = pref.getString(APP_PREFERENCES_ID, "0")
-                    }
-                    try{uploadViewModel.uploadTrade(id!!.toInt(), token, Trade(id = 0, instrument = "${currencies1.text.toString().toLowerCase()}-${currencies2.text.toString().toLowerCase()}",
-                        tradeType = type, tradedQuantity = BigDecimal(tradedQ.text.toString()), tradedPrice = BigDecimal(tradePrice.text.toString()), commission = BigDecimal(commission.text.toString()),
-                        tradeValueId = tradeId.text.toString().toInt(), tradedQuantityCurrency = currencies1.text.toString().toLowerCase(), tradedPriceCurrency = currencies2.text.toString().toLowerCase(), commissionCurrency = currencies2.text.toString().toLowerCase(),
-                        dateTime = "${dat}T${time.text}:00.000Z"
-                        ))
-                    dialog .dismiss()}
-                    catch (e:Exception){
-                        Toast.makeText( this,
-                            "Something went wrong",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-                dialog .show()
-            }
-            222 ->{
-                val dialog = Dialog(this)
-                dialog .requestWindowFeature(Window.FEATURE_NO_TITLE)
-                dialog .setCancelable(true)
-                dialog .setContentView(R.layout.upload_transaction)
-
-                val time = dialog.findViewById(R.id.time) as TextView
-                val radio1: RadioButton = dialog.findViewById(R.id.radio1)
-                val radio2: RadioButton = dialog.findViewById(R.id.radio2)
-                val commission : EditText = dialog.findViewById(R.id.commission)
-                val amount : EditText = dialog.findViewById(R.id.amount)
-                var type = ""
-                val transactionId : EditText = dialog.findViewById(R.id.transactionId)
-                time.text =
-                    SimpleDateFormat("HH:mm").format(System.currentTimeMillis())
-                val date = dialog.findViewById(R.id.date) as TextView
-                date.text = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
-                date.setOnClickListener {
-                  setDate(date)
-                }
-                val currencies1: AutoCompleteTextView = dialog.findViewById(R.id.autoCoCur)
-                setCur(Currencies.currenciesArray, currencies1)
-
-                time.setOnClickListener {  val cal = Calendar.getInstance()
-                    val timeSetListener = TimePickerDialog.OnTimeSetListener { _, hour, minute ->
-                        cal.set(Calendar.HOUR_OF_DAY, hour)
-                        cal.set(Calendar.MINUTE, minute)
-                        time.text = SimpleDateFormat("HH:mm").format(cal.time)
-                    }
-                    TimePickerDialog(this, timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show() }
-                val yesBtn = dialog .findViewById(R.id.upload) as Button
-                yesBtn.setOnClickListener {
-                    when {
-                        radio1.isChecked -> type = "Deposit"
-                        radio2.isChecked -> type = "Withdraw"
-                    }
-                    val token = getToken()
-                    var dat = LocalDate.parse(date.text.toString(), DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-
-                    var id: String? = null
-                    if (pref.contains(APP_PREFERENCES_ID)) {
-                        id = pref.getString(APP_PREFERENCES_ID, "0")
-                    }
-                   try{ uploadViewModel.uploadTransaction(id!!.toInt(), token, Transaction(id = 0,  commission = BigDecimal(commission.text.toString()), transactionType = type, currency = currencies1.text.toString().toLowerCase(),
-                        amount = BigDecimal(amount.text.toString()), transactionStatus = "Complete", transactionValueId = transactionId.text.toString().toInt(),
-                        dateTime = "${dat}T${time.text}:00.000Z"
-                    ))
-                    dialog .dismiss()}
-                   catch (e:Exception){
-                       Toast.makeText( this,
-                           "Something went wrong",
-                           Toast.LENGTH_SHORT
-                       ).show()
-                   }
-                }
-                dialog .show()
-            }
+    private fun setUploadTr(flag: Int) {
+        val token = getToken()
+        var id: String? = null
+        if (pref.contains(APP_PREFERENCES_ID)) {
+            id = pref.getString(APP_PREFERENCES_ID, "0")
         }
+        dialogUpload.setUploadTr(flag, this, id!!, token, this@MainActivity)
     }
 
 
@@ -706,10 +590,11 @@ class MainActivity : AppCompatActivity() {
         textDateFrom.text =
             SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
         textDateTo.text = SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis())
-       setDate(textDateFrom)
+        setDate(textDateFrom)
         setDate(textDateTo)
     }
-    private fun setDate(date: TextView){
+
+    private fun setDate(date: TextView) {
         val cal = Calendar.getInstance()
         val myFormat = "dd.MM.yyyy"
         val dateSetListenerFrom =
@@ -729,6 +614,7 @@ class MainActivity : AppCompatActivity() {
             ).show()
         }
     }
+
     private fun setCur(array: Array<String>, currencies1: AutoCompleteTextView) {
 
 
@@ -994,7 +880,10 @@ class MainActivity : AppCompatActivity() {
         }
         )
         rvRatesAdapter.selectedRateLiveData.observe(this, Observer {
-           ratesGraphDraw(it.first.substring(0, it.first.indexOf('-')), it.first.substring(it.first.indexOf('-') + 1, it.first.length))
+            ratesGraphDraw(
+                it.first.substring(0, it.first.indexOf('-')),
+                it.first.substring(it.first.indexOf('-') + 1, it.first.length)
+            )
         }
         )
         rvRatesAdapter.deleteRateLiveData.observe(this, Observer {

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:background="@color/colorBackground"
+    android:id="@+id/layout"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -47,15 +48,15 @@
         android:layout_marginBottom="10dp"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:paddingLeft="50dp"
-        android:paddingRight="50dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         >
         <RadioButton
             android:id="@+id/radio1"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="50dp"
             android:textColor="@android:color/white"
-            android:layout_marginRight="10dp"
+            android:layout_margin="5dp"
             android:text="Sell"
             android:layout_weight="1"
             android:checked="true"
@@ -64,10 +65,9 @@
             android:background="@drawable/radio_button_selector"
             />
         <RadioButton
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_margin="5dp"
             android:id="@+id/radio2"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="50dp"
             android:textColor="@android:color/white"
 
@@ -170,17 +170,37 @@
         android:text="Time"
         >
     </TextView>
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:orientation="horizontal">
     <Button
         android:id="@+id/upload"
         android:layout_width="250dp"
         android:layout_height="50dp"
+        android:layout_weight="1"
         android:layout_marginTop="30dp"
         android:textColor="@color/border"
         android:textSize="18dp"
+        android:layout_margin="10dp"
         android:background="@drawable/custom_button_login"
         android:layout_gravity="center_horizontal"
         android:text="UPLOAD"/>
+
+        <Button
+            android:id="@+id/cancel"
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:layout_margin="10dp"
+            android:layout_marginTop="30dp"
+            android:textColor="@color/border"
+            android:textSize="18dp"
+            android:background="@drawable/custom_button_login"
+            android:layout_gravity="center_horizontal"
+            android:text="CANCEL"/>
+    </LinearLayout>
 
 
 </LinearLayout>
