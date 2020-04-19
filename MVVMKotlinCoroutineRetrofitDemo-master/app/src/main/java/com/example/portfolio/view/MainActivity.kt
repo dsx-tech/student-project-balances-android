@@ -437,7 +437,7 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             R.id.menu8 -> {
-                setContentView(R.layout.activity_input_output)
+                setContentView(R.layout.activity_income_port)
                 setCalendars()
                 val button: Button = findViewById(R.id.graph_draw)
                 val textDateFrom: TextView = findViewById(R.id.dateFrom)
