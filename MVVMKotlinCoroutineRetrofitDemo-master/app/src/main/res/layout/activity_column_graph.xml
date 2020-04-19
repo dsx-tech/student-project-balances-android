@@ -36,6 +36,8 @@
                 android:id="@+id/rate_column_graph"
                 android:layout_weight="1"
                 android:layout_width="match_parent"
+                android:background="@drawable/custom_draw_button"
+                android:textColor="@color/border"
                 android:text="Go"
                 android:layout_height="match_parent">
             </Button>

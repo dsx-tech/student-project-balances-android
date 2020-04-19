@@ -12,14 +12,19 @@ class InputViewModel: ViewModel() {
     var valuesForInput = repositoryForInputOutput.valuesForInput
     var inOutSuccessLiveData = repositoryForInputOutput.inOutSuccessLiveData
     var resSuccessLiveData = repositoryForInputOutput.resSuccessLiveData
+    var resMonthSuccessLiveData = repositoryForInputOutput.resMonthSuccessLiveData
+    var periodsLiveData = repositoryForInputOutput.periodsLiveData
 
     fun getRatesForTimeInput(instruments: String, time1: Long, time2: Long){
         viewModelScope.launch { repositoryForInputOutput.getRatesForTime(instruments, time1, time2) }
     }
-    fun filterTrans(allTrans : MutableList<Transaction>, time1:String, time2:String, baseCur : String){
-        viewModelScope.launch { repositoryForInputOutput.filterTrans(allTrans, time1, time2, baseCur) }
+    fun filterTrans(allTrans : MutableList<Transaction>, time1:String, time2:String, baseCur : String, i :Int){
+        viewModelScope.launch { repositoryForInputOutput.filterTrans(allTrans, time1, time2, baseCur, i) }
     }
     fun calculationInput(baseCur : String){
         viewModelScope.launch { repositoryForInputOutput.calculationInput(baseCur) }
+    }
+    fun calculationInputMonth(baseCur : String){
+        viewModelScope.launch { repositoryForInputOutput.calculationInputMonthly(baseCur) }
     }
 }

@@ -48,6 +48,8 @@
 
             <Button
                 android:id="@+id/graph_draw"
+                android:background="@drawable/custom_draw_button"
+                android:textColor="@color/border"
                 android:layout_weight="1"
                 android:layout_width="match_parent"
                 android:text="Go"
@@ -64,7 +66,47 @@
 
 
         </com.aachartmodel.aainfographics.AAInfographicsLib.AAChartConfiger.AAChartView>
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_marginBottom="10dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="50dp"
+            android:paddingRight="50dp"
+            >
+            <RadioButton
+                android:id="@+id/radio1"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:textColor="@android:color/white"
+                android:layout_marginRight="10dp"
+                android:text="Daily"
+                android:layout_weight="1"
+                android:checked="true"
+                android:button="@android:color/transparent"
+                android:gravity="center"
+                android:background="@drawable/radio_button_selector"
+                />
+            <RadioButton
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:id="@+id/radio2"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:textColor="@android:color/white"
 
+                android:text="Monthly"
+                android:layout_weight="1"
+                android:checked="false"
+                android:button="@android:color/transparent"
+                android:background="@drawable/radio_button_selector"
+                android:gravity="center"
+                />
+
+
+
+
+        </RadioGroup>
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

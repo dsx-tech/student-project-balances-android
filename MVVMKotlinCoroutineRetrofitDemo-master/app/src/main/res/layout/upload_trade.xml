@@ -117,7 +117,7 @@
             android:layout_weight="1"
             android:textColorHint="@color/whiteHint"
             android:textColor="@color/white"
-            android:hint="Cur1" >
+            android:hint="Cur" >
         </AutoCompleteTextView>
 
         <EditText

@@ -44,6 +44,8 @@
                 android:id="@+id/add_instrument"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@drawable/custom_draw_button"
+                android:textColor="@color/border"
                 android:layout_weight="1"
                 android:text="Add" />
 
@@ -59,6 +61,8 @@
             android:id="@+id/draw"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/custom_draw_button"
+            android:textColor="@color/border"
             android:layout_weight="1"
             android:text="Draw"/>
     </LinearLayout>

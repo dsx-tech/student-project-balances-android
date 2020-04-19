@@ -156,6 +156,7 @@ class MainActivity : AppCompatActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         recyclerView.adapter = rvRatesAdapter
+        addBtn.visibility=View.VISIBLE
     }
 
     private fun loginSetup() {
@@ -416,12 +417,21 @@ class MainActivity : AppCompatActivity() {
                 val button: Button = findViewById(R.id.graph_draw)
                 val textDateFrom: TextView = findViewById(R.id.dateFrom)
                 val textDateTo: TextView = findViewById(R.id.dateTo)
+                val radio1: RadioButton = findViewById(R.id.radio1)
+                val radio2: RadioButton = findViewById(R.id.radio2)
+                var i = 1
+
+
                 button.setOnClickListener {
+                    when {
+                        radio1.isChecked -> i = 1
+                        radio2.isChecked -> i = 2
+                    }
                     inputViewModel.filterTrans(
                         mainViewModel.transSuccessLiveData.value!!,
                         textDateFrom.text.toString(),
                         textDateTo.text.toString(),
-                        baseCur
+                        baseCur, i
                     )
                 }
                 true
@@ -846,7 +856,14 @@ class MainActivity : AppCompatActivity() {
         }
         )
         inputViewModel.inOutSuccessLiveData.observe(this, Observer {
-            inputViewModel.calculationInput(baseCur)
+            when(inputViewModel.periodsLiveData.value){
+                1 ->{
+                    inputViewModel.calculationInput(baseCur)
+                }
+                2 ->{
+                    inputViewModel.calculationInputMonth(baseCur)
+                }
+            }
         }
         )
         rvPortfolioAdapter.deletePortfolioLiveData.observe(this, Observer {
@@ -859,6 +876,15 @@ class MainActivity : AppCompatActivity() {
         )
         inputViewModel.resSuccessLiveData.observe(this, Observer {
             inputOutputAdapter.setInputChart(
+                aaChartView,
+                it,
+                inputViewModel.valuesForInput.value!!.second,
+                baseCur
+            )
+        }
+        )
+        inputViewModel.resMonthSuccessLiveData.observe(this, Observer {
+            inputOutputAdapter.setInputMonthChart(
                 aaChartView,
                 it,
                 inputViewModel.valuesForInput.value!!.second,
