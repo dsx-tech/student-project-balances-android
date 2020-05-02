@@ -24,6 +24,7 @@ class MainViewModel : ViewModel() {
     var relevantRatesSuccessLiveData = repositoryForPieGraph.relevantRatesSuccessLiveData
     var balancesAtTheEnd = repositoryForPieGraph.balancesAtTheEnd
     var balancesMultRates = repositoryForPieGraph.balancesMultRates
+    var balancesMinus = repositoryForPieGraph.balancesMinus
 
     val rateSuccessLiveData = repositoryForRates.rateSuccessLiveData
 

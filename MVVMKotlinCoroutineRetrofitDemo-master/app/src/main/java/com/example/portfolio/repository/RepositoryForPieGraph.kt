@@ -20,7 +20,7 @@ class RepositoryForPieGraph {
     var relevantRatesFailureLiveData = MutableLiveData<Boolean>()
     var balancesAtTheEnd = MutableLiveData<MutableMap<String, BigDecimal?>>()
     var stringWithInstruments = MutableLiveData<String>()
-
+    var balancesMinus = MutableLiveData<MutableMap<String, BigDecimal?>>()
     var balancesMultRates = MutableLiveData<MutableMap<String, BigDecimal?>>()
 
     suspend fun getRate(instruments: String){
@@ -176,6 +176,7 @@ class RepositoryForPieGraph {
     }
 
     fun multiplyRelevant(baseCur:String){
+        balancesMinus.value?.clear()
         val balancesMult : MutableMap<String, BigDecimal?> = mutableMapOf()
         for (key in balancesAtTheEnd.value!!.keys){
             if (relevantRatesSuccessLiveData.value!!.containsKey("${key.toLowerCase()}-$baseCur")){
@@ -191,7 +192,14 @@ class RepositoryForPieGraph {
         }
 
         balancesMultRates.postValue(balancesMult)
-
+        val minusList:MutableMap<String, BigDecimal?> = mutableMapOf()
+        balancesMult.keys.forEach{
+            if(balancesMult[it]!!.compareTo(BigDecimal.ZERO) == -1){
+                minusList[it] = balancesMult[it]
+                balancesMinus.value?.set(it, balancesMult[it])
+            }
+        }
+        balancesMinus.postValue(minusList)
     }
 
 }

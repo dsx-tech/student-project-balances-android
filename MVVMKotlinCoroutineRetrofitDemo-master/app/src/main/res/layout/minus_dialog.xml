@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/colorBackground"
+    android:id="@+id/layout"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:textColor="@color/white"
+        android:textSize="20dp"
+        android:gravity="center"
+        android:text="These balances less then zero:"
+        >
+    </TextView>
+    <TextView
+        android:layout_width="match_parent"
+        android:id="@+id/balances"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:textColor="@color/white"
+        android:textSize="20dp"
+        android:gravity="center"
+        android:text="----------"
+        >
+    </TextView>
+    <Button
+        android:id="@+id/cancel"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:layout_margin="10dp"
+        android:layout_marginTop="30dp"
+        android:textColor="@color/border"
+        android:textSize="18dp"
+        android:background="@drawable/custom_button_login"
+        android:layout_gravity="center_horizontal"
+        android:text="OK"/>
+
+
+
+</LinearLayout>

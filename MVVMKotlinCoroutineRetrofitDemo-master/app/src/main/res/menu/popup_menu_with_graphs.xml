@@ -12,6 +12,9 @@
             <item
                 android:id="@+id/base_currency"
                 android:title="Base currency" />
+            <item
+                android:id="@+id/minus_balances"
+                android:title="Minus balances" />
         </menu>
     </item>
     <item

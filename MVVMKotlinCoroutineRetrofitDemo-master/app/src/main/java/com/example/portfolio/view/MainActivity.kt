@@ -84,6 +84,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var repositoryForCorrelation: RepositoryForCorrelation
     private lateinit var inputOutputAdapter: InputOutputAdapter
     private lateinit var dialogUpload: DialogUpload
+    private lateinit var dialogMinus: DialogMinus
 
     private lateinit var dialog: Dialog
     private var aaChartView: AAChartView? = null
@@ -123,6 +124,7 @@ class MainActivity : AppCompatActivity() {
         repositoryForInputOutput = RepositoryForInputOutput()
         inputOutputAdapter = InputOutputAdapter()
         dialogUpload = DialogUpload()
+        dialogMinus = DialogMinus()
 
         registerObservers()
         loginSetup()
@@ -276,6 +278,10 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         return when (item.itemId) {
+            R.id.minus_balances -> {
+dialogMinus.setMinus(this,  mainViewModel.balancesMinus.value)
+            true
+            }
             R.id.base_currency -> {
                 lateinit var dialog: AlertDialog
                 val array = Currencies.currenciesArray
@@ -427,12 +433,12 @@ class MainActivity : AppCompatActivity() {
                         radio1.isChecked -> i = 1
                         radio2.isChecked -> i = 2
                     }
-                    inputViewModel.filterTrans(
-                        mainViewModel.transSuccessLiveData.value!!,
-                        textDateFrom.text.toString(),
-                        textDateTo.text.toString(),
-                        baseCur, i
-                    )
+                        inputViewModel.filterTrans(
+                            mainViewModel.transSuccessLiveData.value!!,
+                            textDateFrom.text.toString(),
+                            textDateTo.text.toString(),
+                            baseCur, i
+                        )
                 }
                 true
             }
@@ -941,6 +947,10 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.rateRelSuccessLiveData.observe(this, Observer {
             rvRatesAdapter.addRate(Pair(it.keys.first(), it.values.first().exchangeRate))
             setRates()
+
+        })
+        mainViewModel.balancesMinus.observe(this, Observer {
+           var m = 3
 
         })
 
