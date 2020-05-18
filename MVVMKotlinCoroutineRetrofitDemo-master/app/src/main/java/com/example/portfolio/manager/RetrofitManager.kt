@@ -12,7 +12,7 @@ object RetrofitManager {
     init {
         val client = OkHttpClient.Builder().build()
         rateApi = Retrofit.Builder()
-            .baseUrl("http://3.248.170.197:8888")
+            .baseUrl("http://35.217.7.122:8888")
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .client(client)
@@ -24,7 +24,7 @@ object RetrofitManager {
     init {
         val client = OkHttpClient.Builder().build()
         transTradesApi = Retrofit.Builder()
-            .baseUrl("http://3.248.170.197:9999")
+            .baseUrl("http://35.217.7.122:9999")
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .client(client)
