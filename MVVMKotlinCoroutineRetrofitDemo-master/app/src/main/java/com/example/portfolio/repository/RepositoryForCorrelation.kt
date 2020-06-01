@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.portfolio.manager.RetrofitManager
 import com.example.portfolio.model.Rate
-import java.math.BigDecimal
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import kotlin.math.sqrt
@@ -33,7 +32,6 @@ class RepositoryForCorrelation {
             rateCorSuccessLiveData.value!![keys[0]]!!.forEach {
                 avg1 += it.exchangeRate.toFloat()
             }
-            var f = BigDecimal(rateCorSuccessLiveData.value!![keys[0]]!!.size)
             avg1 /= ((rateCorSuccessLiveData.value!![keys[0]]!!.size))
             rateCorSuccessLiveData.value!![keys[1]]!!.forEach {
                 avg2 += it.exchangeRate.toFloat()

@@ -3,14 +3,8 @@ package com.example.portfolio.view
 import android.app.*
 import android.content.Context
 import android.view.View
-import android.view.Window
 import android.view.inputmethod.InputMethodManager
-import android.widget.*
-import androidx.lifecycle.ViewModelProviders
-import com.example.portfolio.R
-import com.example.portfolio.viewmodel.UploadViewModel
 import java.math.BigDecimal
-import java.text.SimpleDateFormat
 
 import java.util.*
 
